@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Aston&#39;s Programming Thoughts</title>
+    <link>https://astonbitecode.github.io/blog/</link>
+    <description>Recent content on Aston&#39;s Programming Thoughts</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 09 Aug 2016 08:05:58 +0000</lastBuildDate>
+    <atom:link href="https://astonbitecode.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>About</title>
+      <link>https://astonbitecode.github.io/blog/page/about/</link>
+      <pubDate>Tue, 09 Aug 2016 08:05:58 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/page/about/</guid>
+      <description>
+
+&lt;h2 id=&#34;this-is-aston-s-blog&#34;&gt;This is Aston&amp;rsquo;s blog&lt;/h2&gt;
+
+&lt;p&gt;Aston is my friend and I know he likes coding&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;In this blog, he will try to blog&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Scala: Use fold to serialize any number of Futures</title>
+      <link>https://astonbitecode.github.io/blog/blog/2015/10/04/scala-use-fold-to-serialize-any-number-of-futures/</link>
+      <pubDate>Sun, 04 Oct 2015 08:05:58 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/blog/2015/10/04/scala-use-fold-to-serialize-any-number-of-futures/</guid>
+      <description>&lt;p&gt;Scala&amp;rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More specifically, for serializing Futures.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s assume that we have a function that performs some kind of logic and returns a Future:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;def addOneAndPrint(num: Int): Future[Unit] = {
+  Future {
+    val addedOne = num + 1
+    print(addedOne + &amp;quot; &amp;quot;)
+  }
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Users of such a fuction, may want to call it more than one time and additionally, to call it serially. This is easily done by using a for-comprehension like following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;for {
+  _ &amp;lt;- addOneAndPrint(1)
+  _ &amp;lt;- addOneAndPrint(2)
+} yield (Unit)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This assures that addOneAndPrint(1) will be executed first, the result will be returned and then the addOneAndPrint(2) will be executed.&lt;/p&gt;
+
+&lt;p&gt;However, using the for like that, is a bit awkward if this should include many serialized calls (or unknown number of calls).
+For example, how could someone call the addOneAndPrint function one time for each element of a List of Integers?&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val ints = List(1, 3, 5, 7, 9)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;One nice solution is to use foldLeft for this List, combining a for-comprehension like following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val dummy = Future {}
+ 
+ints.foldLeft(dummy) {
+  case (prevFuture, currentNumber) =&amp;gt; {
+    for {
+      _ &amp;lt;- prevFuture
+      _ &amp;lt;- addOneAndPrint(currentNumber)
+    } yield (Unit)
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The output will be the result of calling the addOneAndPrint serially:&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;2 4 6 8 10&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>A (kind-of) Dependency Injection in Scala</title>
+      <link>https://astonbitecode.github.io/blog/blog/2015/04/25/a-kind-of-dependency-injection-in-scala/</link>
+      <pubDate>Sat, 25 Apr 2015 08:05:58 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/blog/2015/04/25/a-kind-of-dependency-injection-in-scala/</guid>
+      <description>
+
+&lt;h2 id=&#34;the-problem&#34;&gt;The problem&lt;/h2&gt;
+
+&lt;p&gt;While projects evolve, the lines of code increase and the dependencies between the classes are becoming more and more complicated. With the absence of some Dependency Injection (DI) framework/library, this ends up quickly in having to pass instances here and there through constructors of classes. The constructors may end up having something like 10+ arguments. To make things worse, for some cases, these arguments are not used by the logic of the classes themselves, but instead, they are just used to create subclasses!&lt;/p&gt;
+
+&lt;p&gt;This situation is especially common for projects that are built using a service-oriented architecture internally and of course, makes things tight and difficult during Unit Testing.&lt;/p&gt;
+
+&lt;p&gt;Dependency Injection may help keeping the code (mostly) clean and can facilitate the implementation of Unit Tests. However, it is not the choice for everyone and some teams may have decided not to use any DI framework.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-thought-for-a-way-out&#34;&gt;The thought for a way out&lt;/h2&gt;
+
+&lt;p&gt;Scala is a very expressive language and it is pretty amazing how beautiful things someone can achieve when using it. We can see this everywhere: in blogs, SO and gists to name a few.
+So, maybe we could find some delicate and easy way to keep the code cleaner, even without the use of any specific DI libraries.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-kind-of-di&#34;&gt;A kind of DI&lt;/h2&gt;
+
+&lt;p&gt;As Jonas Bonér (founder and CTO of Typesafe) says in his blog: “Scala is a very rich and deep language that gives you several ways of doing DI solely based on language constructs”.&lt;/p&gt;
+
+&lt;p&gt;In the same blog, he describes a way to perform DI using the Cake Pattern. Searching around the blogs and answers/proposals, one may find out that indeed, DI in Scala can be achieved with several ways.&lt;/p&gt;
+
+&lt;p&gt;What we will try to do here, is a kind of DI using Scala-only constructs, in order to be able to create some class instance once and “inject” it wherever is needed.&lt;/p&gt;
+
+&lt;h2 id=&#34;use-case-to-drive-the-solution&#34;&gt;Use case to drive the solution&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say that we have a class that represents a Configuration Service. This service provides a file path to its users. The service should be used by any class in our application that needs it and it may look like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;class ConfigurationService(filePath: String) {
+  def getFilePath(): String = filePath
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;who-will-instantiate-the-service&#34;&gt;Who will instantiate the service?&lt;/h2&gt;
+
+&lt;p&gt;In a real DI framework, the container/framework itself should instantiate the ConfigurationService, as being dictated by some XML configuration or annotations, like in Spring.&lt;/p&gt;
+
+&lt;p&gt;In this case however, the service will be created by our code, during the startup of the application and before any class asks for it.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-package-object-in-the-solution&#34;&gt;A package object in the solution&lt;/h2&gt;
+
+&lt;p&gt;A package object is really helpful because any definition that is done inside the package object is actually member of the package itself. A package object (and a Scala object in general) can provide access to its fields and methods from anywhere in our code.&lt;/p&gt;
+
+&lt;p&gt;So, someone could think to create an object like following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;package object di {
+  var configurationService: ConfigurationService = _
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;However, there are some things that need our attention. Firstly, we need to obey to the functional principle that dictates the use of vals instead of vars.&lt;/p&gt;
+
+&lt;p&gt;So, the service should be available to the users immutably, via a val.
+But how this can be done, since the object will be already created by the time that our application performs the initialization of the service? Well, a small hack including a lazy val and a var could do the trick:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;package object di {
+  private var configurationServiceVar: ConfigurationService = _
+  lazy val configurationService: ConfigurationService = configurationServiceVar
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now the di object offers the ConfigurationService publicly via a val. All we need now is a def that allows the mutation of the var.
+This mutation should be done early in out Application initialization, before someone asks for the val. If not, the configurationService val will be null during the lifetime of our application.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s try to avoid that by using Options and Exceptions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;package object di {
+  private var configurationServiceVar: Option[ConfigurationService] = None
+ 
+  lazy val configurationService: ConfigurationService = {
+    configurationServiceVar.getOrElse(throw new RuntimeException(&amp;quot;Configuration is not yet initialized&amp;quot;))
+  }
+ 
+  def initService(cs: ConfigurationService) = configurationServiceVar = Some(cs)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With the above code, we are making sure that if someone asks for the ConfigurationService before it gets initialized, he/she will get a nice RuntimeException. Moreover, the RuntimeException will prevent setting the val with something wrong like None.&lt;/p&gt;
+
+&lt;p&gt;Our lazy val will stay uninitialized until someone actually initializes it.&lt;/p&gt;
+
+&lt;h2 id=&#34;making-it-generic&#34;&gt;Making it generic&lt;/h2&gt;
+
+&lt;p&gt;Until now, the solution handles only the ConfigurationService class. Let&amp;rsquo;s try to make it more useful, by handling more services generically:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;package object di {
+  private var readyToInject: Map[Class[_], Any] = TrieMap.empty
+ 
+  private def key[T](implicit classTag: ClassTag[T]): Class[_] = classTag.runtimeClass
+ 
+  def initService[T: ClassTag](c: T) {
+    val k = key[T]
+    readyToInject.get(k) match {
+      case Some(initialized) =&amp;gt; throw new RuntimeException(&amp;quot;The service already initialized&amp;quot;)
+      case None =&amp;gt; readyToInject = readyToInject += (k -&amp;gt; c) 
+    }
+  }
+ 
+  def inject[T: ClassTag]: T = {
+    readyToInject.get(key[T]).getOrElse(throw new RuntimeException(&amp;quot;The service is not yet initialized&amp;quot;)).asInstanceOf[T]
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We created a concurrent Map that has a Class as key and Any as value. The potential is that the Map will hold the instances that will be later injected into fields of classes that need them.&lt;/p&gt;
+
+&lt;p&gt;We also changed the name of the initService method to inject. This is just to add a bit more “beauty”, as it will make the code easier to understand and to look familiar to us (similarly to @inject annotation).&lt;/p&gt;
+
+&lt;h2 id=&#34;how-this-kind-of-di-looks-like-to-its-users&#34;&gt;How this kind of DI looks like to its users?&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s create a user of the ConfigurationService, a HelpfulClass:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;class HelpfulClass {
+  private val config = inject[ConfigurationService]
+ 
+  def doSomethingUsingTheConfiguration = {
+    println(config.getFilePath())
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This seems simple and elegant. We expect our config val to have “injected” an instance of the ConfigurationService class, only by issuing:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;private val config = inject[ConfigurationService]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;Note:&lt;/em&gt; For this example and for the sake of simplicity, the ConfigurationService was a concrete class. However, it could also be a trait.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s see what is the result
+We may test the result by creating a simple Main object and try to see the following:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;We will try to use the HelpfulClass before the ConfigurationService is created in order to get the resulted exception.&lt;/li&gt;
+&lt;li&gt;We will initialize and use the ConfigurationService.&lt;/li&gt;
+&lt;li&gt;We will try to use the HelpfulClass again in order to get the resulted exception.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;object Main extends App {
+  // Try to use the service before it gets initialized (1)
+  try {
+    val helpfulClassShouldFail = new HelpfulClass
+  } catch {
+    case error: Exception =&amp;gt; println(error.getMessage)
+  }
+ 
+  // Initialize services (like the DI framework would do)
+  initService(new ConfigurationService(&amp;quot;/my/path&amp;quot;))
+ 
+  // Run the application (2)
+  val helpfulClass = new HelpfulClass
+  helpfulClass.doSomethingUsingTheConfiguration
+ 
+  // Try to re-initialize the service (3)
+  try {
+    initService(new ConfigurationService(&amp;quot;/my/other/path&amp;quot;))
+  } catch {
+    case error: Exception =&amp;gt; println(error.getMessage)
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once this runs, we should see the output:&lt;/p&gt;
+
+&lt;p&gt;Configuration is not yet initialized
+/my/path
+Configuration is already initialized&lt;/p&gt;
+
+&lt;h2 id=&#34;drawbacks-and-possible-extensions&#34;&gt;Drawbacks and possible extensions&lt;/h2&gt;
+
+&lt;p&gt;The main drawback is that it is dangerous to use this kind of DI to inject values into Scala objects. In the case that someone tries to use the object before the ConfiguratioService gets initialized, the application will crash with an ExceptionInInitializerError.&lt;/p&gt;
+
+&lt;p&gt;The other thing that doesn&amp;rsquo;t allow me to call this proper DI, is that the inversion of control is not applied in a proper way. The control of the services creation is still in our own code.&lt;/p&gt;
+
+&lt;p&gt;One way to try to abstract away of explicitly creating the instances of services in the code, could be to create logic inside the di package object that would read some XML file and do the instantiation of services using reflection, during the startup of the Application.&lt;/p&gt;
+
+&lt;p&gt;Moreover, we could even try to create scopes and, like in Spring for example, support singleton, prototype etc!&lt;/p&gt;
+
+&lt;p&gt;##What to takeaway?
+The idea, if you like it and the code, of course. It is pushed in a GitHub repo.&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

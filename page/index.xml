@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pages on Aston&#39;s Programming Thoughts</title>
+    <link>https://astonbitecode.github.io/blog/page/</link>
+    <description>Recent content in Pages on Aston&#39;s Programming Thoughts</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 09 Aug 2016 08:05:58 +0000</lastBuildDate>
+    <atom:link href="https://astonbitecode.github.io/blog/page/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>About</title>
+      <link>https://astonbitecode.github.io/blog/page/about/</link>
+      <pubDate>Tue, 09 Aug 2016 08:05:58 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/page/about/</guid>
+      <description>
+
+&lt;h2 id=&#34;this-is-aston-s-blog&#34;&gt;This is Aston&amp;rsquo;s blog&lt;/h2&gt;
+
+&lt;p&gt;Aston is my friend and I know he likes coding&amp;hellip;&lt;/p&gt;
+
+&lt;p&gt;In this blog, he will try to blog&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
