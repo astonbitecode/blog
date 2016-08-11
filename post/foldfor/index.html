@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Scala: Use fold to serialize any number of Futures</title>
+
+  <meta name="author" content="Aston" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.17-DEV" />
+
+  <link rel="alternate" href="https://astonbitecode.github.io/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/pygment_highlights.css" />
+  
+  
+  <meta property="og:title" content="Scala: Use fold to serialize any number of Futures" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/" />
+  <meta property="og:image" content="images/aston.png" />
+  
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://astonbitecode.github.io/blog/">Aston&#39;s Programming Thoughts</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+          <li>
+          <a title="Blog" href="/blog/">Blog</a>
+  	      </li>
+  	    
+      
+        
+          <li>
+          <a title="About" href="/blog/page/about/">About</a>
+  	      </li>
+  	    
+      
+      </ul>
+    </div>
+
+	<div class="avatar-container">
+	  <div class="avatar-img-border">
+      
+          <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog/">
+              <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/aston.png" alt="Aston&#39;s Programming Thoughts" />
+          </a>
+      
+	  </div>
+	</div>
+
+  </div>
+</nav>
+
+
+    <div role="main" class="container main-content">
+
+      
+        
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1>Scala: Use fold to serialize any number of Futures</h1>
+      
+      
+      
+      <span class="post-meta">Posted on October 4, 2015</span>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+          <p>Scala&rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More specifically, for serializing Futures.</p>
+
+<p>Let&rsquo;s assume that we have a function that performs some kind of logic and returns a Future:</p>
+
+<p><div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">def</span> <span class="n">addOneAndPrint</span><span class="o">(</span><span class="n">num</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="nc">Future</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">addedOne</span> <span class="k">=</span> <span class="n">num</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">print</span><span class="o">(</span><span class="n">addedOne</span> <span class="o">+</span> <span class="s">&quot; &quot;</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+Users of such a fuction, may want to call it more than one time and additionally, to call it serially. This is easily done by using a for-comprehension like following:</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">for</span> <span class="o">{</span>
+  <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">addOneAndPrint</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+  <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">addOneAndPrint</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="nc">Unit</span><span class="o">)</span>
+</code></pre></div>
+
+
+<p>This assures that addOneAndPrint(1) will be executed first, the result will be returned and then the addOneAndPrint(2) will be executed.</p>
+
+<p>However, using the for like that, is a bit awkward if this should include many serialized calls (or unknown number of calls).
+For example, how could someone call the addOneAndPrint function one time for each element of a List of Integers?</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">val</span> <span class="n">ints</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">9</span><span class="o">)</span>
+</code></pre></div>
+
+
+<p>One nice solution is to use foldLeft for this List, combining a for-comprehension like following:</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">val</span> <span class="n">dummy</span> <span class="k">=</span> <span class="nc">Future</span> <span class="o">{}</span>
+ 
+<span class="n">ints</span><span class="o">.</span><span class="n">foldLeft</span><span class="o">(</span><span class="n">dummy</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="o">(</span><span class="n">prevFuture</span><span class="o">,</span> <span class="n">currentNumber</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">{</span>
+      <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">prevFuture</span>
+      <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">addOneAndPrint</span><span class="o">(</span><span class="n">currentNumber</span><span class="o">)</span>
+    <span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="nc">Unit</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+
+<p>The output will be the result of calling the addOneAndPrint serially:</p>
+
+<p><em>2 4 6 8 10</em></p>
+
+<p>Thanks for reading!</p>
+
+      </article>
+
+      <ul class="pager blog-pager">
+        
+        <li class="previous">
+          <a href="https://astonbitecode.github.io/blog/post/kindofdi/" data-toggle="tooltip" data-placement="top" title="A (kind-of) Dependency Injection in Scala">&larr; Previous Post</a>
+        </li>
+        
+        
+      </ul>
+
+      
+
+    </div>
+  </div>
+</div>
+
+      
+
+    </div>
+
+    <footer>
+  <div class="container beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+          
+          <li>
+            <a href="https://github.com/astonbitecode" title="GitHub">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+		      
+		      
+		      
+	    	  
+          
+          
+
+    		  <li>
+      			<a href="https://astonbitecode.github.io/blog/index.xml" title="RSS">
+      			  <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+      			</a>
+    		  </li>		
+
+        </ul>
+        <p class="copyright text-muted">
+    		  Aston
+    		  &nbsp;&bull;&nbsp;
+    		  2016
+    		  
+    		  
+    		  &nbsp;&bull;&nbsp;
+    		  <a href="https://astonbitecode.github.io/blog/">Aston&#39;s Programming Thoughts</a>
+    		  
+  	    </p>
+  	        
+    		<p class="theme-by text-muted">
+    		  Theme by
+    		  <a href="http://deanattali.com/beautiful-jekyll/">beautiful-jekyll</a>
+    		</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://astonbitecode.github.io/blog/js/jquery-1.11.2.min.js"></script>
+<script src="https://astonbitecode.github.io/blog/js/bootstrap.min.js"></script>
+<script src="https://astonbitecode.github.io/blog/js/main.js"></script>
+
+
+
+  </body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>OSGi: Finding the way to JEE and JSF </title>
+
+  <meta name="author" content="Aston" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.17-DEV" />
+
+  <link rel="alternate" href="https://astonbitecode.github.io/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/pygment_highlights.css" />
+  
+  
+  <meta property="og:title" content="OSGi: Finding the way to JEE and JSF " />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/" />
+  <meta property="og:image" content="images/aston.png" />
+  
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://astonbitecode.github.io/blog/">Aston&#39;s Programming Thoughts</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+          <li>
+          <a title="Blog" href="/blog/">Blog</a>
+  	      </li>
+  	    
+      
+        
+          <li>
+          <a title="About" href="/blog/page/about/">About</a>
+  	      </li>
+  	    
+      
+      </ul>
+    </div>
+
+	<div class="avatar-container">
+	  <div class="avatar-img-border">
+      
+          <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog/">
+              <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/aston.png" alt="Aston&#39;s Programming Thoughts" />
+          </a>
+      
+	  </div>
+	</div>
+
+  </div>
+</nav>
+
+
+    <div role="main" class="container main-content">
+
+      
+        
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1>OSGi: Finding the way to JEE and JSF </h1>
+      
+      
+      
+      <span class="post-meta">Posted on March 5, 2015</span>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+          
+
+<p>Combining the modularity offered by OSGi with the EE technologies may result to powerful, scalable and maintainable applications.</p>
+
+<p>Eclipse Virgo bridges OSGi and JEE worlds and provides a “completely module-based Java application server”.</p>
+
+<p>Even if the Virgo documentation provides detailed explanations, it seemed difficult to find tutorials that are functional and build up to a JEE Web application that is powered by OSGi bundles and services.</p>
+
+<p>In this tutorial, I will try to provide the pieces to build a JSF – Richfaces – Spring application that makes use of OSGi services over Blueprint.</p>
+
+<p>It is considered that the reader has the knowledge of Maven, OSGi, Spring and JSF.</p>
+
+<p>I used the eclipse IDE but any IDE (or no IDE) should do.</p>
+
+<p>We will create two bundles. The first is a simple OSGi bundle that provides a service to the framework and the second is a WAB, that consumes the service and forms a JSF web application.</p>
+
+<h2 id="service-provider-bundle">Service Provider bundle</h2>
+
+<p>Create a simple maven project and inside it the interface for the service that will be exported:</p>
+
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="kn">package</span> <span class="nn">org.astonbitecode.osgi.serviceProvider.service</span><span class="o">;</span>
+ 
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MyService</span> <span class="o">{</span>
+   <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div>
+
+
+<p>Then, the MyService implementation:</p>
+
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="kn">package</span> <span class="nn">org.astonbitecode.osgi.serviceProvider.service.impl</span><span class="o">;</span>
+ 
+<span class="kn">import</span> <span class="nn">org.astonbitecode.osgi.serviceProvider.service.MyService</span><span class="o">;</span>
+ 
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyServiceImpl</span> <span class="kd">implements</span> <span class="n">MyService</span> <span class="o">{</span>
+   <span class="nd">@Override</span>
+   <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="s">&quot;MyService says hi!&quot;</span><span class="o">;</span>
+   <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+
+<p>In order to create the OSGi service and export it with Blueprint, Gemini expects by default to find the file “osgi-context.xml” under the folder META-INF/spring, but this can change. I have chosen to put our file inside the resources folder, under a subfolder called “spring” (you may see the structure of the whole project later on).</p>
+
+<p>The contents of the osgi-context.xml file should be:</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="nt">&lt;blueprint</span> <span class="na">xmlns=</span><span class="s">&quot;http://www.osgi.org/xmlns/blueprint/v1.0.0&quot;</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;myService&quot;</span> <span class="na">class=</span><span class="s">&quot;org.astonbitecode.osgi.serviceProvider.service.impl.MyServiceImpl&quot;</span> <span class="nt">/&gt;</span>
+   <span class="nt">&lt;service</span> <span class="na">ref=</span><span class="s">&quot;myService&quot;</span> <span class="na">interface=</span><span class="s">&quot;org.astonbitecode.osgi.serviceProvider.service.MyService&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/blueprint&gt;</span>
+</code></pre></div>
+
+
+<p>The “bean” element creates the Spring Bean by instantiating the MyServiceImpl, whereas the “service” element exports the “myService” Spring Bean as an OSGi service.</p>
+
+<p>After these, the structure of the project should look like the following:</p>
+
+<p><img src="sp3.png" alt="sp3" /></p>
+
+<p>We will use maven and the maven-bundle-plugin in order to build our bundle. In order to do this, our pom.xml should contain the following plugin configuration:</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="nt">&lt;plugin&gt;</span>
+   <span class="nt">&lt;groupid&gt;</span>org.apache.felix<span class="nt">&lt;/groupid&gt;</span>
+   <span class="nt">&lt;artifactid&gt;</span>maven-bundle-plugin<span class="nt">&lt;/artifactid&gt;</span>
+   <span class="nt">&lt;version&gt;</span>2.4.0<span class="nt">&lt;/version&gt;</span>
+   <span class="nt">&lt;extensions&gt;</span>true<span class="nt">&lt;/extensions&gt;</span>
+   <span class="nt">&lt;executions&gt;</span>
+      <span class="nt">&lt;execution&gt;</span>
+         <span class="nt">&lt;id&gt;</span>bundle-manifest<span class="nt">&lt;/id&gt;</span>
+         <span class="nt">&lt;phase&gt;</span>process-classes<span class="nt">&lt;/phase&gt;</span>
+         <span class="nt">&lt;goals&gt;</span>
+            <span class="nt">&lt;goal&gt;</span>manifest<span class="nt">&lt;/goal&gt;</span>
+         <span class="nt">&lt;/goals&gt;</span>
+      <span class="nt">&lt;/execution&gt;</span>
+   <span class="nt">&lt;/executions&gt;</span>
+   <span class="nt">&lt;configuration&gt;</span>
+      <span class="nt">&lt;instructions&gt;</span>
+         <span class="nt">&lt;bundle-classpath&gt;</span>.<span class="nt">&lt;/bundle-classpath&gt;</span>
+         <span class="nt">&lt;bundle-symbolicname&gt;</span>${project.artifactId}<span class="nt">&lt;/bundle-symbolicname&gt;</span>
+         <span class="nt">&lt;spring-context&gt;</span>spring/osgi-context.xml;create-asynchrously:=true;wait-for-dependencies:=true;publish-context:=true<span class="nt">&lt;/spring-context&gt;</span>
+         <span class="nt">&lt;export-package&gt;</span>org.astonbitecode.osgi.serviceProvider.service<span class="nt">&lt;/export-package&gt;</span>
+         <span class="nt">&lt;import-package&gt;</span>!org.astonbitecode.osgi.serviceProvider.*, *<span class="nt">&lt;/import-package&gt;</span>
+      <span class="nt">&lt;/instructions&gt;</span>
+   <span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span>
+</code></pre></div>
+
+
+<p>Using the maven-bundle-plugin, we define the export and import packages for the bundle and the location of the osgi-context xml</p>
+
+<p>After running mvn install, our bundle should contain the following MANIFEST.MF:</p>
+
+<pre><code>Manifest-Version: 1.0
+Bnd-LastModified: 1394373967669
+Build-Jdk: 1.7.0_51
+Built-By: astonbitecode
+Bundle-ManifestVersion: 2
+Bundle-Name: serviceProvider
+Bundle-SymbolicName: serviceProvider
+Bundle-Version: 0.0.1.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.astonbitecode.osgi.serviceProvider.service;version=&quot; 0.0.1.SNAPSHOT&quot;
+Spring-Context: spring/osgi-context.xml;create-asynchrously:=true;wait-f or-dependencies:=true;publish-context:=true
+Tool: Bnd-2.1.0.20130426-122213
+</code></pre>
+
+<h2 id="wab-service-consumer">WAB - Service Consumer</h2>
+
+<p>We got the producer of the service done, so we should now continue with the bundle that will make use of the service and will contain the JSF and Richfaces implementation.</p>
+
+<p>Our bundle this time should follow the EE way and its structure will be quite different from the serviceProvider.</p>
+
+<p>Since we are dealing with a Dynamic Web project, let&rsquo;s see how some of the contents of the web.xml should be.</p>
+
+<p>The crucial elements regarding the OSGi and blueprint are the following:</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span>  <span class="nt">&lt;context-param&gt;</span>
+    <span class="nt">&lt;param-name&gt;</span>contextConfigLocation<span class="nt">&lt;/param-name&gt;</span>
+    <span class="nt">&lt;param-value&gt;</span>classpath:spring/*context.xml<span class="nt">&lt;/param-value&gt;</span>
+  <span class="nt">&lt;/context-param&gt;</span>
+ 
+  <span class="nt">&lt;listener&gt;</span>
+    <span class="nt">&lt;listener-class&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="nt">&lt;/listener-class&gt;</span>
+  <span class="nt">&lt;/listener&gt;</span>
+ 
+  <span class="nt">&lt;context-param&gt;</span>
+    <span class="nt">&lt;param-name&gt;</span>contextClass<span class="nt">&lt;/param-name&gt;</span>
+    <span class="nt">&lt;param-value&gt;</span>org.eclipse.virgo.web.dm.ServerOsgiBundleXmlWebApplicationContext<span class="nt">&lt;/param-value&gt;</span>
+  <span class="nt">&lt;/context-param&gt;</span>
+</code></pre></div>
+
+
+<p>The first (contextConfigLocation) defines where the Spring configuration files are located. As in the serviceProvider bundle, we choose to keep the configurations under the resources folder and under the spring sub-folder.</p>
+
+<p>The second element, defines a Spring context loader listener that will load the root web application context.</p>
+
+<p>Finally, the third element enables the use of the OSGi services within the root WebApplicationContext.</p>
+
+<p>The rest of the web.xml contains the usual elements to create a JSF and Richfaces application, the most important being:</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="nt">&lt;servlet&gt;</span>
+  <span class="nt">&lt;servlet-name&gt;</span>Resource Servlet<span class="nt">&lt;/servlet-name&gt;</span>
+  <span class="nt">&lt;servlet-class&gt;</span>org.richfaces.webapp.ResourceServlet<span class="nt">&lt;/servlet-class&gt;</span>
+  <span class="nt">&lt;load-on-startup&gt;</span>1<span class="nt">&lt;/load-on-startup&gt;</span>
+<span class="nt">&lt;/servlet&gt;</span>
+<span class="nt">&lt;servlet-mapping&gt;</span>
+  <span class="nt">&lt;servlet-name&gt;</span>Resource Servlet<span class="nt">&lt;/servlet-name&gt;</span>
+  <span class="nt">&lt;url-pattern&gt;</span>/org.richfaces.resources/*<span class="nt">&lt;/url-pattern&gt;</span>
+<span class="nt">&lt;/servlet-mapping&gt;</span>
+<span class="nt">&lt;servlet&gt;</span>
+  <span class="nt">&lt;servlet-name&gt;</span>Faces Servlet<span class="nt">&lt;/servlet-name&gt;</span>
+  <span class="nt">&lt;servlet-class&gt;</span>javax.faces.webapp.FacesServlet<span class="nt">&lt;/servlet-class&gt;</span>
+  <span class="nt">&lt;load-on-startup&gt;</span>1<span class="nt">&lt;/load-on-startup&gt;</span>
+<span class="nt">&lt;/servlet&gt;</span>
+<span class="nt">&lt;context-param&gt;</span>
+  <span class="nt">&lt;param-name&gt;</span>facelets.VIEW_MAPPINGS<span class="nt">&lt;/param-name&gt;</span>
+  <span class="nt">&lt;param-value&gt;</span>*.xhtml<span class="nt">&lt;/param-value&gt;</span>
+<span class="nt">&lt;/context-param&gt;</span>
+<span class="nt">&lt;servlet-mapping&gt;</span>
+  <span class="nt">&lt;servlet-name&gt;</span>Faces Servlet<span class="nt">&lt;/servlet-name&gt;</span>
+  <span class="nt">&lt;url-pattern&gt;</span>/faces/*<span class="nt">&lt;/url-pattern&gt;</span>
+<span class="nt">&lt;/servlet-mapping&gt;</span>
+</code></pre></div>
+
+
+<p>Several libraries are needed by our project in order to use JSF and Richfaces. We decided to install the JSF as a bundle in the OSGi framework and to embed the Richfaces inside our bundle. The most correct thing to do in an OSGi environment is to have all the needed libraries installed as bundles and use their exported packages in our code. This ensures modularity and at the end of the day will  provide great help during code upgrades etc.
+However, it can be a design decision to keep some library embedded into a bundle. The maven-bundle-plugin offers this choice, using the Embed-Dependency and Embed-Transitive elements. We will use this to embed the Richfaces into our WAB – Service consumer.</p>
+
+<p>The complete pom.xml that achieves the above can be found along with the rest of the source code. However, we will show here the configuration of the maven-bundle-plugin:</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="nt">&lt;plugin&gt;</span>
+  <span class="nt">&lt;groupId&gt;</span>org.apache.felix<span class="nt">&lt;/groupId&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>maven-bundle-plugin<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>2.4.0<span class="nt">&lt;/version&gt;</span>
+  <span class="nt">&lt;extensions&gt;</span>true<span class="nt">&lt;/extensions&gt;</span>
+  <span class="nt">&lt;executions&gt;</span>
+    <span class="nt">&lt;execution&gt;</span>
+      <span class="nt">&lt;id&gt;</span>bundle-manifest<span class="nt">&lt;/id&gt;</span>
+      <span class="nt">&lt;phase&gt;</span>process-classes<span class="nt">&lt;/phase&gt;</span>
+      <span class="nt">&lt;goals&gt;</span>
+        <span class="nt">&lt;goal&gt;</span>manifest<span class="nt">&lt;/goal&gt;</span>
+      <span class="nt">&lt;/goals&gt;</span>
+    <span class="nt">&lt;/execution&gt;</span>
+  <span class="nt">&lt;/executions&gt;</span>
+  <span class="nt">&lt;configuration&gt;</span>
+    <span class="nt">&lt;supportedProjectTypes&gt;</span>
+      <span class="nt">&lt;supportedProjectType&gt;</span>bundle<span class="nt">&lt;/supportedProjectType&gt;</span>
+      <span class="nt">&lt;supportedProjectType&gt;</span>war<span class="nt">&lt;/supportedProjectType&gt;</span>
+    <span class="nt">&lt;/supportedProjectTypes&gt;</span>
+    <span class="nt">&lt;instructions&gt;</span>
+      <span class="nt">&lt;Bundle-SymbolicName&gt;</span>${project.artifactId}<span class="nt">&lt;/Bundle-SymbolicName&gt;</span>
+      <span class="nt">&lt;Bundle-ClassPath&gt;</span>.,WEB-INF/classes<span class="nt">&lt;/Bundle-ClassPath&gt;</span>
+      <span class="nt">&lt;Import-Package&gt;</span>
+        com.opensymphony.oscache.base;resolution:=optional, com.opensymphony.oscache.general;resolution:=optional,
+        com.opensymphony.oscache.web.filter;resolution:=optional, com.sun.enterprise;resolution:=optional,
+        com.sun.enterprise.deployment;resolution:=optional, groovy.lang;resolution:=optional, groovy.util;resolution:=optional,
+        javax.annotation, javax.crypto, javax.crypto.spec, javax.el,javax.enterprise.context;resolution:=optional,
+        javax.enterprise.context.spi;resolution:=optional,javax.enterprise.event;resolution:=optional,
+        javax.enterprise.inject;resolution:=optional,javax.enterprise.inject.spi;resolution:=optional,
+        javax.imageio;resolution:=optional,javax.imageio.metadata;resolution:=optional,
+        javax.imageio.stream;resolution:=optional, javax.inject;resolution:=optional, javax.jms;resolution:=optional,
+        javax.naming, javax.naming.spi, javax.servlet;version=&quot;[3.0,4)&quot;, javax.servlet.annotation;version=&quot;[3.0,4)&quot;,
+        javax.servlet.http;version=&quot;[3.0,4)&quot;, javax.servlet.jsp, javax.servlet.jsp.jstl.core,
+        javax.servlet.jsp.jstl.sql, javax.servlet.jsp.tagext, javax.swing.tree;resolution:=optional,
+        javax.transaction;resolution:=optional, javax.validation;resolution:=optional,
+        javax.validation.groups;resolution:=optional, javax.validation.metadata;resolution:=optional,
+        javax.xml.bind;resolution:=optional, javax.xml.bind.annotation;resolution:=optional, javax.xml.parsers,
+        javax.xml.transform, javax.xml.transform.dom, javax.xml.transform.stream, javax.xml.validation,
+        javax.xml.xpath, net.sf.ehcache;resolution:=optional, net.sf.ehcache.config;resolution:=optional,
+        org.apache;resolution:=optional, org.apache.myfaces.shared.renderkit.html.util;resolution:=optional,
+        org.atmosphere.cpr;resolution:=optional, org.atmosphere.handler;resolution:=optional,
+        org.atmosphere.websocket;resolution:=optional, org.jboss.cache;resolution:=optional,
+        org.jboss.cache.config;resolution:=optional, org.jboss.cache.eviction;resolution:=optional,
+        org.mortbay.jetty.annotations;resolution:=optional, org.mortbay.jetty.handler;resolution:=optional,
+        org.mortbay.jetty.plus.annotation;resolution:=optional, org.mortbay.jetty.webapp;resolution:=optional,
+        org.w3c.dom, org.w3c.dom.css;resolution:=optional, org.w3c.dom.ls, org.w3c.dom.stylesheets;resolution:=optional,
+        org.xml.sax, org.xml.sax.ext, org.xml.sax.helpers, sun.misc;resolution:=optional,
+        <span class="c">&lt;!-- Faces --&gt;</span>
+        com.sun.faces;version=&quot;2.1&quot;, com.sun.faces.application;version=&quot;2.1&quot;,
+        com.sun.faces.application.annotation;version=&quot;2.1&quot;, com.sun.faces.application.resource;version=&quot;2.1&quot;,
+        com.sun.faces.application.view;version=&quot;2.1&quot;, com.sun.faces.component;version=&quot;2.1&quot;,
+        com.sun.faces.component.behavior;version=&quot;2.1&quot;, com.sun.faces.component.validator;version=&quot;2.1&quot;,
+        com.sun.faces.component.visit;version=&quot;2.1&quot;, com.sun.faces.config;version=&quot;2.1&quot;,
+        com.sun.faces.config.configprovider;version=&quot;2.1&quot;, com.sun.faces.config.processor;version=&quot;2.1&quot;,
+        com.sun.faces.context;version=&quot;2.1&quot;, com.sun.faces.context.flash;version=&quot;2.1&quot;,
+        com.sun.faces.el;version=&quot;2.1&quot;, com.sun.faces.ext.component;version=&quot;2.1&quot;,
+        com.sun.faces.ext.render;version=&quot;2.1&quot;, com.sun.faces.ext.taglib;version=&quot;2.1&quot;,
+        com.sun.faces.ext.validator;version=&quot;2.1&quot;, com.sun.faces.facelets;version=&quot;2.1&quot;,
+        com.sun.faces.facelets.compiler;version=&quot;2.1&quot;, com.sun.faces.facelets.component;version=&quot;2.1&quot;,
+        com.sun.faces.facelets.el;version=&quot;2.1&quot;, com.sun.faces.facelets.impl;version=&quot;2.1&quot;,
+        com.sun.faces.facelets.tag;version=&quot;2.1&quot;, com.sun.faces.facelets.tag.composite;version=&quot;2.1&quot;,
+        com.sun.faces.facelets.tag.jsf;version=&quot;2.1&quot;, com.sun.faces.facelets.tag.jsf.core;version=&quot;2.1&quot;,
+        com.sun.faces.facelets.tag.jsf.html;version=&quot;2.1&quot;, com.sun.faces.facelets.tag.jstl.core;version=&quot;2.1&quot;,
+        com.sun.faces.facelets.tag.jstl.fn;version=&quot;2.1&quot;, com.sun.faces.facelets.tag.ui;version=&quot;2.1&quot;,
+        com.sun.faces.facelets.util;version=&quot;2.1&quot;, com.sun.faces.io;version=&quot;2.1&quot;,
+        com.sun.faces.lifecycle;version=&quot;2.1&quot;, com.sun.faces.metadata.taglib;version=&quot;2.1&quot;,
+        com.sun.faces.mgbean;version=&quot;2.1&quot;, com.sun.faces.renderkit;version=&quot;2.1&quot;,
+        com.sun.faces.renderkit.html_basic;version=&quot;2.1&quot;, com.sun.faces.resources;version=&quot;2.1&quot;,
+        com.sun.faces.scripting;version=&quot;2.1&quot;, com.sun.faces.scripting.groovy;version=&quot;2.1&quot;,
+        com.sun.faces.spi;version=&quot;2.1&quot;, com.sun.faces.taglib;version=&quot;2.1&quot;,
+        com.sun.faces.taglib.html_basic;version=&quot;2.1&quot;, com.sun.faces.taglib.jsf_core;version=&quot;2.1&quot;,
+        com.sun.faces.util;version=&quot;2.1&quot;, com.sun.faces.vendor;version=&quot;2.1&quot;,
+        com.sun.faces.xhtml;version=&quot;2.1&quot;, javax.faces;version=&quot;2.1&quot;,
+        javax.faces.application;version=&quot;2.1&quot;, javax.faces.bean;version=&quot;2.1&quot;,
+        javax.faces.component;version=&quot;2.1&quot;, javax.faces.component.behavior;version=&quot;2.1&quot;,
+        javax.faces.component.html;version=&quot;2.1&quot;, javax.faces.component.visit;version=&quot;2.1&quot;,
+        javax.faces.context;version=&quot;2.1&quot;, javax.faces.convert;version=&quot;2.1&quot;,
+        javax.faces.el;version=&quot;2.1&quot;, javax.faces.event;version=&quot;2.1&quot;,
+        javax.faces.lifecycle;version=&quot;2.1&quot;, javax.faces.model;version=&quot;2.1&quot;,
+        javax.faces.render;version=&quot;2.1&quot;, javax.faces.validator;version=&quot;2.1&quot;,
+        javax.faces.view;version=&quot;2.1&quot;, javax.faces.view.facelets;version=&quot;2.1&quot;, javax.faces.webapp;version=&quot;2.1&quot;,
+        <span class="c">&lt;!-- Faces end --&gt;</span>
+        org.eclipse.virgo.web.dm,
+        org.springframework.web.context,
+        org.springframework.web.jsf.el,
+        *
+      <span class="nt">&lt;/Import-Package&gt;</span>
+      <span class="nt">&lt;Export-Package</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;Web-ContextPath&gt;</span>mywab<span class="nt">&lt;/Web-ContextPath&gt;</span>
+      <span class="nt">&lt;Spring-Context&gt;</span>WEB-INF/classes/spring/osgi-context.xml;create-asynchrously:=true;wait-for-dependencies:=true;publish-context:=true<span class="nt">&lt;/Spring-Context&gt;</span>
+      <span class="nt">&lt;Embed-Dependency&gt;</span>*;scope=compile|runtime<span class="nt">&lt;/Embed-Dependency&gt;</span>
+      <span class="nt">&lt;Embed-Transitive&gt;</span>true<span class="nt">&lt;/Embed-Transitive&gt;</span>
+    <span class="nt">&lt;/instructions&gt;</span>
+  <span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span>
+<span class="nt">&lt;plugin&gt;</span>
+  <span class="nt">&lt;artifactId&gt;</span>maven-war-plugin<span class="nt">&lt;/artifactId&gt;</span>
+  <span class="nt">&lt;version&gt;</span>2.2<span class="nt">&lt;/version&gt;</span>
+  <span class="nt">&lt;configuration&gt;</span>
+    <span class="nt">&lt;archive&gt;</span>
+      <span class="nt">&lt;manifestFile&gt;</span>${project.build.outputDirectory}/META-INF/MANIFEST.MF<span class="nt">&lt;/manifestFile&gt;</span>
+    <span class="nt">&lt;/archive&gt;</span>
+  <span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span>
+</code></pre></div>
+
+
+<p>As you see, we need to import by default all the packages regarding the JSF and we also need to mark as optional some packages, in order to avoid classloading problems.</p>
+
+<p>Going further with the JSF configuration, we want to be able to inject Spring beans inside JSF Managed Beans. In order to do that, we will need to add to the faces-config.xml the following:</p>
+
+<p><div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="nt">&lt;application&gt;</span>
+  <span class="nt">&lt;el-resolver&gt;</span>org.springframework.web.jsf.el.SpringBeanFacesELResolver<span class="nt">&lt;/el-resolver&gt;</span>
+<span class="nt">&lt;/application&gt;</span>
+</code></pre></div>
+</p>
+
+<p>Next step is to create a Spring bean inside the consumer WAB and to make use of the MyService that is exported by the serviceProducer bundle:</p>
+
+<p>Here is the interface:</p>
+
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="kn">package</span> <span class="nn">org.astonbitecode.osgi.wabConsumer.service</span><span class="o">;</span>
+ 
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ConsumerService</span> <span class="o">{</span>
+  <span class="kd">public</span> <span class="n">String</span> <span class="nf">invokeBlueprintService</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div>
+
+
+<p>Here is the implementation:</p>
+
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="kn">package</span> <span class="nn">org.astonbitecode.osgi.wabConsumer.service.impl</span><span class="o">;</span>
+ 
+<span class="kn">import</span> <span class="nn">org.astonbitecode.osgi.serviceProvider.service.MyService</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.astonbitecode.osgi.wabConsumer.service.ConsumerService</span><span class="o">;</span>
+ 
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ConsumerServiceImpl</span> <span class="kd">implements</span> <span class="n">ConsumerService</span> <span class="o">{</span>
+   <span class="kd">private</span> <span class="n">MyService</span> <span class="n">myService</span><span class="o">;</span>
+ 
+   <span class="nd">@Override</span>
+   <span class="kd">public</span> <span class="n">String</span> <span class="nf">invokeBlueprintService</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">myService</span><span class="o">.</span><span class="na">getName</span><span class="o">();</span>
+   <span class="o">}</span>
+ 
+   <span class="kd">public</span> <span class="n">MyService</span> <span class="nf">getMyService</span><span class="o">()</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">myService</span><span class="o">;</span>
+   <span class="o">}</span>
+ 
+   <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setMyService</span><span class="o">(</span><span class="n">MyService</span> <span class="n">myService</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">this</span><span class="o">.</span><span class="na">myService</span> <span class="o">=</span> <span class="n">myService</span><span class="o">;</span>
+   <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+
+<p>and here are the definitions inside the osgi-context.xml:</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="nt">&lt;blueprint</span> <span class="na">xmlns=</span><span class="s">&quot;http://www.osgi.org/xmlns/blueprint/v1.0.0&quot;</span><span class="nt">&gt;</span>
+ 
+  <span class="nt">&lt;reference</span> <span class="na">id=</span><span class="s">&quot;myService&quot;</span> <span class="na">interface=</span><span class="s">&quot;org.astonbitecode.osgi.serviceProvider.service.MyService&quot;</span>
+      <span class="na">availability=</span><span class="s">&quot;mandatory&quot;</span><span class="nt">/&gt;</span>
+ 
+  <span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;consumerService&quot;</span> <span class="na">class=</span><span class="s">&quot;org.astonbitecode.osgi.wabConsumer.service.impl.ConsumerServiceImpl&quot;</span><span class="nt">&gt;</span>
+     <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;myService&quot;</span> <span class="na">ref=</span><span class="s">&quot;myService&quot;</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;/bean&gt;</span>
+<span class="nt">&lt;/blueprint&gt;</span>
+</code></pre></div>
+
+
+<p>We will make use of the consumerService Spring bean from a JSF Managed Bean, using the ManagedProperty annotation:</p>
+
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="kn">package</span> <span class="nn">org.astonbitecode.osgi.wabConsumer.jsf</span><span class="o">;</span>
+ 
+<span class="kn">import</span> <span class="nn">java.io.Serializable</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.annotation.PostConstruct</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.faces.bean.ManagedBean</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.faces.bean.ManagedProperty</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.faces.bean.ViewScoped</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.astonbitecode.osgi.wabConsumer.service.ConsumerService</span><span class="o">;</span>
+ 
+<span class="nd">@ManagedBean</span><span class="o">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;welcomeBean&quot;</span><span class="o">)</span>
+<span class="nd">@ViewScoped</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">WelcomeBean</span> <span class="kd">implements</span> <span class="n">Serializable</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">serviceMessage</span><span class="o">;</span>
+    <span class="nd">@ManagedProperty</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&quot;#{consumerService}&quot;</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="n">ConsumerService</span> <span class="n">consumerService</span><span class="o">;</span>
+    
+    <span class="nd">@PostConstruct</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">initBean</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">serviceMessage</span> <span class="o">=</span> <span class="n">getConsumerService</span><span class="o">().</span><span class="na">invokeBlueprintService</span><span class="o">();</span>
+    <span class="o">}</span>
+    
+    <span class="kd">public</span> <span class="n">ConsumerService</span> <span class="nf">getConsumerService</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">consumerService</span><span class="o">;</span>
+    <span class="o">}</span>
+ 
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setConsumerService</span><span class="o">(</span><span class="n">ConsumerService</span> <span class="n">consumerService</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">consumerService</span> <span class="o">=</span> <span class="n">consumerService</span><span class="o">;</span>
+    <span class="o">}</span>
+ 
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getServiceMessage</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">serviceMessage</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+
+<p>Now that we have everything in place, let&rsquo;s create a simple XHTML page with JSF and Richfaces:</p>
+
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="nt">&lt;ui:composition</span> <span class="na">xmlns=</span><span class="s">&quot;http://www.w3.org/1999/xhtml&quot;</span>
+    <span class="na">xmlns:h=</span><span class="s">&quot;http://java.sun.com/jsf/html&quot;</span>
+    <span class="na">xmlns:f=</span><span class="s">&quot;http://java.sun.com/jsf/core&quot;</span>
+    <span class="na">xmlns:ui=</span><span class="s">&quot;http://java.sun.com/jsf/facelets&quot;</span>
+    <span class="na">xmlns:a4j=</span><span class="s">&quot;http://richfaces.org/a4j&quot;</span>
+    <span class="na">xmlns:rich=</span><span class="s">&quot;http://richfaces.org/rich&quot;</span><span class="nt">&gt;</span>
+ 
+     <span class="nt">&lt;f:view&gt;</span>
+        <span class="nt">&lt;h:head&gt;&lt;/h:head&gt;</span>
+        <span class="nt">&lt;h:body&gt;</span>
+          <span class="nt">&lt;rich:panel</span> <span class="na">header=</span><span class="s">&quot;Hello&quot;</span><span class="nt">&gt;</span>
+             <span class="nt">&lt;h:form&gt;</span>
+                <span class="nt">&lt;h:outputText</span> <span class="na">value=</span><span class="s">&quot;This is the message from MyService:&quot;</span> <span class="nt">/&gt;</span>
+             <span class="nt">&lt;h:outputText</span> <span class="na">value=</span><span class="s">&quot;#{welcomeBean.serviceMessage}&quot;</span> <span class="na">id=</span><span class="s">&quot;serviceMessage&quot;</span> <span class="nt">/&gt;</span>
+          <span class="nt">&lt;/h:form&gt;</span>
+          <span class="nt">&lt;/rich:panel&gt;</span>
+       <span class="nt">&lt;/h:body&gt;</span>
+    <span class="nt">&lt;/f:view&gt;</span>
+<span class="nt">&lt;/ui:composition&gt;</span>
+</code></pre></div>
+
+
+<p>By now, the structure of our consumer WAB should be like the following:</p>
+
+<p><img src="sc2.png" alt="sc2" /></p>
+
+<h2 id="virgo-server">Virgo Server</h2>
+
+<p>Download eclipse virgo and unzip it to the directory of your choice. The version used for this tutorial was virgo for apache Tomcat 3.6.3.</p>
+
+<p>We need to do one thing before we start Virgo. This is to edit the file</p>
+
+<p><code>$VIRGO_ROOT_DIR/repository/ext/org.eclipse.virgo.web.properties</code></p>
+
+<p>and change the WABHeaders property to “defaulted”.
+For more information see here and here.</p>
+
+<p>As mentioned earlier, we will install the JSF library as a bundle inside the OSGi repository. In order to do this, we will need to copy the javax.faces-2.1.2.jar in the directory $VIRGO_ROOT_DIR/repository/usr. You can download the jar from the maven central.</p>
+
+<p>Next, start the virgo server by browsing into the $VIRGO_ROOT_DIR/bin with a terminal and run the startup script. Once Virgo is up, copy the serviceProvider-0.0.1-SNAPSHOT.jar file in the directory  $VIRGO_ROOT_DIR/pickup. Virgo will automatically install the bundle and you should see something like this in the terminal:</p>
+
+<pre><code>fs-watcher        &lt;HD0001I&gt; Hot deployer processing 'CREATED' event for file 'serviceProvider-0.0.1-SNAPSHOT.jar'.
+fs-watcher        &lt;DE0000I&gt; Installing bundle 'serviceProvider' version '0.0.1.SNAPSHOT'.
+fs-watcher        &lt;DE0001I&gt; Installed bundle 'serviceProvider' version '0.0.1.SNAPSHOT'.
+fs-watcher        &lt;DE0004I&gt; Starting bundle 'serviceProvider' version '0.0.1.SNAPSHOT'.
+start-signalling-2           &lt;DE0005I&gt; Started bundle 'serviceProvider' version '0.0.1.SNAPSHOT'.
+</code></pre>
+
+<p>After the serviceProvider is started, copy the wabConsumer-0.0.1-SNAPSHOT.war in $VIRGO_ROOT_DIR/pickup. The output in the terminal should look like this:</p>
+
+<pre><code>fs-watcher      &lt;HD0001I&gt; Hot deployer processing 'CREATED' event for file 'wabConsumer-0.0.1-SNAPSHOT.war'.
+fs-watcher      &lt;DE0000I&gt; Installing bundle 'wabConsumer' version '0.0.1.SNAPSHOT'.
+fs-watcher      &lt;DE0001I&gt; Installed bundle 'wabConsumer' version '0.0.1.SNAPSHOT'.
+fs-watcher      &lt;DE0004I&gt; Starting bundle 'wabConsumer' version '0.0.1.SNAPSHOT'.
+start-signalling-2   &lt;WE0000I&gt; Starting web bundle 'wabConsumer' version '0.0.1.SNAPSHOT' with context path '/mywab'.
+start-signalling-2   &lt;WE0001I&gt; Started web bundle 'wabConsumer' version '0.0.1.SNAPSHOT' with context path '/mywab'.
+start-signalling-2   &lt;DE0005I&gt; Started bundle 'wabConsumer' version '0.0.1.SNAPSHOT'. 
+</code></pre>
+
+<p>That&rsquo;s it!</p>
+
+<p>Browsing to the address <a href="http://localhost:8080/mywab/faces/welcome.xhtml">http://localhost:8080/mywab/faces/welcome.xhtml</a> you should see the following page:</p>
+
+<p><img src="Hello.png" alt="Hello" /></p>
+
+      </article>
+
+      <ul class="pager blog-pager">
+        
+        
+        <li class="next">
+          <a href="https://astonbitecode.github.io/blog/post/kindofdi/" data-toggle="tooltip" data-placement="top" title="A (kind-of) Dependency Injection in Scala">Next Post &rarr;</a>
+        </li>
+        
+      </ul>
+
+      
+
+    </div>
+  </div>
+</div>
+
+      
+
+    </div>
+
+    <footer>
+  <div class="container beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+          
+          <li>
+            <a href="https://github.com/astonbitecode" title="GitHub">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+		      
+		      
+		      
+	    	  
+          
+          
+
+    		  <li>
+      			<a href="https://astonbitecode.github.io/blog/index.xml" title="RSS">
+      			  <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+      			</a>
+    		  </li>		
+
+        </ul>
+        <p class="copyright text-muted">
+    		  Aston
+    		  &nbsp;&bull;&nbsp;
+    		  2016
+    		  
+    		  
+    		  &nbsp;&bull;&nbsp;
+    		  <a href="https://astonbitecode.github.io/blog/">Aston&#39;s Programming Thoughts</a>
+    		  
+  	    </p>
+  	        
+    		<p class="theme-by text-muted">
+    		  Theme by
+    		  <a href="http://deanattali.com/beautiful-jekyll/">beautiful-jekyll</a>
+    		</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://astonbitecode.github.io/blog/js/jquery-1.11.2.min.js"></script>
+<script src="https://astonbitecode.github.io/blog/js/bootstrap.min.js"></script>
+<script src="https://astonbitecode.github.io/blog/js/main.js"></script>
+
+
+
+  </body>
+</html>

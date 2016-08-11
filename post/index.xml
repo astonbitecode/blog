@@ -1,0 +1,722 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Aston&#39;s Programming Thoughts</title>
+    <link>https://astonbitecode.github.io/blog/post/</link>
+    <description>Recent content in Posts on Aston&#39;s Programming Thoughts</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 04 Oct 2015 08:05:58 +0000</lastBuildDate>
+    <atom:link href="https://astonbitecode.github.io/blog/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Scala: Use fold to serialize any number of Futures</title>
+      <link>https://astonbitecode.github.io/blog/post/foldfor/</link>
+      <pubDate>Sun, 04 Oct 2015 08:05:58 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/post/foldfor/</guid>
+      <description>&lt;p&gt;Scala&amp;rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More specifically, for serializing Futures.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s assume that we have a function that performs some kind of logic and returns a Future:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;addOneAndPrint&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Future&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;Unit&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;nc&#34;&gt;Future&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;addedOne&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;num&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;print&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;addedOne&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot; &amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+Users of such a fuction, may want to call it more than one time and additionally, to call it serially. This is easily done by using a for-comprehension like following:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;addOneAndPrint&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;addOneAndPrint&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;yield&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Unit&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This assures that addOneAndPrint(1) will be executed first, the result will be returned and then the addOneAndPrint(2) will be executed.&lt;/p&gt;
+
+&lt;p&gt;However, using the for like that, is a bit awkward if this should include many serialized calls (or unknown number of calls).
+For example, how could someone call the addOneAndPrint function one time for each element of a List of Integers?&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ints&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;List&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;7&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;One nice solution is to use foldLeft for this List, combining a for-comprehension like following:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;dummy&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Future&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{}&lt;/span&gt;
+ 
+&lt;span class=&#34;n&#34;&gt;ints&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;foldLeft&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;dummy&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;prevFuture&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;currentNumber&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;prevFuture&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;addOneAndPrint&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;currentNumber&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;yield&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Unit&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The output will be the result of calling the addOneAndPrint serially:&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;2 4 6 8 10&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>A (kind-of) Dependency Injection in Scala</title>
+      <link>https://astonbitecode.github.io/blog/post/kindofdi/</link>
+      <pubDate>Sat, 25 Apr 2015 08:05:58 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/post/kindofdi/</guid>
+      <description>
+
+&lt;h2 id=&#34;the-problem&#34;&gt;The problem&lt;/h2&gt;
+
+&lt;p&gt;While projects evolve, the lines of code increase and the dependencies between the classes are becoming more and more complicated. With the absence of some Dependency Injection (DI) framework/library, this ends up quickly in having to pass instances here and there through constructors of classes. The constructors may end up having something like 10+ arguments. To make things worse, for some cases, these arguments are not used by the logic of the classes themselves, but instead, they are just used to create subclasses!&lt;/p&gt;
+
+&lt;p&gt;This situation is especially common for projects that are built using a service-oriented architecture internally and of course, makes things tight and difficult during Unit Testing.&lt;/p&gt;
+
+&lt;p&gt;Dependency Injection may help keeping the code (mostly) clean and can facilitate the implementation of Unit Tests. However, it is not the choice for everyone and some teams may have decided not to use any DI framework.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-thought-for-a-way-out&#34;&gt;The thought for a way out&lt;/h2&gt;
+
+&lt;p&gt;Scala is a very expressive language and it is pretty amazing how beautiful things someone can achieve when using it. We can see this everywhere: in blogs, SO and gists to name a few.
+So, maybe we could find some delicate and easy way to keep the code cleaner, even without the use of any specific DI libraries.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-kind-of-di&#34;&gt;A kind of DI&lt;/h2&gt;
+
+&lt;p&gt;As Jonas Bonér (founder and CTO of Typesafe) says in his blog: “Scala is a very rich and deep language that gives you several ways of doing DI solely based on language constructs”.&lt;/p&gt;
+
+&lt;p&gt;In the same blog, he describes a way to perform DI using the Cake Pattern. Searching around the blogs and answers/proposals, one may find out that indeed, DI in Scala can be achieved with several ways.&lt;/p&gt;
+
+&lt;p&gt;What we will try to do here, is a kind of DI using Scala-only constructs, in order to be able to create some class instance once and “inject” it wherever is needed.&lt;/p&gt;
+
+&lt;h2 id=&#34;use-case-to-drive-the-solution&#34;&gt;Use case to drive the solution&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s say that we have a class that represents a Configuration Service. This service provides a file path to its users. The service should be used by any class in our application that needs it and it may look like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;ConfigurationService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;filePath&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;getFilePath&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;filePath&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2 id=&#34;who-will-instantiate-the-service&#34;&gt;Who will instantiate the service?&lt;/h2&gt;
+
+&lt;p&gt;In a real DI framework, the container/framework itself should instantiate the ConfigurationService, as being dictated by some XML configuration or annotations, like in Spring.&lt;/p&gt;
+
+&lt;p&gt;In this case however, the service will be created by our code, during the startup of the application and before any class asks for it.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-package-object-in-the-solution&#34;&gt;A package object in the solution&lt;/h2&gt;
+
+&lt;p&gt;A package object is really helpful because any definition that is done inside the package object is actually member of the package itself. A package object (and a Scala object in general) can provide access to its fields and methods from anywhere in our code.&lt;/p&gt;
+
+&lt;p&gt;So, someone could think to create an object like following:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;di&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;configurationService&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;However, there are some things that need our attention. Firstly, we need to obey to the functional principle that dictates the use of vals instead of vars.&lt;/p&gt;
+
+&lt;p&gt;So, the service should be available to the users immutably, via a val.
+But how this can be done, since the object will be already created by the time that our application performs the initialization of the service? Well, a small hack including a lazy val and a var could do the trick:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;di&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;configurationServiceVar&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;lazy&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;configurationService&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;configurationServiceVar&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Now the di object offers the ConfigurationService publicly via a val. All we need now is a def that allows the mutation of the var.
+This mutation should be done early in out Application initialization, before someone asks for the val. If not, the configurationService val will be null during the lifetime of our application.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s try to avoid that by using Options and Exceptions:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;di&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;configurationServiceVar&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Option&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;None&lt;/span&gt;
+ 
+  &lt;span class=&#34;k&#34;&gt;lazy&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;configurationService&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;configurationServiceVar&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;getOrElse&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;throw&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RuntimeException&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;Configuration is not yet initialized&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+ 
+  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;initService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cs&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;configurationServiceVar&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Some&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;cs&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;With the above code, we are making sure that if someone asks for the ConfigurationService before it gets initialized, he/she will get a nice RuntimeException. Moreover, the RuntimeException will prevent setting the val with something wrong like None.&lt;/p&gt;
+
+&lt;p&gt;Our lazy val will stay uninitialized until someone actually initializes it.&lt;/p&gt;
+
+&lt;h2 id=&#34;making-it-generic&#34;&gt;Making it generic&lt;/h2&gt;
+
+&lt;p&gt;Until now, the solution handles only the ConfigurationService class. Let&amp;rsquo;s try to make it more useful, by handling more services generically:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;di&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;readyToInject&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;Class&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;, &lt;span class=&#34;kt&#34;&gt;Any&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;TrieMap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;empty&lt;/span&gt;
+ 
+  &lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;key&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;](&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;implicit&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;classTag&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;ClassTag&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;])&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Class&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;classTag&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;runtimeClass&lt;/span&gt;
+ 
+  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;initService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;T:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;ClassTag&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;](&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;k&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;key&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;readyToInject&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;k&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;match&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Some&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;initialized&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;throw&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RuntimeException&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;The service already initialized&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;None&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;readyToInject&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;readyToInject&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;k&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+ 
+  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;inject&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;T:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;ClassTag&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;T&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;readyToInject&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;key&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;getOrElse&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;throw&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RuntimeException&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;The service is not yet initialized&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;asInstanceOf&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We created a concurrent Map that has a Class as key and Any as value. The potential is that the Map will hold the instances that will be later injected into fields of classes that need them.&lt;/p&gt;
+
+&lt;p&gt;We also changed the name of the initService method to inject. This is just to add a bit more “beauty”, as it will make the code easier to understand and to look familiar to us (similarly to @inject annotation).&lt;/p&gt;
+
+&lt;h2 id=&#34;how-this-kind-of-di-looks-like-to-its-users&#34;&gt;How this kind of DI looks like to its users?&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s create a user of the ConfigurationService, a HelpfulClass:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;HelpfulClass&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;config&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;inject&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+ 
+  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;doSomethingUsingTheConfiguration&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;config&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;getFilePath&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;())&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This seems simple and elegant. We expect our config val to have “injected” an instance of the ConfigurationService class, only by issuing:
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;config&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;inject&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Note:&lt;/em&gt; For this example and for the sake of simplicity, the ConfigurationService was a concrete class. However, it could also be a trait.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s see what is the result
+We may test the result by creating a simple Main object and try to see the following:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;We will try to use the HelpfulClass before the ConfigurationService is created in order to get the resulted exception.&lt;/li&gt;
+&lt;li&gt;We will initialize and use the ConfigurationService.&lt;/li&gt;
+&lt;li&gt;We will try to use the HelpfulClass again in order to get the resulted exception.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Main&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;App&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;c1&#34;&gt;// Try to use the service before it gets initialized (1)&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;try&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;helpfulClassShouldFail&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;HelpfulClass&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;catch&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Exception&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;getMessage&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+ 
+  &lt;span class=&#34;c1&#34;&gt;// Initialize services (like the DI framework would do)&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;initService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;ConfigurationService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;/my/path&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
+ 
+  &lt;span class=&#34;c1&#34;&gt;// Run the application (2)&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;helpfulClass&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;HelpfulClass&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;helpfulClass&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;doSomethingUsingTheConfiguration&lt;/span&gt;
+ 
+  &lt;span class=&#34;c1&#34;&gt;// Try to re-initialize the service (3)&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;try&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;initService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;ConfigurationService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;/my/other/path&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;catch&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Exception&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;getMessage&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Once this runs, we should see the output:&lt;/p&gt;
+
+&lt;p&gt;Configuration is not yet initialized
+/my/path
+Configuration is already initialized&lt;/p&gt;
+
+&lt;h2 id=&#34;drawbacks-and-possible-extensions&#34;&gt;Drawbacks and possible extensions&lt;/h2&gt;
+
+&lt;p&gt;The main drawback is that it is dangerous to use this kind of DI to inject values into Scala objects. In the case that someone tries to use the object before the ConfiguratioService gets initialized, the application will crash with an ExceptionInInitializerError.&lt;/p&gt;
+
+&lt;p&gt;The other thing that doesn&amp;rsquo;t allow me to call this proper DI, is that the inversion of control is not applied in a proper way. The control of the services creation is still in our own code.&lt;/p&gt;
+
+&lt;p&gt;One way to try to abstract away of explicitly creating the instances of services in the code, could be to create logic inside the di package object that would read some XML file and do the instantiation of services using reflection, during the startup of the Application.&lt;/p&gt;
+
+&lt;p&gt;Moreover, we could even try to create scopes and, like in Spring for example, support singleton, prototype etc!&lt;/p&gt;
+
+&lt;h2 id=&#34;what-to-takeaway&#34;&gt;What to takeaway?&lt;/h2&gt;
+
+&lt;p&gt;The idea, if you like it and the code, of course. It is pushed in a GitHub repo.&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>OSGi: Finding the way to JEE and JSF </title>
+      <link>https://astonbitecode.github.io/blog/post/osgijsf/</link>
+      <pubDate>Thu, 05 Mar 2015 08:05:58 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/post/osgijsf/</guid>
+      <description>
+
+&lt;p&gt;Combining the modularity offered by OSGi with the EE technologies may result to powerful, scalable and maintainable applications.&lt;/p&gt;
+
+&lt;p&gt;Eclipse Virgo bridges OSGi and JEE worlds and provides a “completely module-based Java application server”.&lt;/p&gt;
+
+&lt;p&gt;Even if the Virgo documentation provides detailed explanations, it seemed difficult to find tutorials that are functional and build up to a JEE Web application that is powered by OSGi bundles and services.&lt;/p&gt;
+
+&lt;p&gt;In this tutorial, I will try to provide the pieces to build a JSF – Richfaces – Spring application that makes use of OSGi services over Blueprint.&lt;/p&gt;
+
+&lt;p&gt;It is considered that the reader has the knowledge of Maven, OSGi, Spring and JSF.&lt;/p&gt;
+
+&lt;p&gt;I used the eclipse IDE but any IDE (or no IDE) should do.&lt;/p&gt;
+
+&lt;p&gt;We will create two bundles. The first is a simple OSGi bundle that provides a service to the framework and the second is a WAB, that consumes the service and forms a JSF web application.&lt;/p&gt;
+
+&lt;h2 id=&#34;service-provider-bundle&#34;&gt;Service Provider bundle&lt;/h2&gt;
+
+&lt;p&gt;Create a simple maven project and inside it the interface for the service that will be exported:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;kn&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;org.astonbitecode.osgi.serviceProvider.service&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+ 
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;MyService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+   &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;getName&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Then, the MyService implementation:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;kn&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;org.astonbitecode.osgi.serviceProvider.service.impl&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+ 
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;org.astonbitecode.osgi.serviceProvider.service.MyService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+ 
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;MyServiceImpl&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;implements&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MyService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+   &lt;span class=&#34;nd&#34;&gt;@Override&lt;/span&gt;
+   &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;getName&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;MyService says hi!&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+   &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In order to create the OSGi service and export it with Blueprint, Gemini expects by default to find the file “osgi-context.xml” under the folder META-INF/spring, but this can change. I have chosen to put our file inside the resources folder, under a subfolder called “spring” (you may see the structure of the whole project later on).&lt;/p&gt;
+
+&lt;p&gt;The contents of the osgi-context.xml file should be:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;blueprint&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;xmlns=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;http://www.osgi.org/xmlns/blueprint/v1.0.0&amp;quot;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
+   &lt;span class=&#34;nt&#34;&gt;&amp;lt;bean&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;myService&amp;quot;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;class=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;org.astonbitecode.osgi.serviceProvider.service.impl.MyServiceImpl&amp;quot;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+   &lt;span class=&#34;nt&#34;&gt;&amp;lt;service&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;ref=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;myService&amp;quot;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;interface=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;org.astonbitecode.osgi.serviceProvider.service.MyService&amp;quot;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;/blueprint&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The “bean” element creates the Spring Bean by instantiating the MyServiceImpl, whereas the “service” element exports the “myService” Spring Bean as an OSGi service.&lt;/p&gt;
+
+&lt;p&gt;After these, the structure of the project should look like the following:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;sp3.png&#34; alt=&#34;sp3&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;We will use maven and the maven-bundle-plugin in order to build our bundle. In order to do this, our pom.xml should contain the following plugin configuration:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;plugin&amp;gt;&lt;/span&gt;
+   &lt;span class=&#34;nt&#34;&gt;&amp;lt;groupid&amp;gt;&lt;/span&gt;org.apache.felix&lt;span class=&#34;nt&#34;&gt;&amp;lt;/groupid&amp;gt;&lt;/span&gt;
+   &lt;span class=&#34;nt&#34;&gt;&amp;lt;artifactid&amp;gt;&lt;/span&gt;maven-bundle-plugin&lt;span class=&#34;nt&#34;&gt;&amp;lt;/artifactid&amp;gt;&lt;/span&gt;
+   &lt;span class=&#34;nt&#34;&gt;&amp;lt;version&amp;gt;&lt;/span&gt;2.4.0&lt;span class=&#34;nt&#34;&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+   &lt;span class=&#34;nt&#34;&gt;&amp;lt;extensions&amp;gt;&lt;/span&gt;true&lt;span class=&#34;nt&#34;&gt;&amp;lt;/extensions&amp;gt;&lt;/span&gt;
+   &lt;span class=&#34;nt&#34;&gt;&amp;lt;executions&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;execution&amp;gt;&lt;/span&gt;
+         &lt;span class=&#34;nt&#34;&gt;&amp;lt;id&amp;gt;&lt;/span&gt;bundle-manifest&lt;span class=&#34;nt&#34;&gt;&amp;lt;/id&amp;gt;&lt;/span&gt;
+         &lt;span class=&#34;nt&#34;&gt;&amp;lt;phase&amp;gt;&lt;/span&gt;process-classes&lt;span class=&#34;nt&#34;&gt;&amp;lt;/phase&amp;gt;&lt;/span&gt;
+         &lt;span class=&#34;nt&#34;&gt;&amp;lt;goals&amp;gt;&lt;/span&gt;
+            &lt;span class=&#34;nt&#34;&gt;&amp;lt;goal&amp;gt;&lt;/span&gt;manifest&lt;span class=&#34;nt&#34;&gt;&amp;lt;/goal&amp;gt;&lt;/span&gt;
+         &lt;span class=&#34;nt&#34;&gt;&amp;lt;/goals&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;/execution&amp;gt;&lt;/span&gt;
+   &lt;span class=&#34;nt&#34;&gt;&amp;lt;/executions&amp;gt;&lt;/span&gt;
+   &lt;span class=&#34;nt&#34;&gt;&amp;lt;configuration&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;instructions&amp;gt;&lt;/span&gt;
+         &lt;span class=&#34;nt&#34;&gt;&amp;lt;bundle-classpath&amp;gt;&lt;/span&gt;.&lt;span class=&#34;nt&#34;&gt;&amp;lt;/bundle-classpath&amp;gt;&lt;/span&gt;
+         &lt;span class=&#34;nt&#34;&gt;&amp;lt;bundle-symbolicname&amp;gt;&lt;/span&gt;${project.artifactId}&lt;span class=&#34;nt&#34;&gt;&amp;lt;/bundle-symbolicname&amp;gt;&lt;/span&gt;
+         &lt;span class=&#34;nt&#34;&gt;&amp;lt;spring-context&amp;gt;&lt;/span&gt;spring/osgi-context.xml;create-asynchrously:=true;wait-for-dependencies:=true;publish-context:=true&lt;span class=&#34;nt&#34;&gt;&amp;lt;/spring-context&amp;gt;&lt;/span&gt;
+         &lt;span class=&#34;nt&#34;&gt;&amp;lt;export-package&amp;gt;&lt;/span&gt;org.astonbitecode.osgi.serviceProvider.service&lt;span class=&#34;nt&#34;&gt;&amp;lt;/export-package&amp;gt;&lt;/span&gt;
+         &lt;span class=&#34;nt&#34;&gt;&amp;lt;import-package&amp;gt;&lt;/span&gt;!org.astonbitecode.osgi.serviceProvider.*, *&lt;span class=&#34;nt&#34;&gt;&amp;lt;/import-package&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;/instructions&amp;gt;&lt;/span&gt;
+   &lt;span class=&#34;nt&#34;&gt;&amp;lt;/configuration&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;/plugin&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Using the maven-bundle-plugin, we define the export and import packages for the bundle and the location of the osgi-context xml&lt;/p&gt;
+
+&lt;p&gt;After running mvn install, our bundle should contain the following MANIFEST.MF:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Manifest-Version: 1.0
+Bnd-LastModified: 1394373967669
+Build-Jdk: 1.7.0_51
+Built-By: astonbitecode
+Bundle-ManifestVersion: 2
+Bundle-Name: serviceProvider
+Bundle-SymbolicName: serviceProvider
+Bundle-Version: 0.0.1.SNAPSHOT
+Created-By: Apache Maven Bundle Plugin
+Export-Package: org.astonbitecode.osgi.serviceProvider.service;version=&amp;quot; 0.0.1.SNAPSHOT&amp;quot;
+Spring-Context: spring/osgi-context.xml;create-asynchrously:=true;wait-f or-dependencies:=true;publish-context:=true
+Tool: Bnd-2.1.0.20130426-122213
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;wab-service-consumer&#34;&gt;WAB - Service Consumer&lt;/h2&gt;
+
+&lt;p&gt;We got the producer of the service done, so we should now continue with the bundle that will make use of the service and will contain the JSF and Richfaces implementation.&lt;/p&gt;
+
+&lt;p&gt;Our bundle this time should follow the EE way and its structure will be quite different from the serviceProvider.&lt;/p&gt;
+
+&lt;p&gt;Since we are dealing with a Dynamic Web project, let&amp;rsquo;s see how some of the contents of the web.xml should be.&lt;/p&gt;
+
+&lt;p&gt;The crucial elements regarding the OSGi and blueprint are the following:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;context-param&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;param-name&amp;gt;&lt;/span&gt;contextConfigLocation&lt;span class=&#34;nt&#34;&gt;&amp;lt;/param-name&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;param-value&amp;gt;&lt;/span&gt;classpath:spring/*context.xml&lt;span class=&#34;nt&#34;&gt;&amp;lt;/param-value&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/context-param&amp;gt;&lt;/span&gt;
+ 
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;listener&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;listener-class&amp;gt;&lt;/span&gt;org.springframework.web.context.ContextLoaderListener&lt;span class=&#34;nt&#34;&gt;&amp;lt;/listener-class&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/listener&amp;gt;&lt;/span&gt;
+ 
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;context-param&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;param-name&amp;gt;&lt;/span&gt;contextClass&lt;span class=&#34;nt&#34;&gt;&amp;lt;/param-name&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;param-value&amp;gt;&lt;/span&gt;org.eclipse.virgo.web.dm.ServerOsgiBundleXmlWebApplicationContext&lt;span class=&#34;nt&#34;&gt;&amp;lt;/param-value&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/context-param&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The first (contextConfigLocation) defines where the Spring configuration files are located. As in the serviceProvider bundle, we choose to keep the configurations under the resources folder and under the spring sub-folder.&lt;/p&gt;
+
+&lt;p&gt;The second element, defines a Spring context loader listener that will load the root web application context.&lt;/p&gt;
+
+&lt;p&gt;Finally, the third element enables the use of the OSGi services within the root WebApplicationContext.&lt;/p&gt;
+
+&lt;p&gt;The rest of the web.xml contains the usual elements to create a JSF and Richfaces application, the most important being:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;servlet&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;servlet-name&amp;gt;&lt;/span&gt;Resource Servlet&lt;span class=&#34;nt&#34;&gt;&amp;lt;/servlet-name&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;servlet-class&amp;gt;&lt;/span&gt;org.richfaces.webapp.ResourceServlet&lt;span class=&#34;nt&#34;&gt;&amp;lt;/servlet-class&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;load-on-startup&amp;gt;&lt;/span&gt;1&lt;span class=&#34;nt&#34;&gt;&amp;lt;/load-on-startup&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;/servlet&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;servlet-mapping&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;servlet-name&amp;gt;&lt;/span&gt;Resource Servlet&lt;span class=&#34;nt&#34;&gt;&amp;lt;/servlet-name&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;url-pattern&amp;gt;&lt;/span&gt;/org.richfaces.resources/*&lt;span class=&#34;nt&#34;&gt;&amp;lt;/url-pattern&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;/servlet-mapping&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;servlet&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;servlet-name&amp;gt;&lt;/span&gt;Faces Servlet&lt;span class=&#34;nt&#34;&gt;&amp;lt;/servlet-name&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;servlet-class&amp;gt;&lt;/span&gt;javax.faces.webapp.FacesServlet&lt;span class=&#34;nt&#34;&gt;&amp;lt;/servlet-class&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;load-on-startup&amp;gt;&lt;/span&gt;1&lt;span class=&#34;nt&#34;&gt;&amp;lt;/load-on-startup&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;/servlet&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;context-param&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;param-name&amp;gt;&lt;/span&gt;facelets.VIEW_MAPPINGS&lt;span class=&#34;nt&#34;&gt;&amp;lt;/param-name&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;param-value&amp;gt;&lt;/span&gt;*.xhtml&lt;span class=&#34;nt&#34;&gt;&amp;lt;/param-value&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;/context-param&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;servlet-mapping&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;servlet-name&amp;gt;&lt;/span&gt;Faces Servlet&lt;span class=&#34;nt&#34;&gt;&amp;lt;/servlet-name&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;url-pattern&amp;gt;&lt;/span&gt;/faces/*&lt;span class=&#34;nt&#34;&gt;&amp;lt;/url-pattern&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;/servlet-mapping&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Several libraries are needed by our project in order to use JSF and Richfaces. We decided to install the JSF as a bundle in the OSGi framework and to embed the Richfaces inside our bundle. The most correct thing to do in an OSGi environment is to have all the needed libraries installed as bundles and use their exported packages in our code. This ensures modularity and at the end of the day will  provide great help during code upgrades etc.
+However, it can be a design decision to keep some library embedded into a bundle. The maven-bundle-plugin offers this choice, using the Embed-Dependency and Embed-Transitive elements. We will use this to embed the Richfaces into our WAB – Service consumer.&lt;/p&gt;
+
+&lt;p&gt;The complete pom.xml that achieves the above can be found along with the rest of the source code. However, we will show here the configuration of the maven-bundle-plugin:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;plugin&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;groupId&amp;gt;&lt;/span&gt;org.apache.felix&lt;span class=&#34;nt&#34;&gt;&amp;lt;/groupId&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;maven-bundle-plugin&lt;span class=&#34;nt&#34;&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;version&amp;gt;&lt;/span&gt;2.4.0&lt;span class=&#34;nt&#34;&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;extensions&amp;gt;&lt;/span&gt;true&lt;span class=&#34;nt&#34;&gt;&amp;lt;/extensions&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;executions&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;execution&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;id&amp;gt;&lt;/span&gt;bundle-manifest&lt;span class=&#34;nt&#34;&gt;&amp;lt;/id&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;phase&amp;gt;&lt;/span&gt;process-classes&lt;span class=&#34;nt&#34;&gt;&amp;lt;/phase&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;goals&amp;gt;&lt;/span&gt;
+        &lt;span class=&#34;nt&#34;&gt;&amp;lt;goal&amp;gt;&lt;/span&gt;manifest&lt;span class=&#34;nt&#34;&gt;&amp;lt;/goal&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;/goals&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;/execution&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/executions&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;configuration&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;supportedProjectTypes&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;supportedProjectType&amp;gt;&lt;/span&gt;bundle&lt;span class=&#34;nt&#34;&gt;&amp;lt;/supportedProjectType&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;supportedProjectType&amp;gt;&lt;/span&gt;war&lt;span class=&#34;nt&#34;&gt;&amp;lt;/supportedProjectType&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;/supportedProjectTypes&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;instructions&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;Bundle-SymbolicName&amp;gt;&lt;/span&gt;${project.artifactId}&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Bundle-SymbolicName&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;Bundle-ClassPath&amp;gt;&lt;/span&gt;.,WEB-INF/classes&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Bundle-ClassPath&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;Import-Package&amp;gt;&lt;/span&gt;
+        com.opensymphony.oscache.base;resolution:=optional, com.opensymphony.oscache.general;resolution:=optional,
+        com.opensymphony.oscache.web.filter;resolution:=optional, com.sun.enterprise;resolution:=optional,
+        com.sun.enterprise.deployment;resolution:=optional, groovy.lang;resolution:=optional, groovy.util;resolution:=optional,
+        javax.annotation, javax.crypto, javax.crypto.spec, javax.el,javax.enterprise.context;resolution:=optional,
+        javax.enterprise.context.spi;resolution:=optional,javax.enterprise.event;resolution:=optional,
+        javax.enterprise.inject;resolution:=optional,javax.enterprise.inject.spi;resolution:=optional,
+        javax.imageio;resolution:=optional,javax.imageio.metadata;resolution:=optional,
+        javax.imageio.stream;resolution:=optional, javax.inject;resolution:=optional, javax.jms;resolution:=optional,
+        javax.naming, javax.naming.spi, javax.servlet;version=&amp;quot;[3.0,4)&amp;quot;, javax.servlet.annotation;version=&amp;quot;[3.0,4)&amp;quot;,
+        javax.servlet.http;version=&amp;quot;[3.0,4)&amp;quot;, javax.servlet.jsp, javax.servlet.jsp.jstl.core,
+        javax.servlet.jsp.jstl.sql, javax.servlet.jsp.tagext, javax.swing.tree;resolution:=optional,
+        javax.transaction;resolution:=optional, javax.validation;resolution:=optional,
+        javax.validation.groups;resolution:=optional, javax.validation.metadata;resolution:=optional,
+        javax.xml.bind;resolution:=optional, javax.xml.bind.annotation;resolution:=optional, javax.xml.parsers,
+        javax.xml.transform, javax.xml.transform.dom, javax.xml.transform.stream, javax.xml.validation,
+        javax.xml.xpath, net.sf.ehcache;resolution:=optional, net.sf.ehcache.config;resolution:=optional,
+        org.apache;resolution:=optional, org.apache.myfaces.shared.renderkit.html.util;resolution:=optional,
+        org.atmosphere.cpr;resolution:=optional, org.atmosphere.handler;resolution:=optional,
+        org.atmosphere.websocket;resolution:=optional, org.jboss.cache;resolution:=optional,
+        org.jboss.cache.config;resolution:=optional, org.jboss.cache.eviction;resolution:=optional,
+        org.mortbay.jetty.annotations;resolution:=optional, org.mortbay.jetty.handler;resolution:=optional,
+        org.mortbay.jetty.plus.annotation;resolution:=optional, org.mortbay.jetty.webapp;resolution:=optional,
+        org.w3c.dom, org.w3c.dom.css;resolution:=optional, org.w3c.dom.ls, org.w3c.dom.stylesheets;resolution:=optional,
+        org.xml.sax, org.xml.sax.ext, org.xml.sax.helpers, sun.misc;resolution:=optional,
+        &lt;span class=&#34;c&#34;&gt;&amp;lt;!-- Faces --&amp;gt;&lt;/span&gt;
+        com.sun.faces;version=&amp;quot;2.1&amp;quot;, com.sun.faces.application;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.application.annotation;version=&amp;quot;2.1&amp;quot;, com.sun.faces.application.resource;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.application.view;version=&amp;quot;2.1&amp;quot;, com.sun.faces.component;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.component.behavior;version=&amp;quot;2.1&amp;quot;, com.sun.faces.component.validator;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.component.visit;version=&amp;quot;2.1&amp;quot;, com.sun.faces.config;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.config.configprovider;version=&amp;quot;2.1&amp;quot;, com.sun.faces.config.processor;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.context;version=&amp;quot;2.1&amp;quot;, com.sun.faces.context.flash;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.el;version=&amp;quot;2.1&amp;quot;, com.sun.faces.ext.component;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.ext.render;version=&amp;quot;2.1&amp;quot;, com.sun.faces.ext.taglib;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.ext.validator;version=&amp;quot;2.1&amp;quot;, com.sun.faces.facelets;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.facelets.compiler;version=&amp;quot;2.1&amp;quot;, com.sun.faces.facelets.component;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.facelets.el;version=&amp;quot;2.1&amp;quot;, com.sun.faces.facelets.impl;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.facelets.tag;version=&amp;quot;2.1&amp;quot;, com.sun.faces.facelets.tag.composite;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.facelets.tag.jsf;version=&amp;quot;2.1&amp;quot;, com.sun.faces.facelets.tag.jsf.core;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.facelets.tag.jsf.html;version=&amp;quot;2.1&amp;quot;, com.sun.faces.facelets.tag.jstl.core;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.facelets.tag.jstl.fn;version=&amp;quot;2.1&amp;quot;, com.sun.faces.facelets.tag.ui;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.facelets.util;version=&amp;quot;2.1&amp;quot;, com.sun.faces.io;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.lifecycle;version=&amp;quot;2.1&amp;quot;, com.sun.faces.metadata.taglib;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.mgbean;version=&amp;quot;2.1&amp;quot;, com.sun.faces.renderkit;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.renderkit.html_basic;version=&amp;quot;2.1&amp;quot;, com.sun.faces.resources;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.scripting;version=&amp;quot;2.1&amp;quot;, com.sun.faces.scripting.groovy;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.spi;version=&amp;quot;2.1&amp;quot;, com.sun.faces.taglib;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.taglib.html_basic;version=&amp;quot;2.1&amp;quot;, com.sun.faces.taglib.jsf_core;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.util;version=&amp;quot;2.1&amp;quot;, com.sun.faces.vendor;version=&amp;quot;2.1&amp;quot;,
+        com.sun.faces.xhtml;version=&amp;quot;2.1&amp;quot;, javax.faces;version=&amp;quot;2.1&amp;quot;,
+        javax.faces.application;version=&amp;quot;2.1&amp;quot;, javax.faces.bean;version=&amp;quot;2.1&amp;quot;,
+        javax.faces.component;version=&amp;quot;2.1&amp;quot;, javax.faces.component.behavior;version=&amp;quot;2.1&amp;quot;,
+        javax.faces.component.html;version=&amp;quot;2.1&amp;quot;, javax.faces.component.visit;version=&amp;quot;2.1&amp;quot;,
+        javax.faces.context;version=&amp;quot;2.1&amp;quot;, javax.faces.convert;version=&amp;quot;2.1&amp;quot;,
+        javax.faces.el;version=&amp;quot;2.1&amp;quot;, javax.faces.event;version=&amp;quot;2.1&amp;quot;,
+        javax.faces.lifecycle;version=&amp;quot;2.1&amp;quot;, javax.faces.model;version=&amp;quot;2.1&amp;quot;,
+        javax.faces.render;version=&amp;quot;2.1&amp;quot;, javax.faces.validator;version=&amp;quot;2.1&amp;quot;,
+        javax.faces.view;version=&amp;quot;2.1&amp;quot;, javax.faces.view.facelets;version=&amp;quot;2.1&amp;quot;, javax.faces.webapp;version=&amp;quot;2.1&amp;quot;,
+        &lt;span class=&#34;c&#34;&gt;&amp;lt;!-- Faces end --&amp;gt;&lt;/span&gt;
+        org.eclipse.virgo.web.dm,
+        org.springframework.web.context,
+        org.springframework.web.jsf.el,
+        *
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;/Import-Package&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;Export-Package&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;Web-ContextPath&amp;gt;&lt;/span&gt;mywab&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Web-ContextPath&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;Spring-Context&amp;gt;&lt;/span&gt;WEB-INF/classes/spring/osgi-context.xml;create-asynchrously:=true;wait-for-dependencies:=true;publish-context:=true&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Spring-Context&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;Embed-Dependency&amp;gt;&lt;/span&gt;*;scope=compile|runtime&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Embed-Dependency&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;Embed-Transitive&amp;gt;&lt;/span&gt;true&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Embed-Transitive&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;/instructions&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/configuration&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;/plugin&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;plugin&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;artifactId&amp;gt;&lt;/span&gt;maven-war-plugin&lt;span class=&#34;nt&#34;&gt;&amp;lt;/artifactId&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;version&amp;gt;&lt;/span&gt;2.2&lt;span class=&#34;nt&#34;&gt;&amp;lt;/version&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;configuration&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;archive&amp;gt;&lt;/span&gt;
+      &lt;span class=&#34;nt&#34;&gt;&amp;lt;manifestFile&amp;gt;&lt;/span&gt;${project.build.outputDirectory}/META-INF/MANIFEST.MF&lt;span class=&#34;nt&#34;&gt;&amp;lt;/manifestFile&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;/archive&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/configuration&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;/plugin&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As you see, we need to import by default all the packages regarding the JSF and we also need to mark as optional some packages, in order to avoid classloading problems.&lt;/p&gt;
+
+&lt;p&gt;Going further with the JSF configuration, we want to be able to inject Spring beans inside JSF Managed Beans. In order to do that, we will need to add to the faces-config.xml the following:&lt;/p&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;application&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;el-resolver&amp;gt;&lt;/span&gt;org.springframework.web.jsf.el.SpringBeanFacesELResolver&lt;span class=&#34;nt&#34;&gt;&amp;lt;/el-resolver&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;/application&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Next step is to create a Spring bean inside the consumer WAB and to make use of the MyService that is exported by the serviceProducer bundle:&lt;/p&gt;
+
+&lt;p&gt;Here is the interface:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;kn&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;org.astonbitecode.osgi.wabConsumer.service&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+ 
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;ConsumerService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;invokeBlueprintService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Here is the implementation:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;kn&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;org.astonbitecode.osgi.wabConsumer.service.impl&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+ 
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;org.astonbitecode.osgi.serviceProvider.service.MyService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;org.astonbitecode.osgi.wabConsumer.service.ConsumerService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+ 
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;ConsumerServiceImpl&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;implements&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ConsumerService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+   &lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MyService&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;myService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+ 
+   &lt;span class=&#34;nd&#34;&gt;@Override&lt;/span&gt;
+   &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;invokeBlueprintService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;myService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getName&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+   &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+ 
+   &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MyService&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;getMyService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;myService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+   &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+ 
+   &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;setMyService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;MyService&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;myService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;myService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;myService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+   &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;and here are the definitions inside the osgi-context.xml:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;blueprint&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;xmlns=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;http://www.osgi.org/xmlns/blueprint/v1.0.0&amp;quot;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
+ 
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;reference&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;myService&amp;quot;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;interface=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;org.astonbitecode.osgi.serviceProvider.service.MyService&amp;quot;&lt;/span&gt;
+      &lt;span class=&#34;na&#34;&gt;availability=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;mandatory&amp;quot;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+ 
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;bean&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;consumerService&amp;quot;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;class=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;org.astonbitecode.osgi.wabConsumer.service.impl.ConsumerServiceImpl&amp;quot;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
+     &lt;span class=&#34;nt&#34;&gt;&amp;lt;property&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;myService&amp;quot;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;ref=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;myService&amp;quot;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/bean&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;/blueprint&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We will make use of the consumerService Spring bean from a JSF Managed Bean, using the ManagedProperty annotation:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;kn&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;org.astonbitecode.osgi.wabConsumer.jsf&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+ 
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;java.io.Serializable&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;javax.annotation.PostConstruct&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;javax.faces.bean.ManagedBean&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;javax.faces.bean.ManagedProperty&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;javax.faces.bean.ViewScoped&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kn&#34;&gt;import&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;org.astonbitecode.osgi.wabConsumer.service.ConsumerService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+ 
+&lt;span class=&#34;nd&#34;&gt;@ManagedBean&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;welcomeBean&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nd&#34;&gt;@ViewScoped&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;WelcomeBean&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;implements&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Serializable&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;serviceMessage&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;nd&#34;&gt;@ManagedProperty&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;value&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;#{consumerService}&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ConsumerService&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;consumerService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    
+    &lt;span class=&#34;nd&#34;&gt;@PostConstruct&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;initBean&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;n&#34;&gt;serviceMessage&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;getConsumerService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;invokeBlueprintService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ConsumerService&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;getConsumerService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;consumerService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+ 
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;setConsumerService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ConsumerService&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;consumerService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;consumerService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;consumerService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+ 
+    &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;getServiceMessage&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;serviceMessage&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now that we have everything in place, let&amp;rsquo;s create a simple XHTML page with JSF and Richfaces:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;ui:composition&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;xmlns=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;http://www.w3.org/1999/xhtml&amp;quot;&lt;/span&gt;
+    &lt;span class=&#34;na&#34;&gt;xmlns:h=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;http://java.sun.com/jsf/html&amp;quot;&lt;/span&gt;
+    &lt;span class=&#34;na&#34;&gt;xmlns:f=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;http://java.sun.com/jsf/core&amp;quot;&lt;/span&gt;
+    &lt;span class=&#34;na&#34;&gt;xmlns:ui=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;http://java.sun.com/jsf/facelets&amp;quot;&lt;/span&gt;
+    &lt;span class=&#34;na&#34;&gt;xmlns:a4j=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;http://richfaces.org/a4j&amp;quot;&lt;/span&gt;
+    &lt;span class=&#34;na&#34;&gt;xmlns:rich=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;http://richfaces.org/rich&amp;quot;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
+ 
+     &lt;span class=&#34;nt&#34;&gt;&amp;lt;f:view&amp;gt;&lt;/span&gt;
+        &lt;span class=&#34;nt&#34;&gt;&amp;lt;h:head&amp;gt;&amp;lt;/h:head&amp;gt;&lt;/span&gt;
+        &lt;span class=&#34;nt&#34;&gt;&amp;lt;h:body&amp;gt;&lt;/span&gt;
+          &lt;span class=&#34;nt&#34;&gt;&amp;lt;rich:panel&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;header=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;Hello&amp;quot;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
+             &lt;span class=&#34;nt&#34;&gt;&amp;lt;h:form&amp;gt;&lt;/span&gt;
+                &lt;span class=&#34;nt&#34;&gt;&amp;lt;h:outputText&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;value=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;This is the message from MyService:&amp;quot;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+             &lt;span class=&#34;nt&#34;&gt;&amp;lt;h:outputText&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;value=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;#{welcomeBean.serviceMessage}&amp;quot;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;serviceMessage&amp;quot;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+          &lt;span class=&#34;nt&#34;&gt;&amp;lt;/h:form&amp;gt;&lt;/span&gt;
+          &lt;span class=&#34;nt&#34;&gt;&amp;lt;/rich:panel&amp;gt;&lt;/span&gt;
+       &lt;span class=&#34;nt&#34;&gt;&amp;lt;/h:body&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;/f:view&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;nt&#34;&gt;&amp;lt;/ui:composition&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;By now, the structure of our consumer WAB should be like the following:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;sc2.png&#34; alt=&#34;sc2&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;virgo-server&#34;&gt;Virgo Server&lt;/h2&gt;
+
+&lt;p&gt;Download eclipse virgo and unzip it to the directory of your choice. The version used for this tutorial was virgo for apache Tomcat 3.6.3.&lt;/p&gt;
+
+&lt;p&gt;We need to do one thing before we start Virgo. This is to edit the file&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;$VIRGO_ROOT_DIR/repository/ext/org.eclipse.virgo.web.properties&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;and change the WABHeaders property to “defaulted”.
+For more information see here and here.&lt;/p&gt;
+
+&lt;p&gt;As mentioned earlier, we will install the JSF library as a bundle inside the OSGi repository. In order to do this, we will need to copy the javax.faces-2.1.2.jar in the directory $VIRGO_ROOT_DIR/repository/usr. You can download the jar from the maven central.&lt;/p&gt;
+
+&lt;p&gt;Next, start the virgo server by browsing into the $VIRGO_ROOT_DIR/bin with a terminal and run the startup script. Once Virgo is up, copy the serviceProvider-0.0.1-SNAPSHOT.jar file in the directory  $VIRGO_ROOT_DIR/pickup. Virgo will automatically install the bundle and you should see something like this in the terminal:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;fs-watcher        &amp;lt;HD0001I&amp;gt; Hot deployer processing &#39;CREATED&#39; event for file &#39;serviceProvider-0.0.1-SNAPSHOT.jar&#39;.
+fs-watcher        &amp;lt;DE0000I&amp;gt; Installing bundle &#39;serviceProvider&#39; version &#39;0.0.1.SNAPSHOT&#39;.
+fs-watcher        &amp;lt;DE0001I&amp;gt; Installed bundle &#39;serviceProvider&#39; version &#39;0.0.1.SNAPSHOT&#39;.
+fs-watcher        &amp;lt;DE0004I&amp;gt; Starting bundle &#39;serviceProvider&#39; version &#39;0.0.1.SNAPSHOT&#39;.
+start-signalling-2           &amp;lt;DE0005I&amp;gt; Started bundle &#39;serviceProvider&#39; version &#39;0.0.1.SNAPSHOT&#39;.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;After the serviceProvider is started, copy the wabConsumer-0.0.1-SNAPSHOT.war in $VIRGO_ROOT_DIR/pickup. The output in the terminal should look like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;fs-watcher      &amp;lt;HD0001I&amp;gt; Hot deployer processing &#39;CREATED&#39; event for file &#39;wabConsumer-0.0.1-SNAPSHOT.war&#39;.
+fs-watcher      &amp;lt;DE0000I&amp;gt; Installing bundle &#39;wabConsumer&#39; version &#39;0.0.1.SNAPSHOT&#39;.
+fs-watcher      &amp;lt;DE0001I&amp;gt; Installed bundle &#39;wabConsumer&#39; version &#39;0.0.1.SNAPSHOT&#39;.
+fs-watcher      &amp;lt;DE0004I&amp;gt; Starting bundle &#39;wabConsumer&#39; version &#39;0.0.1.SNAPSHOT&#39;.
+start-signalling-2   &amp;lt;WE0000I&amp;gt; Starting web bundle &#39;wabConsumer&#39; version &#39;0.0.1.SNAPSHOT&#39; with context path &#39;/mywab&#39;.
+start-signalling-2   &amp;lt;WE0001I&amp;gt; Started web bundle &#39;wabConsumer&#39; version &#39;0.0.1.SNAPSHOT&#39; with context path &#39;/mywab&#39;.
+start-signalling-2   &amp;lt;DE0005I&amp;gt; Started bundle &#39;wabConsumer&#39; version &#39;0.0.1.SNAPSHOT&#39;. 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That&amp;rsquo;s it!&lt;/p&gt;
+
+&lt;p&gt;Browsing to the address &lt;a href=&#34;http://localhost:8080/mywab/faces/welcome.xhtml&#34;&gt;http://localhost:8080/mywab/faces/welcome.xhtml&lt;/a&gt; you should see the following page:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;Hello.png&#34; alt=&#34;Hello&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

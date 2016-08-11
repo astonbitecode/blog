@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Aston&#39;s Programming Thoughts</title>
+
+  <meta name="author" content="Aston" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.17-DEV" />
+
+  <link rel="alternate" href="https://astonbitecode.github.io/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/pygment_highlights.css" />
+  
+  
+  <meta property="og:title" content="Aston&#39;s Programming Thoughts" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="//" />
+  <meta property="og:image" content="images/aston.png" />
+  
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://astonbitecode.github.io/blog/">Aston&#39;s Programming Thoughts</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+          <li>
+          <a title="Blog" href="/blog/">Blog</a>
+  	      </li>
+  	    
+      
+        
+          <li>
+          <a title="About" href="/blog/page/about/">About</a>
+  	      </li>
+  	    
+      
+      </ul>
+    </div>
+
+	<div class="avatar-container">
+	  <div class="avatar-img-border">
+      
+          <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog/">
+              <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/aston.png" alt="Aston&#39;s Programming Thoughts" />
+          </a>
+      
+	  </div>
+	</div>
+
+  </div>
+</nav>
+
+
+    <header class="header-section ">
+      <div class="intro-header no-img">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+              <div class="page-heading">
+                <h1>Aston&#39;s Programming Thoughts</h1>
+                
+                  <hr class="small">
+                  <span class="page-subheading">Sharing some thoughts and solutions, hoping it might be helpful for someone...</span>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+
+    <div role="main" class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="posts-list">
+            
+            
+            <article class="post-preview">
+              <a href="https://astonbitecode.github.io/blog/post/foldfor/">
+          	  <h2 class="post-title">Scala: Use fold to serialize any number of Futures</h2>
+          	
+          	    
+              </a>
+
+              <p class="post-meta">
+                Posted on October 4, 2015
+              </p>
+            
+              <div class="post-entry">
+                Scala&rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More specifically, for serializing Futures. Let&rsquo;s assume that we have a function that performs some kind of logic and returns a Future: def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num + 1 print(addedOne + &quot; &quot;) } } Users of such a fuction, may want to call it more than one time and additionally, to call it serially.
+          	  <a href="https://astonbitecode.github.io/blog/post/foldfor/" class="post-read-more">[Read&nbsp;More]</a>
+              </div>
+            
+             </article>
+            
+            <article class="post-preview">
+              <a href="https://astonbitecode.github.io/blog/post/kindofdi/">
+          	  <h2 class="post-title">A (kind-of) Dependency Injection in Scala</h2>
+          	
+          	    
+              </a>
+
+              <p class="post-meta">
+                Posted on April 25, 2015
+              </p>
+            
+              <div class="post-entry">
+                The problem While projects evolve, the lines of code increase and the dependencies between the classes are becoming more and more complicated. With the absence of some Dependency Injection (DI) framework/library, this ends up quickly in having to pass instances here and there through constructors of classes. The constructors may end up having something like 10+ arguments. To make things worse, for some cases, these arguments are not used by the logic of the classes themselves, but instead, they are just used to create subclasses!
+          	  <a href="https://astonbitecode.github.io/blog/post/kindofdi/" class="post-read-more">[Read&nbsp;More]</a>
+              </div>
+            
+             </article>
+            
+            <article class="post-preview">
+              <a href="https://astonbitecode.github.io/blog/post/osgijsf/">
+          	  <h2 class="post-title">OSGi: Finding the way to JEE and JSF </h2>
+          	
+          	    
+              </a>
+
+              <p class="post-meta">
+                Posted on March 5, 2015
+              </p>
+            
+              <div class="post-entry">
+                Combining the modularity offered by OSGi with the EE technologies may result to powerful, scalable and maintainable applications. Eclipse Virgo bridges OSGi and JEE worlds and provides a “completely module-based Java application server”. Even if the Virgo documentation provides detailed explanations, it seemed difficult to find tutorials that are functional and build up to a JEE Web application that is powered by OSGi bundles and services. In this tutorial, I will try to provide the pieces to build a JSF – Richfaces – Spring application that makes use of OSGi services over Blueprint.
+          	  <a href="https://astonbitecode.github.io/blog/post/osgijsf/" class="post-read-more">[Read&nbsp;More]</a>
+              </div>
+            
+             </article>
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+
+    <footer>
+  <div class="container beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+          
+          <li>
+            <a href="https://github.com/astonbitecode" title="GitHub">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+		      
+		      
+		      
+	    	  
+          
+          
+
+    		  <li>
+      			<a href="https://astonbitecode.github.io/blog/index.xml" title="RSS">
+      			  <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+      			</a>
+    		  </li>		
+
+        </ul>
+        <p class="copyright text-muted">
+    		  Aston
+    		  &nbsp;&bull;&nbsp;
+    		  2016
+    		  
+    		  
+    		  &nbsp;&bull;&nbsp;
+    		  <a href="https://astonbitecode.github.io/blog/">Aston&#39;s Programming Thoughts</a>
+    		  
+  	    </p>
+  	        
+    		<p class="theme-by text-muted">
+    		  Theme by
+    		  <a href="http://deanattali.com/beautiful-jekyll/">beautiful-jekyll</a>
+    		</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://astonbitecode.github.io/blog/js/jquery-1.11.2.min.js"></script>
+<script src="https://astonbitecode.github.io/blog/js/bootstrap.min.js"></script>
+<script src="https://astonbitecode.github.io/blog/js/main.js"></script>
+
+
+
+  </body>
+</html>
