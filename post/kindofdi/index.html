@@ -135,7 +135,7 @@ So, maybe we could find some delicate and easy way to keep the code cleaner, eve
 
 <p>In the same blog, he describes a way to perform DI using the Cake Pattern. Searching around the blogs and answers/proposals, one may find out that indeed, DI in Scala can be achieved with several ways.</p>
 
-<p>What we will try to do here, is a kind of DI using Scala-only constructs, in order to be able to create some class instance once and “inject” it wherever is needed.</p>
+<p>What we will try to do here, is a kind of DI using Scala-only constructs, in order to be able to create some class instance <strong>once</strong> and <em>“inject”</em> it wherever is needed.</p>
 
 <h2 id="use-case-to-drive-the-solution">Use case to drive the solution</h2>
 
@@ -281,9 +281,9 @@ We may test the result by creating a simple Main object and try to see the follo
 
 <p>Once this runs, we should see the output:</p>
 
-<p>Configuration is not yet initialized
-/my/path
-Configuration is already initialized</p>
+<p><em>Configuration is not yet initialized</em>
+<em>/my/path</em>
+<em>Configuration is already initialized</em></p>
 
 <h2 id="drawbacks-and-possible-extensions">Drawbacks and possible extensions</h2>
 
@@ -297,7 +297,8 @@ Configuration is already initialized</p>
 
 <h2 id="what-to-takeaway">What to takeaway?</h2>
 
-<p>The idea, if you like it and the code, of course. It is pushed in a GitHub repo.</p>
+<p>The idea, if you like it and the code, of course.
+I have created a library that builds on the ideas described here and you can find it on <a href="https://github.com/astonbitecode/kind-of-di">GitHub</a></p>
 
 <p>Thanks for reading!</p>
 

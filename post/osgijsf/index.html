@@ -116,13 +116,15 @@
       <article role="main" class="blog-post">
           
 
+<p><strong>Note: You may find the complete source code for this tutorial <a href="https://github.com/astonbitecode/tutorial-osgi-jsf">here</a>.</strong></p>
+
 <p>Combining the modularity offered by OSGi with the EE technologies may result to powerful, scalable and maintainable applications.</p>
 
 <p>Eclipse Virgo bridges OSGi and JEE worlds and provides a “completely module-based Java application server”.</p>
 
 <p>Even if the Virgo documentation provides detailed explanations, it seemed difficult to find tutorials that are functional and build up to a JEE Web application that is powered by OSGi bundles and services.</p>
 
-<p>In this tutorial, I will try to provide the pieces to build a JSF – Richfaces – Spring application that makes use of OSGi services over Blueprint.</p>
+<p>In this tutorial, I will try to provide the pieces to build a <strong>JSF – Richfaces – Spring</strong> application that makes use of OSGi services over Blueprint.</p>
 
 <p>It is considered that the reader has the knowledge of Maven, OSGi, Spring and JSF.</p>
 
@@ -531,11 +533,11 @@ However, it can be a design decision to keep some library embedded into a bundle
 <p><code>$VIRGO_ROOT_DIR/repository/ext/org.eclipse.virgo.web.properties</code></p>
 
 <p>and change the WABHeaders property to “defaulted”.
-For more information see here and here.</p>
+For more information see <a href="http://www.eclipse.org/virgo/documentation/virgo-documentation-3.6.3.RELEASE/docs/virgo-user-guide/html/ch13s08.html">here</a> and <a href="http://www.eclipse.org/virgo/documentation/virgo-documentation-3.6.3.RELEASE/docs/virgo-programmer-guide/html/ch04s07.html">here</a>.</p>
 
-<p>As mentioned earlier, we will install the JSF library as a bundle inside the OSGi repository. In order to do this, we will need to copy the javax.faces-2.1.2.jar in the directory $VIRGO_ROOT_DIR/repository/usr. You can download the jar from the maven central.</p>
+<p>As mentioned earlier, we will install the JSF library as a bundle inside the OSGi repository. In order to do this, we will need to copy the javax.faces-2.1.2.jar in the directory <code>$VIRGO_ROOT_DIR/repository/usr</code>. You can download the jar from the <a href="search.maven.org/remotecontent?filepath=org/glassfish/javax.faces/2.1.2/javax.faces-2.1.2.jar">maven central</a>.</p>
 
-<p>Next, start the virgo server by browsing into the $VIRGO_ROOT_DIR/bin with a terminal and run the startup script. Once Virgo is up, copy the serviceProvider-0.0.1-SNAPSHOT.jar file in the directory  $VIRGO_ROOT_DIR/pickup. Virgo will automatically install the bundle and you should see something like this in the terminal:</p>
+<p>Next, start the virgo server by browsing into the <code>$VIRGO_ROOT_DIR/bin</code> with a terminal and run the startup script. Once Virgo is up, copy the <strong>serviceProvider-0.0.1-SNAPSHOT.jar</strong> file in the directory  <code>$VIRGO_ROOT_DIR/pickup</code>. Virgo will automatically install the bundle and you should see something like this in the terminal:</p>
 
 <pre><code>fs-watcher        &lt;HD0001I&gt; Hot deployer processing 'CREATED' event for file 'serviceProvider-0.0.1-SNAPSHOT.jar'.
 fs-watcher        &lt;DE0000I&gt; Installing bundle 'serviceProvider' version '0.0.1.SNAPSHOT'.
@@ -544,7 +546,7 @@ fs-watcher        &lt;DE0004I&gt; Starting bundle 'serviceProvider' version '0.0
 start-signalling-2           &lt;DE0005I&gt; Started bundle 'serviceProvider' version '0.0.1.SNAPSHOT'.
 </code></pre>
 
-<p>After the serviceProvider is started, copy the wabConsumer-0.0.1-SNAPSHOT.war in $VIRGO_ROOT_DIR/pickup. The output in the terminal should look like this:</p>
+<p>After the serviceProvider is started, copy the <strong>wabConsumer-0.0.1-SNAPSHOT.war</strong> in <code>$VIRGO_ROOT_DIR/pickup</code>. The output in the terminal should look like this:</p>
 
 <pre><code>fs-watcher      &lt;HD0001I&gt; Hot deployer processing 'CREATED' event for file 'wabConsumer-0.0.1-SNAPSHOT.war'.
 fs-watcher      &lt;DE0000I&gt; Installing bundle 'wabConsumer' version '0.0.1.SNAPSHOT'.

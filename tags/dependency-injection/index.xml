@@ -36,7 +36,7 @@ So, maybe we could find some delicate and easy way to keep the code cleaner, eve
 
 &lt;p&gt;In the same blog, he describes a way to perform DI using the Cake Pattern. Searching around the blogs and answers/proposals, one may find out that indeed, DI in Scala can be achieved with several ways.&lt;/p&gt;
 
-&lt;p&gt;What we will try to do here, is a kind of DI using Scala-only constructs, in order to be able to create some class instance once and “inject” it wherever is needed.&lt;/p&gt;
+&lt;p&gt;What we will try to do here, is a kind of DI using Scala-only constructs, in order to be able to create some class instance &lt;strong&gt;once&lt;/strong&gt; and &lt;em&gt;“inject”&lt;/em&gt; it wherever is needed.&lt;/p&gt;
 
 &lt;h2 id=&#34;use-case-to-drive-the-solution&#34;&gt;Use case to drive the solution&lt;/h2&gt;
 
@@ -182,9 +182,9 @@ We may test the result by creating a simple Main object and try to see the follo
 
 &lt;p&gt;Once this runs, we should see the output:&lt;/p&gt;
 
-&lt;p&gt;Configuration is not yet initialized
-/my/path
-Configuration is already initialized&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Configuration is not yet initialized&lt;/em&gt;
+&lt;em&gt;/my/path&lt;/em&gt;
+&lt;em&gt;Configuration is already initialized&lt;/em&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;drawbacks-and-possible-extensions&#34;&gt;Drawbacks and possible extensions&lt;/h2&gt;
 
@@ -198,7 +198,8 @@ Configuration is already initialized&lt;/p&gt;
 
 &lt;h2 id=&#34;what-to-takeaway&#34;&gt;What to takeaway?&lt;/h2&gt;
 
-&lt;p&gt;The idea, if you like it and the code, of course. It is pushed in a GitHub repo.&lt;/p&gt;
+&lt;p&gt;The idea, if you like it and the code, of course.
+I have created a library that builds on the ideas described here and you can find it on &lt;a href=&#34;https://github.com/astonbitecode/kind-of-di&#34;&gt;GitHub&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Thanks for reading!&lt;/p&gt;
 </description>

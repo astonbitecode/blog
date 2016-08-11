@@ -17,13 +17,15 @@
       <guid>https://astonbitecode.github.io/blog/post/osgijsf/</guid>
       <description>
 
+&lt;p&gt;&lt;strong&gt;Note: You may find the complete source code for this tutorial &lt;a href=&#34;https://github.com/astonbitecode/tutorial-osgi-jsf&#34;&gt;here&lt;/a&gt;.&lt;/strong&gt;&lt;/p&gt;
+
 &lt;p&gt;Combining the modularity offered by OSGi with the EE technologies may result to powerful, scalable and maintainable applications.&lt;/p&gt;
 
 &lt;p&gt;Eclipse Virgo bridges OSGi and JEE worlds and provides a “completely module-based Java application server”.&lt;/p&gt;
 
 &lt;p&gt;Even if the Virgo documentation provides detailed explanations, it seemed difficult to find tutorials that are functional and build up to a JEE Web application that is powered by OSGi bundles and services.&lt;/p&gt;
 
-&lt;p&gt;In this tutorial, I will try to provide the pieces to build a JSF – Richfaces – Spring application that makes use of OSGi services over Blueprint.&lt;/p&gt;
+&lt;p&gt;In this tutorial, I will try to provide the pieces to build a &lt;strong&gt;JSF – Richfaces – Spring&lt;/strong&gt; application that makes use of OSGi services over Blueprint.&lt;/p&gt;
 
 &lt;p&gt;It is considered that the reader has the knowledge of Maven, OSGi, Spring and JSF.&lt;/p&gt;
 
@@ -432,11 +434,11 @@ However, it can be a design decision to keep some library embedded into a bundle
 &lt;p&gt;&lt;code&gt;$VIRGO_ROOT_DIR/repository/ext/org.eclipse.virgo.web.properties&lt;/code&gt;&lt;/p&gt;
 
 &lt;p&gt;and change the WABHeaders property to “defaulted”.
-For more information see here and here.&lt;/p&gt;
+For more information see &lt;a href=&#34;http://www.eclipse.org/virgo/documentation/virgo-documentation-3.6.3.RELEASE/docs/virgo-user-guide/html/ch13s08.html&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;http://www.eclipse.org/virgo/documentation/virgo-documentation-3.6.3.RELEASE/docs/virgo-programmer-guide/html/ch04s07.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;As mentioned earlier, we will install the JSF library as a bundle inside the OSGi repository. In order to do this, we will need to copy the javax.faces-2.1.2.jar in the directory $VIRGO_ROOT_DIR/repository/usr. You can download the jar from the maven central.&lt;/p&gt;
+&lt;p&gt;As mentioned earlier, we will install the JSF library as a bundle inside the OSGi repository. In order to do this, we will need to copy the javax.faces-2.1.2.jar in the directory &lt;code&gt;$VIRGO_ROOT_DIR/repository/usr&lt;/code&gt;. You can download the jar from the &lt;a href=&#34;search.maven.org/remotecontent?filepath=org/glassfish/javax.faces/2.1.2/javax.faces-2.1.2.jar&#34;&gt;maven central&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;Next, start the virgo server by browsing into the $VIRGO_ROOT_DIR/bin with a terminal and run the startup script. Once Virgo is up, copy the serviceProvider-0.0.1-SNAPSHOT.jar file in the directory  $VIRGO_ROOT_DIR/pickup. Virgo will automatically install the bundle and you should see something like this in the terminal:&lt;/p&gt;
+&lt;p&gt;Next, start the virgo server by browsing into the &lt;code&gt;$VIRGO_ROOT_DIR/bin&lt;/code&gt; with a terminal and run the startup script. Once Virgo is up, copy the &lt;strong&gt;serviceProvider-0.0.1-SNAPSHOT.jar&lt;/strong&gt; file in the directory  &lt;code&gt;$VIRGO_ROOT_DIR/pickup&lt;/code&gt;. Virgo will automatically install the bundle and you should see something like this in the terminal:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;fs-watcher        &amp;lt;HD0001I&amp;gt; Hot deployer processing &#39;CREATED&#39; event for file &#39;serviceProvider-0.0.1-SNAPSHOT.jar&#39;.
 fs-watcher        &amp;lt;DE0000I&amp;gt; Installing bundle &#39;serviceProvider&#39; version &#39;0.0.1.SNAPSHOT&#39;.
@@ -445,7 +447,7 @@ fs-watcher        &amp;lt;DE0004I&amp;gt; Starting bundle &#39;serviceProvider&#
 start-signalling-2           &amp;lt;DE0005I&amp;gt; Started bundle &#39;serviceProvider&#39; version &#39;0.0.1.SNAPSHOT&#39;.
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;After the serviceProvider is started, copy the wabConsumer-0.0.1-SNAPSHOT.war in $VIRGO_ROOT_DIR/pickup. The output in the terminal should look like this:&lt;/p&gt;
+&lt;p&gt;After the serviceProvider is started, copy the &lt;strong&gt;wabConsumer-0.0.1-SNAPSHOT.war&lt;/strong&gt; in &lt;code&gt;$VIRGO_ROOT_DIR/pickup&lt;/code&gt;. The output in the terminal should look like this:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;fs-watcher      &amp;lt;HD0001I&amp;gt; Hot deployer processing &#39;CREATED&#39; event for file &#39;wabConsumer-0.0.1-SNAPSHOT.war&#39;.
 fs-watcher      &amp;lt;DE0000I&amp;gt; Installing bundle &#39;wabConsumer&#39; version &#39;0.0.1.SNAPSHOT&#39;.
