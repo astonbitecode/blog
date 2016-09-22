@@ -6,8 +6,128 @@
     <description>Recent content in Posts on Aston&#39;s Programming Thoughts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 04 Oct 2015 08:05:58 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 20 Sep 2016 06:10:10 +0000</lastBuildDate>
     <atom:link href="https://astonbitecode.github.io/blog/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Akka: To ask, or not to ask?</title>
+      <link>https://astonbitecode.github.io/blog/post/bang-not-ask/</link>
+      <pubDate>Tue, 20 Sep 2016 06:10:10 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/post/bang-not-ask/</guid>
+      <description>
+
+&lt;p&gt;There are times that &lt;a href=&#34;http://akka.io/&#34;&gt;Akka&lt;/a&gt; Actors need to contact some other Actor, get the response and then continue their processing.&lt;/p&gt;
+
+&lt;p&gt;It is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don&amp;rsquo;t have access to others&amp;rsquo; code.&lt;/p&gt;
+
+&lt;p&gt;So, how this can be achieved in an efficient way, taking into consideration the inherent asynchronous nature of the Akka Actors?&lt;/p&gt;
+
+&lt;p&gt;How someone can implement an &lt;em&gt;Actor A&lt;/em&gt; that at some point it needs to contact some &lt;em&gt;Actor B&lt;/em&gt; and then use this response to continue its processing?&lt;/p&gt;
+
+&lt;h2 id=&#34;possible-solutions&#34;&gt;Possible solutions&lt;/h2&gt;
+
+&lt;p&gt;The &lt;a href=&#34;http://doc.akka.io/docs/akka/current/scala/actors.html#Send_messages&#34;&gt;Akka Documentation mentions that Actors can be contacted with three ways&lt;/a&gt;: using &lt;strong&gt;ask&lt;/strong&gt;, &lt;strong&gt;tell&lt;/strong&gt;, and &lt;strong&gt;forward&lt;/strong&gt;. Since &lt;em&gt;forward&lt;/em&gt; is a kind of &lt;em&gt;tell&lt;/em&gt; in a way that both of them are acting like &lt;em&gt;fire and forget&lt;/em&gt;, this leaves us only with &lt;em&gt;ask&lt;/em&gt; and &lt;em&gt;tell&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;ask&#34;&gt;Ask&lt;/h3&gt;
+
+&lt;p&gt;Using &lt;code&gt;ask&lt;/code&gt; is generally discouraged.&lt;/p&gt;
+
+&lt;p&gt;The main reason is because of performance implications. Each ask operation involves creating an internal Actor that:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;handles the expected response and&lt;/li&gt;
+&lt;li&gt;sets/handles possible timeout to make sure that the resources are freed in the case that the awaited response never comes, or comes late&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Additionally, there are implementation difficulties that may end-up with &lt;a href=&#34;http://stackoverflow.com/questions/16898131/sender-inside-a-future&#34;&gt;closing-over the Actors state&lt;/a&gt; etc.&lt;/p&gt;
+
+&lt;h3 id=&#34;tell&#34;&gt;Tell&lt;/h3&gt;
+
+&lt;p&gt;Using &lt;code&gt;tell&lt;/code&gt; seems like the correct way to go, as it doesn&amp;rsquo;t imply creating additional resources.&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip;Or does it?&lt;/p&gt;
+
+&lt;p&gt;At least for the case that we are talking about, we need to somehow:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;capture the context&lt;/em&gt; for each message that we handle&lt;/li&gt;
+&lt;li&gt;Contact some other Actor&lt;/li&gt;
+&lt;li&gt;Receive response from the other Actor and match it with the initial request (the &lt;em&gt;captured context&lt;/em&gt;)&lt;/li&gt;
+&lt;li&gt;Continue processing using the &lt;em&gt;captured context&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We can achieve all the above using the &lt;a href=&#34;https://github.com/jamie-allen/effective_akka/blob/master/src/main/scala/org/jamieallen/effectiveakka/pattern/cameo/Cameo.scala&#34;&gt;Cameo Pattern&lt;/a&gt;, as described in Jamie Allen&amp;rsquo;s &lt;em&gt;Effective Akka&lt;/em&gt; book, but this involves implementing more code and handle more or less ourselves what &lt;code&gt;ask&lt;/code&gt; was handling alone.&lt;/p&gt;
+
+&lt;h2 id=&#34;second-thoughts&#34;&gt;Second thoughts&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://groups.google.com/forum/#!searchin/akka-user/ask$20performance|sort:relevance/akka-user/A4ee5YjTYKU/qYCKP98vqyoJ&#34;&gt;Ronald Kuhn (previous lead of the Akka project), notes&lt;/a&gt; that the price to pay when using &lt;code&gt;ask&lt;/code&gt; is not zero, &lt;em&gt;but it is very close to it&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;This &lt;em&gt;close-to-zero-price&lt;/em&gt; can be acceptable per case. However, someone may choose to go by-the-book and choose using &lt;code&gt;tell&lt;/code&gt;s.&lt;/p&gt;
+
+&lt;p&gt;Does just using &lt;code&gt;tell&lt;/code&gt; instead of &lt;code&gt;ask&lt;/code&gt; worth it? The &lt;em&gt;Cameo Pattern&lt;/em&gt; implies the creation of an additional Actor for each and every message processed. Can this lead to worse performance instead of just using &lt;code&gt;ask&lt;/code&gt;? And if so, can we do something about it?&lt;/p&gt;
+
+&lt;h2 id=&#34;investigating&#34;&gt;Investigating&lt;/h2&gt;
+
+&lt;h3 id=&#34;use-case&#34;&gt;Use Case&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;rsquo;s assume that we have to implement an Actor which:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Receives text messages written in English&lt;/li&gt;
+&lt;li&gt;Sends each message to a bunch of Translating Actors, each one being responsible for translating from English to a specific language (French, Spanish, German)&lt;/li&gt;
+&lt;li&gt;Gathers the translations&lt;/li&gt;
+&lt;li&gt;Does some post-translation process&lt;/li&gt;
+&lt;li&gt;Replies to the initial sender&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&#34;sequence.png&#34; alt=&#34;sequence&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;implementation&#34;&gt;Implementation&lt;/h3&gt;
+
+&lt;p&gt;We will implement the above requirements in 3 ways:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Using &lt;code&gt;ask&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;With the Cameo pattern, creating one Handler per received message.&lt;/li&gt;
+&lt;li&gt;With the Cameo pattern, but instead of creating one handler per message, create a &lt;a href=&#34;http://doc.akka.io/docs/akka/2.4.10/scala/routing.html&#34;&gt;routed Handler&lt;/a&gt; once and contact this instead.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;testing&#34;&gt;Testing&lt;/h3&gt;
+
+&lt;p&gt;Each implementation will be tested by measuring the time needed to handle 1000000 concurrent English translation messages.&lt;/p&gt;
+
+&lt;p&gt;The results that we will get &lt;strong&gt;should not be treated as absolute numbers&lt;/strong&gt;, since the absolute timing depends on the machine that the test runs on.&lt;/p&gt;
+
+&lt;p&gt;However, by focusing on the &lt;em&gt;differences of the results&lt;/em&gt;, we may infer useful findings.&lt;/p&gt;
+
+&lt;p&gt;You can find the code &lt;a href=&#34;https://gist.github.com/astonbitecode/efb7f4ae508edb003fbdf0574a7c9089&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Please note that each test case was executed separately. The fact that everything is gathered as one unit-test, is for readability reasons.&lt;/p&gt;
+
+&lt;h3 id=&#34;results&#34;&gt;Results&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&#34;chart.png&#34; alt=&#34;chart.png&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The results show that the implementation that performs best is the Cameo using a routed handler (#3).&lt;/p&gt;
+
+&lt;p&gt;Next, was the implementation with the &lt;code&gt;ask&lt;/code&gt; and the pure Cameo was the worst performer.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ask&lt;/code&gt; &lt;strong&gt;does not&lt;/strong&gt; perform bad.&lt;/li&gt;
+&lt;li&gt;The creation of Actors is far slower comparing to the creation of &lt;code&gt;ask&lt;/code&gt; resources. Even if the &lt;code&gt;ask&lt;/code&gt; includes the creation of an Actor as well, this is a &lt;strong&gt;special&lt;/strong&gt; Actor, rather than a normal one&amp;hellip;&lt;/li&gt;
+&lt;li&gt;Choosing the right size of Routees to act as Cameo handlers seems to be the winner because it does not imply creation of new Actors, rather than reusing the same ones.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;So, good analysis and focus on the requirements gives - once again - the best solution&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Scala: Use fold to serialize any number of Futures</title>
@@ -76,7 +196,7 @@ For example, how could someone call the addOneAndPrint function one time for eac
       <guid>https://astonbitecode.github.io/blog/post/kindofdi/</guid>
       <description>
 
-&lt;h2 id=&#34;the-problem&#34;&gt;The problem&lt;/h2&gt;
+&lt;h1 id=&#34;the-problem&#34;&gt;The problem&lt;/h1&gt;
 
 &lt;p&gt;While projects evolve, the lines of code increase and the dependencies between the classes are becoming more and more complicated. With the absence of some Dependency Injection (DI) framework/library, this ends up quickly in having to pass instances here and there through constructors of classes. The constructors may end up having something like 10+ arguments. To make things worse, for some cases, these arguments are not used by the logic of the classes themselves, but instead, they are just used to create subclasses!&lt;/p&gt;
 
@@ -84,22 +204,21 @@ For example, how could someone call the addOneAndPrint function one time for eac
 
 &lt;p&gt;Dependency Injection may help keeping the code (mostly) clean and can facilitate the implementation of Unit Tests. However, it is not the choice for everyone and some teams may have decided not to use any DI framework.&lt;/p&gt;
 
-&lt;h2 id=&#34;the-thought-for-a-way-out&#34;&gt;The thought for a way out&lt;/h2&gt;
+&lt;h1 id=&#34;the-thought-for-a-way-out&#34;&gt;The thought for a way out&lt;/h1&gt;
 
-&lt;p&gt;Scala is a very expressive language and it is pretty amazing how beautiful things someone can achieve when using it. We can see this everywhere: in blogs, SO and gists to name a few.
-So, maybe we could find some delicate and easy way to keep the code cleaner, even without the use of any specific DI libraries.&lt;/p&gt;
+&lt;p&gt;Scala is a very expressive language and it is pretty amazing how beautiful things someone can achieve when using it. We can see this everywhere: in blogs, SO and gists to name a few. So, maybe we could find some delicate and easy way to keep the code cleaner, even without the use of any specific DI libraries.&lt;/p&gt;
 
-&lt;h2 id=&#34;a-kind-of-di&#34;&gt;A kind of DI&lt;/h2&gt;
+&lt;h1 id=&#34;a-kind-of-di&#34;&gt;A kind of DI&lt;/h1&gt;
 
 &lt;p&gt;As Jonas Bonér (founder and CTO of Typesafe) says in his blog: “Scala is a very rich and deep language that gives you several ways of doing DI solely based on language constructs”.&lt;/p&gt;
 
 &lt;p&gt;In the same blog, he describes a way to perform DI using the Cake Pattern. Searching around the blogs and answers/proposals, one may find out that indeed, DI in Scala can be achieved with several ways.&lt;/p&gt;
 
-&lt;p&gt;What we will try to do here, is a kind of DI using Scala-only constructs, in order to be able to create some class instance &lt;strong&gt;once&lt;/strong&gt; and &lt;em&gt;“inject”&lt;/em&gt; it wherever is needed.&lt;/p&gt;
+&lt;p&gt;What we will try to do here, is a kind of DI using Scala-only constructs, in order to be able to create some class instance once and “inject” it wherever is needed.&lt;/p&gt;
 
-&lt;h2 id=&#34;use-case-to-drive-the-solution&#34;&gt;Use case to drive the solution&lt;/h2&gt;
+&lt;h1 id=&#34;use-case-to-drive-the-solution&#34;&gt;Use case to drive the solution&lt;/h1&gt;
 
-&lt;p&gt;Let&amp;rsquo;s say that we have a class that represents a Configuration Service. This service provides a file path to its users. The service should be used by any class in our application that needs it and it may look like this:&lt;/p&gt;
+&lt;p&gt;Let’s say that we have a class that represents a Configuration Service. This service provides a file path to its users. The service should be used by any class in our application that needs it and it may look like this:&lt;/p&gt;
 
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;ConfigurationService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;filePath&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
   &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;getFilePath&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;filePath&lt;/span&gt;
@@ -107,38 +226,38 @@ So, maybe we could find some delicate and easy way to keep the code cleaner, eve
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;h2 id=&#34;who-will-instantiate-the-service&#34;&gt;Who will instantiate the service?&lt;/h2&gt;
+&lt;h1 id=&#34;who-will-instantiate-the-service&#34;&gt;Who will instantiate the service?&lt;/h1&gt;
 
 &lt;p&gt;In a real DI framework, the container/framework itself should instantiate the ConfigurationService, as being dictated by some XML configuration or annotations, like in Spring.&lt;/p&gt;
 
 &lt;p&gt;In this case however, the service will be created by our code, during the startup of the application and before any class asks for it.&lt;/p&gt;
 
-&lt;h2 id=&#34;a-package-object-in-the-solution&#34;&gt;A package object in the solution&lt;/h2&gt;
+&lt;h1 id=&#34;a-package-object-in-the-solution&#34;&gt;A package object in the solution&lt;/h1&gt;
 
 &lt;p&gt;A package object is really helpful because any definition that is done inside the package object is actually member of the package itself. A package object (and a Scala object in general) can provide access to its fields and methods from anywhere in our code.&lt;/p&gt;
 
-&lt;p&gt;So, someone could think to create an object like following:
+&lt;p&gt;So, someone could think to create an object like following:&lt;/p&gt;
+
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;di&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
   &lt;span class=&#34;k&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;configurationService&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;
 &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;However, there are some things that need our attention. Firstly, we need to obey to the functional principle that dictates the use of vals instead of vars.&lt;/p&gt;
 
-&lt;p&gt;So, the service should be available to the users immutably, via a val.
-But how this can be done, since the object will be already created by the time that our application performs the initialization of the service? Well, a small hack including a lazy val and a var could do the trick:
+&lt;p&gt;So, the service should be available to the users immutably, via a val. But how this can be done, since the object will be already created by the time that our application performs the initialization of the service? Well, a small hack including a lazy val and a var could do the trick:&lt;/p&gt;
+
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;di&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
   &lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;configurationServiceVar&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;
   &lt;span class=&#34;k&#34;&gt;lazy&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;configurationService&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;configurationServiceVar&lt;/span&gt;
 &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
 
-&lt;p&gt;Now the di object offers the ConfigurationService publicly via a val. All we need now is a def that allows the mutation of the var.
-This mutation should be done early in out Application initialization, before someone asks for the val. If not, the configurationService val will be null during the lifetime of our application.&lt;/p&gt;
 
-&lt;p&gt;Let&amp;rsquo;s try to avoid that by using Options and Exceptions:&lt;/p&gt;
+&lt;p&gt;Now the di object offers the ConfigurationService publicly via a val. All we need now is a def that allows the mutation of the var. This mutation should be done early in out Application initialization, before someone asks for the val. If not, the configurationService val will be null during the lifetime of our application.&lt;/p&gt;
+
+&lt;p&gt;Let’s try to avoid that by using Options and Exceptions:&lt;/p&gt;
 
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;di&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
   &lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;configurationServiceVar&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Option&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;None&lt;/span&gt;
@@ -156,9 +275,9 @@ This mutation should be done early in out Application initialization, before som
 
 &lt;p&gt;Our lazy val will stay uninitialized until someone actually initializes it.&lt;/p&gt;
 
-&lt;h2 id=&#34;making-it-generic&#34;&gt;Making it generic&lt;/h2&gt;
+&lt;h1 id=&#34;making-it-generic&#34;&gt;Making it generic&lt;/h1&gt;
 
-&lt;p&gt;Until now, the solution handles only the ConfigurationService class. Let&amp;rsquo;s try to make it more useful, by handling more services generically:&lt;/p&gt;
+&lt;p&gt;Until now, the solution handles only the ConfigurationService class. Let’s try to make it more useful, by handling more services generically:&lt;/p&gt;
 
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;package&lt;/span&gt; &lt;span class=&#34;nn&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;di&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
   &lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;readyToInject&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;Class&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;, &lt;span class=&#34;kt&#34;&gt;Any&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;TrieMap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;empty&lt;/span&gt;
@@ -184,9 +303,9 @@ This mutation should be done early in out Application initialization, before som
 
 &lt;p&gt;We also changed the name of the initService method to inject. This is just to add a bit more “beauty”, as it will make the code easier to understand and to look familiar to us (similarly to @inject annotation).&lt;/p&gt;
 
-&lt;h2 id=&#34;how-this-kind-of-di-looks-like-to-its-users&#34;&gt;How this kind of DI looks like to its users?&lt;/h2&gt;
+&lt;h1 id=&#34;how-this-kind-of-di-looks-like-to-its-users&#34;&gt;How this kind of DI looks like to its users?&lt;/h1&gt;
 
-&lt;p&gt;Let&amp;rsquo;s create a user of the ConfigurationService, a HelpfulClass:&lt;/p&gt;
+&lt;p&gt;Let’s create a user of the ConfigurationService, a HelpfulClass:&lt;/p&gt;
 
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;HelpfulClass&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
   &lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;config&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;inject&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
@@ -198,15 +317,15 @@ This mutation should be done early in out Application initialization, before som
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;This seems simple and elegant. We expect our config val to have “injected” an instance of the ConfigurationService class, only by issuing:
+&lt;p&gt;This seems simple and elegant. We expect our config val to have “injected” an instance of the ConfigurationService class, only by issuing:&lt;/p&gt;
+
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;config&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;inject&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;ConfigurationService&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;Note:&lt;/em&gt; For this example and for the sake of simplicity, the ConfigurationService was a concrete class. However, it could also be a trait.&lt;/p&gt;
 
-&lt;p&gt;Let&amp;rsquo;s see what is the result
-We may test the result by creating a simple Main object and try to see the following:&lt;/p&gt;
+&lt;p&gt;Note: For this example and for the sake of simplicity, the ConfigurationService was a concrete class. However, it could also be a trait.&lt;/p&gt;
+
+&lt;p&gt;Let’s see what is the result We may test the result by creating a simple Main object and try to see the following:&lt;/p&gt;
 
 &lt;ol&gt;
 &lt;li&gt;We will try to use the HelpfulClass before the ConfigurationService is created in order to get the resulted exception.&lt;/li&gt;
@@ -241,31 +360,29 @@ We may test the result by creating a simple Main object and try to see the follo
 
 &lt;p&gt;Once this runs, we should see the output:&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;Configuration is not yet initialized&lt;/em&gt;
-&lt;em&gt;/my/path&lt;/em&gt;
-&lt;em&gt;Configuration is already initialized&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Configuration is not yet initialized /my/path Configuration is already initialized&lt;/p&gt;
 
-&lt;h2 id=&#34;drawbacks-and-possible-extensions&#34;&gt;Drawbacks and possible extensions&lt;/h2&gt;
+&lt;h1 id=&#34;drawbacks-and-possible-extensions&#34;&gt;Drawbacks and possible extensions&lt;/h1&gt;
 
 &lt;p&gt;The main drawback is that it is dangerous to use this kind of DI to inject values into Scala objects. In the case that someone tries to use the object before the ConfiguratioService gets initialized, the application will crash with an ExceptionInInitializerError.&lt;/p&gt;
 
-&lt;p&gt;The other thing that doesn&amp;rsquo;t allow me to call this proper DI, is that the inversion of control is not applied in a proper way. The control of the services creation is still in our own code.&lt;/p&gt;
+&lt;p&gt;The other thing that doesn’t allow me to call this proper DI, is that the inversion of control is not applied in a proper way. The control of the services creation is still in our own code.&lt;/p&gt;
 
 &lt;p&gt;One way to try to abstract away of explicitly creating the instances of services in the code, could be to create logic inside the di package object that would read some XML file and do the instantiation of services using reflection, during the startup of the Application.&lt;/p&gt;
 
 &lt;p&gt;Moreover, we could even try to create scopes and, like in Spring for example, support singleton, prototype etc!&lt;/p&gt;
 
-&lt;h2 id=&#34;what-to-takeaway&#34;&gt;What to takeaway?&lt;/h2&gt;
+&lt;h1 id=&#34;what-to-takeaway&#34;&gt;What to takeaway?&lt;/h1&gt;
 
 &lt;p&gt;The idea, if you like it and the code, of course.
-I have created a library that builds on the ideas described here and you can find it on &lt;a href=&#34;https://github.com/astonbitecode/kind-of-di&#34;&gt;GitHub&lt;/a&gt;&lt;/p&gt;
+If you are interested, I have created a library that builds on the ideas described here and you can find it on &lt;a href=&#34;https://github.com/astonbitecode/kind-of-di&#34;&gt;GitHub&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;Thanks for reading!&lt;/p&gt;
 </description>
     </item>
     
     <item>
-      <title>OSGi: Finding the way to JEE and JSF </title>
+      <title>OSGi: Finding the way to JEE and JSF</title>
       <link>https://astonbitecode.github.io/blog/post/osgijsf/</link>
       <pubDate>Thu, 05 Mar 2015 08:05:58 +0000</pubDate>
       
@@ -288,7 +405,7 @@ I have created a library that builds on the ideas described here and you can fin
 
 &lt;p&gt;We will create two bundles. The first is a simple OSGi bundle that provides a service to the framework and the second is a WAB, that consumes the service and forms a JSF web application.&lt;/p&gt;
 
-&lt;h2 id=&#34;service-provider-bundle&#34;&gt;Service Provider bundle&lt;/h2&gt;
+&lt;h1 id=&#34;service-provider-bundle&#34;&gt;Service Provider bundle&lt;/h1&gt;
 
 &lt;p&gt;Create a simple maven project and inside it the interface for the service that will be exported:&lt;/p&gt;
 
@@ -331,7 +448,7 @@ I have created a library that builds on the ideas described here and you can fin
 
 &lt;p&gt;After these, the structure of the project should look like the following:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;sp3.png&#34; alt=&#34;sp3&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;sp3.png&#34; alt=&#34;sp3.png&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;We will use maven and the maven-bundle-plugin in order to build our bundle. In order to do this, our pom.xml should contain the following plugin configuration:&lt;/p&gt;
 
@@ -380,28 +497,32 @@ Spring-Context: spring/osgi-context.xml;create-asynchrously:=true;wait-f or-depe
 Tool: Bnd-2.1.0.20130426-122213
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;wab-service-consumer&#34;&gt;WAB - Service Consumer&lt;/h2&gt;
+&lt;h1 id=&#34;wab-service-consumer&#34;&gt;WAB - Service Consumer&lt;/h1&gt;
 
 &lt;p&gt;We got the producer of the service done, so we should now continue with the bundle that will make use of the service and will contain the JSF and Richfaces implementation.&lt;/p&gt;
 
 &lt;p&gt;Our bundle this time should follow the EE way and its structure will be quite different from the serviceProvider.&lt;/p&gt;
 
-&lt;p&gt;Since we are dealing with a Dynamic Web project, let&amp;rsquo;s see how some of the contents of the web.xml should be.&lt;/p&gt;
+&lt;p&gt;Since we are dealing with a Dynamic Web project, let’s see how some of the contents of the web.xml should be.&lt;/p&gt;
 
 &lt;p&gt;The crucial elements regarding the OSGi and blueprint are the following:&lt;/p&gt;
 
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;context-param&amp;gt;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;context-param&amp;gt;&lt;/span&gt;
     &lt;span class=&#34;nt&#34;&gt;&amp;lt;param-name&amp;gt;&lt;/span&gt;contextConfigLocation&lt;span class=&#34;nt&#34;&gt;&amp;lt;/param-name&amp;gt;&lt;/span&gt;
     &lt;span class=&#34;nt&#34;&gt;&amp;lt;param-value&amp;gt;&lt;/span&gt;classpath:spring/*context.xml&lt;span class=&#34;nt&#34;&gt;&amp;lt;/param-value&amp;gt;&lt;/span&gt;
   &lt;span class=&#34;nt&#34;&gt;&amp;lt;/context-param&amp;gt;&lt;/span&gt;
  
   &lt;span class=&#34;nt&#34;&gt;&amp;lt;listener&amp;gt;&lt;/span&gt;
-    &lt;span class=&#34;nt&#34;&gt;&amp;lt;listener-class&amp;gt;&lt;/span&gt;org.springframework.web.context.ContextLoaderListener&lt;span class=&#34;nt&#34;&gt;&amp;lt;/listener-class&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;listener-class&amp;gt;&lt;/span&gt;
+      org.springframework.web.context.ContextLoaderListener
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;/listener-class&amp;gt;&lt;/span&gt;
   &lt;span class=&#34;nt&#34;&gt;&amp;lt;/listener&amp;gt;&lt;/span&gt;
  
   &lt;span class=&#34;nt&#34;&gt;&amp;lt;context-param&amp;gt;&lt;/span&gt;
     &lt;span class=&#34;nt&#34;&gt;&amp;lt;param-name&amp;gt;&lt;/span&gt;contextClass&lt;span class=&#34;nt&#34;&gt;&amp;lt;/param-name&amp;gt;&lt;/span&gt;
-    &lt;span class=&#34;nt&#34;&gt;&amp;lt;param-value&amp;gt;&lt;/span&gt;org.eclipse.virgo.web.dm.ServerOsgiBundleXmlWebApplicationContext&lt;span class=&#34;nt&#34;&gt;&amp;lt;/param-value&amp;gt;&lt;/span&gt;
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;param-value&amp;gt;&lt;/span&gt;
+      org.eclipse.virgo.web.dm.ServerOsgiBundleXmlWebApplicationContext
+    &lt;span class=&#34;nt&#34;&gt;&amp;lt;/param-value&amp;gt;&lt;/span&gt;
   &lt;span class=&#34;nt&#34;&gt;&amp;lt;/context-param&amp;gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
@@ -439,8 +560,7 @@ Tool: Bnd-2.1.0.20130426-122213
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Several libraries are needed by our project in order to use JSF and Richfaces. We decided to install the JSF as a bundle in the OSGi framework and to embed the Richfaces inside our bundle. The most correct thing to do in an OSGi environment is to have all the needed libraries installed as bundles and use their exported packages in our code. This ensures modularity and at the end of the day will  provide great help during code upgrades etc.
-However, it can be a design decision to keep some library embedded into a bundle. The maven-bundle-plugin offers this choice, using the Embed-Dependency and Embed-Transitive elements. We will use this to embed the Richfaces into our WAB – Service consumer.&lt;/p&gt;
+&lt;p&gt;Several libraries are needed by our project in order to use JSF and Richfaces. We decided to install the JSF as a bundle in the OSGi framework and to embed the Richfaces inside our bundle. The most correct thing to do in an OSGi environment is to have all the needed libraries installed as bundles and use their exported packages in our code. This ensures modularity and at the end of the day will provide great help during code upgrades etc. However, it can be a design decision to keep some library embedded into a bundle. The maven-bundle-plugin offers this choice, using the Embed-Dependency and Embed-Transitive elements. We will use this to embed the Richfaces into our WAB – Service consumer.&lt;/p&gt;
 
 &lt;p&gt;The complete pom.xml that achieves the above can be found along with the rest of the source code. However, we will show here the configuration of the maven-bundle-plugin:&lt;/p&gt;
 
@@ -556,7 +676,9 @@ However, it can be a design decision to keep some library embedded into a bundle
 &lt;p&gt;Going further with the JSF configuration, we want to be able to inject Spring beans inside JSF Managed Beans. In order to do that, we will need to add to the faces-config.xml the following:&lt;/p&gt;
 
 &lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;application&amp;gt;&lt;/span&gt;
-  &lt;span class=&#34;nt&#34;&gt;&amp;lt;el-resolver&amp;gt;&lt;/span&gt;org.springframework.web.jsf.el.SpringBeanFacesELResolver&lt;span class=&#34;nt&#34;&gt;&amp;lt;/el-resolver&amp;gt;&lt;/span&gt;
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;el-resolver&amp;gt;&lt;/span&gt;
+    org.springframework.web.jsf.el.SpringBeanFacesELResolver
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/el-resolver&amp;gt;&lt;/span&gt;
 &lt;span class=&#34;nt&#34;&gt;&amp;lt;/application&amp;gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;/p&gt;
@@ -604,9 +726,10 @@ However, it can be a design decision to keep some library embedded into a bundle
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&lt;/span&gt;
 &lt;span class=&#34;nt&#34;&gt;&amp;lt;blueprint&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;xmlns=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;http://www.osgi.org/xmlns/blueprint/v1.0.0&amp;quot;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
  
-  &lt;span class=&#34;nt&#34;&gt;&amp;lt;reference&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;myService&amp;quot;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;interface=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;org.astonbitecode.osgi.serviceProvider.service.MyService&amp;quot;&lt;/span&gt;
-      &lt;span class=&#34;na&#34;&gt;availability=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;mandatory&amp;quot;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
- 
+  &lt;span class=&#34;nt&#34;&gt;&amp;lt;reference&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;myService&amp;quot;&lt;/span&gt; 
+    &lt;span class=&#34;na&#34;&gt;interface=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;org.astonbitecode.osgi.serviceProvider.service.MyService&amp;quot;&lt;/span&gt;
+    &lt;span class=&#34;na&#34;&gt;availability=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;mandatory&amp;quot;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+
   &lt;span class=&#34;nt&#34;&gt;&amp;lt;bean&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;consumerService&amp;quot;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;class=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;org.astonbitecode.osgi.wabConsumer.service.impl.ConsumerServiceImpl&amp;quot;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
      &lt;span class=&#34;nt&#34;&gt;&amp;lt;property&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;myService&amp;quot;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;ref=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;myService&amp;quot;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
   &lt;span class=&#34;nt&#34;&gt;&amp;lt;/bean&amp;gt;&lt;/span&gt;
@@ -652,7 +775,7 @@ However, it can be a design decision to keep some library embedded into a bundle
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Now that we have everything in place, let&amp;rsquo;s create a simple XHTML page with JSF and Richfaces:&lt;/p&gt;
+&lt;p&gt;Now that we have everything in place, let’s create a simple XHTML page with JSF and Richfaces:&lt;/p&gt;
 
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;ui:composition&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;xmlns=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;http://www.w3.org/1999/xhtml&amp;quot;&lt;/span&gt;
     &lt;span class=&#34;na&#34;&gt;xmlns:h=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;http://java.sun.com/jsf/html&amp;quot;&lt;/span&gt;
@@ -678,9 +801,9 @@ However, it can be a design decision to keep some library embedded into a bundle
 
 &lt;p&gt;By now, the structure of our consumer WAB should be like the following:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;sc2.png&#34; alt=&#34;sc2&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;sc2.png&#34; alt=&#34;sc2.png&#34; /&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;virgo-server&#34;&gt;Virgo Server&lt;/h2&gt;
+&lt;h1 id=&#34;virgo-server&#34;&gt;Virgo Server&lt;/h1&gt;
 
 &lt;p&gt;Download eclipse virgo and unzip it to the directory of your choice. The version used for this tutorial was virgo for apache Tomcat 3.6.3.&lt;/p&gt;
 
@@ -688,12 +811,11 @@ However, it can be a design decision to keep some library embedded into a bundle
 
 &lt;p&gt;&lt;code&gt;$VIRGO_ROOT_DIR/repository/ext/org.eclipse.virgo.web.properties&lt;/code&gt;&lt;/p&gt;
 
-&lt;p&gt;and change the WABHeaders property to “defaulted”.
-For more information see &lt;a href=&#34;http://www.eclipse.org/virgo/documentation/virgo-documentation-3.6.3.RELEASE/docs/virgo-user-guide/html/ch13s08.html&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;http://www.eclipse.org/virgo/documentation/virgo-documentation-3.6.3.RELEASE/docs/virgo-programmer-guide/html/ch04s07.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;and change the WABHeaders property to “defaulted”. For more information see &lt;a href=&#34;http://www.eclipse.org/virgo/documentation/virgo-documentation-3.6.3.RELEASE/docs/virgo-user-guide/html/ch13s08.html&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;http://www.eclipse.org/virgo/documentation/virgo-documentation-3.6.3.RELEASE/docs/virgo-programmer-guide/html/ch04s07.html&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;As mentioned earlier, we will install the JSF library as a bundle inside the OSGi repository. In order to do this, we will need to copy the javax.faces-2.1.2.jar in the directory &lt;code&gt;$VIRGO_ROOT_DIR/repository/usr&lt;/code&gt;. You can download the jar from the &lt;a href=&#34;search.maven.org/remotecontent?filepath=org/glassfish/javax.faces/2.1.2/javax.faces-2.1.2.jar&#34;&gt;maven central&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;As mentioned earlier, we will install the JSF library as a bundle inside the OSGi repository. In order to do this, we will need to copy the javax.faces-2.1.2.jar in the directory &lt;code&gt;$VIRGO_ROOT_DIR/repository/usr&lt;/code&gt;. You can download the jar from the &lt;a href=&#34;https://astonbitecode.github.io/blog/post/osgijsf/search.maven.org/remotecontent?filepath=org/glassfish/javax.faces/2.1.2/javax.faces-2.1.2.jar&#34;&gt;maven central&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;Next, start the virgo server by browsing into the &lt;code&gt;$VIRGO_ROOT_DIR/bin&lt;/code&gt; with a terminal and run the startup script. Once Virgo is up, copy the &lt;strong&gt;serviceProvider-0.0.1-SNAPSHOT.jar&lt;/strong&gt; file in the directory  &lt;code&gt;$VIRGO_ROOT_DIR/pickup&lt;/code&gt;. Virgo will automatically install the bundle and you should see something like this in the terminal:&lt;/p&gt;
+&lt;p&gt;Next, start the virgo server by browsing into the &lt;code&gt;$VIRGO_ROOT_DIR/bin&lt;/code&gt; with a terminal and run the startup script. Once Virgo is up, copy the &lt;strong&gt;serviceProvider-0.0.1-SNAPSHOT.jar&lt;/strong&gt; file in the directory &lt;code&gt;$VIRGO_ROOT_DIR/pickup&lt;/code&gt;. Virgo will automatically install the bundle and you should see something like this in the terminal:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;fs-watcher        &amp;lt;HD0001I&amp;gt; Hot deployer processing &#39;CREATED&#39; event for file &#39;serviceProvider-0.0.1-SNAPSHOT.jar&#39;.
 fs-watcher        &amp;lt;DE0000I&amp;gt; Installing bundle &#39;serviceProvider&#39; version &#39;0.0.1.SNAPSHOT&#39;.
@@ -713,11 +835,11 @@ start-signalling-2   &amp;lt;WE0001I&amp;gt; Started web bundle &#39;wabConsumer
 start-signalling-2   &amp;lt;DE0005I&amp;gt; Started bundle &#39;wabConsumer&#39; version &#39;0.0.1.SNAPSHOT&#39;. 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;That&amp;rsquo;s it!&lt;/p&gt;
+&lt;p&gt;That’s it!&lt;/p&gt;
 
 &lt;p&gt;Browsing to the address &lt;a href=&#34;http://localhost:8080/mywab/faces/welcome.xhtml&#34;&gt;http://localhost:8080/mywab/faces/welcome.xhtml&lt;/a&gt; you should see the following page:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;Hello.png&#34; alt=&#34;Hello&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;Hello.png&#34; alt=&#34;Hello.png&#34; /&gt;&lt;/p&gt;
 </description>
     </item>
     

@@ -5,9 +5,6 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  
-    <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
-  
 
   <title>A (kind-of) Dependency Injection in Scala</title>
 
@@ -16,6 +13,9 @@
   
 
   <meta name="generator" content="Hugo 0.17-DEV" />
+  
+    <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
+  
 
   <link rel="alternate" href="https://astonbitecode.github.io/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts">
 
@@ -30,7 +30,7 @@
   <meta property="og:title" content="A (kind-of) Dependency Injection in Scala" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="/" />
-  <meta property="og:image" content="images/aston.png" />
+  <meta property="og:image" content="images/aston-avatar.png" />
   
 </head>
 
@@ -71,7 +71,7 @@
 	  <div class="avatar-img-border">
       
           <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog/">
-              <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/aston.png" alt="Aston&#39;s Programming Thoughts" />
+              <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/aston-avatar.png" alt="Aston&#39;s Programming Thoughts" />
           </a>
       
 	  </div>
@@ -119,7 +119,7 @@
       <article role="main" class="blog-post">
           
 
-<h2 id="the-problem">The problem</h2>
+<h1 id="the-problem">The problem</h1>
 
 <p>While projects evolve, the lines of code increase and the dependencies between the classes are becoming more and more complicated. With the absence of some Dependency Injection (DI) framework/library, this ends up quickly in having to pass instances here and there through constructors of classes. The constructors may end up having something like 10+ arguments. To make things worse, for some cases, these arguments are not used by the logic of the classes themselves, but instead, they are just used to create subclasses!</p>
 
@@ -127,22 +127,21 @@
 
 <p>Dependency Injection may help keeping the code (mostly) clean and can facilitate the implementation of Unit Tests. However, it is not the choice for everyone and some teams may have decided not to use any DI framework.</p>
 
-<h2 id="the-thought-for-a-way-out">The thought for a way out</h2>
+<h1 id="the-thought-for-a-way-out">The thought for a way out</h1>
 
-<p>Scala is a very expressive language and it is pretty amazing how beautiful things someone can achieve when using it. We can see this everywhere: in blogs, SO and gists to name a few.
-So, maybe we could find some delicate and easy way to keep the code cleaner, even without the use of any specific DI libraries.</p>
+<p>Scala is a very expressive language and it is pretty amazing how beautiful things someone can achieve when using it. We can see this everywhere: in blogs, SO and gists to name a few. So, maybe we could find some delicate and easy way to keep the code cleaner, even without the use of any specific DI libraries.</p>
 
-<h2 id="a-kind-of-di">A kind of DI</h2>
+<h1 id="a-kind-of-di">A kind of DI</h1>
 
 <p>As Jonas Bonér (founder and CTO of Typesafe) says in his blog: “Scala is a very rich and deep language that gives you several ways of doing DI solely based on language constructs”.</p>
 
 <p>In the same blog, he describes a way to perform DI using the Cake Pattern. Searching around the blogs and answers/proposals, one may find out that indeed, DI in Scala can be achieved with several ways.</p>
 
-<p>What we will try to do here, is a kind of DI using Scala-only constructs, in order to be able to create some class instance <strong>once</strong> and <em>“inject”</em> it wherever is needed.</p>
+<p>What we will try to do here, is a kind of DI using Scala-only constructs, in order to be able to create some class instance once and “inject” it wherever is needed.</p>
 
-<h2 id="use-case-to-drive-the-solution">Use case to drive the solution</h2>
+<h1 id="use-case-to-drive-the-solution">Use case to drive the solution</h1>
 
-<p>Let&rsquo;s say that we have a class that represents a Configuration Service. This service provides a file path to its users. The service should be used by any class in our application that needs it and it may look like this:</p>
+<p>Let’s say that we have a class that represents a Configuration Service. This service provides a file path to its users. The service should be used by any class in our application that needs it and it may look like this:</p>
 
 <div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">class</span> <span class="nc">ConfigurationService</span><span class="o">(</span><span class="n">filePath</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">getFilePath</span><span class="o">()</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="n">filePath</span>
@@ -150,38 +149,38 @@ So, maybe we could find some delicate and easy way to keep the code cleaner, eve
 </code></pre></div>
 
 
-<h2 id="who-will-instantiate-the-service">Who will instantiate the service?</h2>
+<h1 id="who-will-instantiate-the-service">Who will instantiate the service?</h1>
 
 <p>In a real DI framework, the container/framework itself should instantiate the ConfigurationService, as being dictated by some XML configuration or annotations, like in Spring.</p>
 
 <p>In this case however, the service will be created by our code, during the startup of the application and before any class asks for it.</p>
 
-<h2 id="a-package-object-in-the-solution">A package object in the solution</h2>
+<h1 id="a-package-object-in-the-solution">A package object in the solution</h1>
 
 <p>A package object is really helpful because any definition that is done inside the package object is actually member of the package itself. A package object (and a Scala object in general) can provide access to its fields and methods from anywhere in our code.</p>
 
-<p>So, someone could think to create an object like following:
+<p>So, someone could think to create an object like following:</p>
+
 <div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">package</span> <span class="nn">object</span> <span class="n">di</span> <span class="o">{</span>
   <span class="k">var</span> <span class="n">configurationService</span><span class="k">:</span> <span class="kt">ConfigurationService</span> <span class="o">=</span> <span class="k">_</span>
 <span class="o">}</span>
 </code></pre></div>
-</p>
+
 
 <p>However, there are some things that need our attention. Firstly, we need to obey to the functional principle that dictates the use of vals instead of vars.</p>
 
-<p>So, the service should be available to the users immutably, via a val.
-But how this can be done, since the object will be already created by the time that our application performs the initialization of the service? Well, a small hack including a lazy val and a var could do the trick:
+<p>So, the service should be available to the users immutably, via a val. But how this can be done, since the object will be already created by the time that our application performs the initialization of the service? Well, a small hack including a lazy val and a var could do the trick:</p>
+
 <div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">package</span> <span class="nn">object</span> <span class="n">di</span> <span class="o">{</span>
   <span class="k">private</span> <span class="k">var</span> <span class="n">configurationServiceVar</span><span class="k">:</span> <span class="kt">ConfigurationService</span> <span class="o">=</span> <span class="k">_</span>
   <span class="k">lazy</span> <span class="k">val</span> <span class="n">configurationService</span><span class="k">:</span> <span class="kt">ConfigurationService</span> <span class="o">=</span> <span class="n">configurationServiceVar</span>
 <span class="o">}</span>
 </code></pre></div>
-</p>
 
-<p>Now the di object offers the ConfigurationService publicly via a val. All we need now is a def that allows the mutation of the var.
-This mutation should be done early in out Application initialization, before someone asks for the val. If not, the configurationService val will be null during the lifetime of our application.</p>
 
-<p>Let&rsquo;s try to avoid that by using Options and Exceptions:</p>
+<p>Now the di object offers the ConfigurationService publicly via a val. All we need now is a def that allows the mutation of the var. This mutation should be done early in out Application initialization, before someone asks for the val. If not, the configurationService val will be null during the lifetime of our application.</p>
+
+<p>Let’s try to avoid that by using Options and Exceptions:</p>
 
 <div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">package</span> <span class="nn">object</span> <span class="n">di</span> <span class="o">{</span>
   <span class="k">private</span> <span class="k">var</span> <span class="n">configurationServiceVar</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">ConfigurationService</span><span class="o">]</span> <span class="k">=</span> <span class="nc">None</span>
@@ -199,9 +198,9 @@ This mutation should be done early in out Application initialization, before som
 
 <p>Our lazy val will stay uninitialized until someone actually initializes it.</p>
 
-<h2 id="making-it-generic">Making it generic</h2>
+<h1 id="making-it-generic">Making it generic</h1>
 
-<p>Until now, the solution handles only the ConfigurationService class. Let&rsquo;s try to make it more useful, by handling more services generically:</p>
+<p>Until now, the solution handles only the ConfigurationService class. Let’s try to make it more useful, by handling more services generically:</p>
 
 <div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">package</span> <span class="nn">object</span> <span class="n">di</span> <span class="o">{</span>
   <span class="k">private</span> <span class="k">var</span> <span class="n">readyToInject</span><span class="k">:</span> <span class="kt">Map</span><span class="o">[</span><span class="kt">Class</span><span class="o">[</span><span class="k">_</span><span class="o">]</span>, <span class="kt">Any</span><span class="o">]</span> <span class="k">=</span> <span class="nc">TrieMap</span><span class="o">.</span><span class="n">empty</span>
@@ -227,9 +226,9 @@ This mutation should be done early in out Application initialization, before som
 
 <p>We also changed the name of the initService method to inject. This is just to add a bit more “beauty”, as it will make the code easier to understand and to look familiar to us (similarly to @inject annotation).</p>
 
-<h2 id="how-this-kind-of-di-looks-like-to-its-users">How this kind of DI looks like to its users?</h2>
+<h1 id="how-this-kind-of-di-looks-like-to-its-users">How this kind of DI looks like to its users?</h1>
 
-<p>Let&rsquo;s create a user of the ConfigurationService, a HelpfulClass:</p>
+<p>Let’s create a user of the ConfigurationService, a HelpfulClass:</p>
 
 <div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">class</span> <span class="nc">HelpfulClass</span> <span class="o">{</span>
   <span class="k">private</span> <span class="k">val</span> <span class="n">config</span> <span class="k">=</span> <span class="n">inject</span><span class="o">[</span><span class="kt">ConfigurationService</span><span class="o">]</span>
@@ -241,15 +240,15 @@ This mutation should be done early in out Application initialization, before som
 </code></pre></div>
 
 
-<p>This seems simple and elegant. We expect our config val to have “injected” an instance of the ConfigurationService class, only by issuing:
+<p>This seems simple and elegant. We expect our config val to have “injected” an instance of the ConfigurationService class, only by issuing:</p>
+
 <div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">private</span> <span class="k">val</span> <span class="n">config</span> <span class="k">=</span> <span class="n">inject</span><span class="o">[</span><span class="kt">ConfigurationService</span><span class="o">]</span>
 </code></pre></div>
-</p>
 
-<p><em>Note:</em> For this example and for the sake of simplicity, the ConfigurationService was a concrete class. However, it could also be a trait.</p>
 
-<p>Let&rsquo;s see what is the result
-We may test the result by creating a simple Main object and try to see the following:</p>
+<p>Note: For this example and for the sake of simplicity, the ConfigurationService was a concrete class. However, it could also be a trait.</p>
+
+<p>Let’s see what is the result We may test the result by creating a simple Main object and try to see the following:</p>
 
 <ol>
 <li>We will try to use the HelpfulClass before the ConfigurationService is created in order to get the resulted exception.</li>
@@ -284,24 +283,22 @@ We may test the result by creating a simple Main object and try to see the follo
 
 <p>Once this runs, we should see the output:</p>
 
-<p><em>Configuration is not yet initialized</em>
-<em>/my/path</em>
-<em>Configuration is already initialized</em></p>
+<p>Configuration is not yet initialized /my/path Configuration is already initialized</p>
 
-<h2 id="drawbacks-and-possible-extensions">Drawbacks and possible extensions</h2>
+<h1 id="drawbacks-and-possible-extensions">Drawbacks and possible extensions</h1>
 
 <p>The main drawback is that it is dangerous to use this kind of DI to inject values into Scala objects. In the case that someone tries to use the object before the ConfiguratioService gets initialized, the application will crash with an ExceptionInInitializerError.</p>
 
-<p>The other thing that doesn&rsquo;t allow me to call this proper DI, is that the inversion of control is not applied in a proper way. The control of the services creation is still in our own code.</p>
+<p>The other thing that doesn’t allow me to call this proper DI, is that the inversion of control is not applied in a proper way. The control of the services creation is still in our own code.</p>
 
 <p>One way to try to abstract away of explicitly creating the instances of services in the code, could be to create logic inside the di package object that would read some XML file and do the instantiation of services using reflection, during the startup of the Application.</p>
 
 <p>Moreover, we could even try to create scopes and, like in Spring for example, support singleton, prototype etc!</p>
 
-<h2 id="what-to-takeaway">What to takeaway?</h2>
+<h1 id="what-to-takeaway">What to takeaway?</h1>
 
 <p>The idea, if you like it and the code, of course.
-I have created a library that builds on the ideas described here and you can find it on <a href="https://github.com/astonbitecode/kind-of-di">GitHub</a></p>
+If you are interested, I have created a library that builds on the ideas described here and you can find it on <a href="https://github.com/astonbitecode/kind-of-di">GitHub</a></p>
 
 <p>Thanks for reading!</p>
 
@@ -310,7 +307,7 @@ I have created a library that builds on the ideas described here and you can fin
       <ul class="pager blog-pager">
         
         <li class="previous">
-          <a href="https://astonbitecode.github.io/blog/post/osgijsf/" data-toggle="tooltip" data-placement="top" title="OSGi: Finding the way to JEE and JSF ">&larr; Previous Post</a>
+          <a href="https://astonbitecode.github.io/blog/post/osgijsf/" data-toggle="tooltip" data-placement="top" title="OSGi: Finding the way to JEE and JSF">&larr; Previous Post</a>
         </li>
         
         

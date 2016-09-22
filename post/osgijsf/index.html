@@ -5,17 +5,17 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  
-    <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
-  
 
-  <title>OSGi: Finding the way to JEE and JSF </title>
+  <title>OSGi: Finding the way to JEE and JSF</title>
 
   <meta name="author" content="Aston" />
   
   
 
   <meta name="generator" content="Hugo 0.17-DEV" />
+  
+    <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
+  
 
   <link rel="alternate" href="https://astonbitecode.github.io/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts">
 
@@ -27,10 +27,10 @@
   <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/pygment_highlights.css" />
   
   
-  <meta property="og:title" content="OSGi: Finding the way to JEE and JSF " />
+  <meta property="og:title" content="OSGi: Finding the way to JEE and JSF" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="/" />
-  <meta property="og:image" content="images/aston.png" />
+  <meta property="og:image" content="images/aston-avatar.png" />
   
 </head>
 
@@ -71,7 +71,7 @@
 	  <div class="avatar-img-border">
       
           <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog/">
-              <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/aston.png" alt="Aston&#39;s Programming Thoughts" />
+              <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/aston-avatar.png" alt="Aston&#39;s Programming Thoughts" />
           </a>
       
 	  </div>
@@ -97,7 +97,7 @@
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <div class="post-heading">
-          <h1>OSGi: Finding the way to JEE and JSF </h1>
+          <h1>OSGi: Finding the way to JEE and JSF</h1>
       
       
       
@@ -135,7 +135,7 @@
 
 <p>We will create two bundles. The first is a simple OSGi bundle that provides a service to the framework and the second is a WAB, that consumes the service and forms a JSF web application.</p>
 
-<h2 id="service-provider-bundle">Service Provider bundle</h2>
+<h1 id="service-provider-bundle">Service Provider bundle</h1>
 
 <p>Create a simple maven project and inside it the interface for the service that will be exported:</p>
 
@@ -178,7 +178,7 @@
 
 <p>After these, the structure of the project should look like the following:</p>
 
-<p><img src="sp3.png" alt="sp3" /></p>
+<p><img src="sp3.png" alt="sp3.png" /></p>
 
 <p>We will use maven and the maven-bundle-plugin in order to build our bundle. In order to do this, our pom.xml should contain the following plugin configuration:</p>
 
@@ -227,28 +227,32 @@ Spring-Context: spring/osgi-context.xml;create-asynchrously:=true;wait-f or-depe
 Tool: Bnd-2.1.0.20130426-122213
 </code></pre>
 
-<h2 id="wab-service-consumer">WAB - Service Consumer</h2>
+<h1 id="wab-service-consumer">WAB - Service Consumer</h1>
 
 <p>We got the producer of the service done, so we should now continue with the bundle that will make use of the service and will contain the JSF and Richfaces implementation.</p>
 
 <p>Our bundle this time should follow the EE way and its structure will be quite different from the serviceProvider.</p>
 
-<p>Since we are dealing with a Dynamic Web project, let&rsquo;s see how some of the contents of the web.xml should be.</p>
+<p>Since we are dealing with a Dynamic Web project, let’s see how some of the contents of the web.xml should be.</p>
 
 <p>The crucial elements regarding the OSGi and blueprint are the following:</p>
 
-<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span>  <span class="nt">&lt;context-param&gt;</span>
+<div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="nt">&lt;context-param&gt;</span>
     <span class="nt">&lt;param-name&gt;</span>contextConfigLocation<span class="nt">&lt;/param-name&gt;</span>
     <span class="nt">&lt;param-value&gt;</span>classpath:spring/*context.xml<span class="nt">&lt;/param-value&gt;</span>
   <span class="nt">&lt;/context-param&gt;</span>
  
   <span class="nt">&lt;listener&gt;</span>
-    <span class="nt">&lt;listener-class&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="nt">&lt;/listener-class&gt;</span>
+    <span class="nt">&lt;listener-class&gt;</span>
+      org.springframework.web.context.ContextLoaderListener
+    <span class="nt">&lt;/listener-class&gt;</span>
   <span class="nt">&lt;/listener&gt;</span>
  
   <span class="nt">&lt;context-param&gt;</span>
     <span class="nt">&lt;param-name&gt;</span>contextClass<span class="nt">&lt;/param-name&gt;</span>
-    <span class="nt">&lt;param-value&gt;</span>org.eclipse.virgo.web.dm.ServerOsgiBundleXmlWebApplicationContext<span class="nt">&lt;/param-value&gt;</span>
+    <span class="nt">&lt;param-value&gt;</span>
+      org.eclipse.virgo.web.dm.ServerOsgiBundleXmlWebApplicationContext
+    <span class="nt">&lt;/param-value&gt;</span>
   <span class="nt">&lt;/context-param&gt;</span>
 </code></pre></div>
 
@@ -286,8 +290,7 @@ Tool: Bnd-2.1.0.20130426-122213
 </code></pre></div>
 
 
-<p>Several libraries are needed by our project in order to use JSF and Richfaces. We decided to install the JSF as a bundle in the OSGi framework and to embed the Richfaces inside our bundle. The most correct thing to do in an OSGi environment is to have all the needed libraries installed as bundles and use their exported packages in our code. This ensures modularity and at the end of the day will  provide great help during code upgrades etc.
-However, it can be a design decision to keep some library embedded into a bundle. The maven-bundle-plugin offers this choice, using the Embed-Dependency and Embed-Transitive elements. We will use this to embed the Richfaces into our WAB – Service consumer.</p>
+<p>Several libraries are needed by our project in order to use JSF and Richfaces. We decided to install the JSF as a bundle in the OSGi framework and to embed the Richfaces inside our bundle. The most correct thing to do in an OSGi environment is to have all the needed libraries installed as bundles and use their exported packages in our code. This ensures modularity and at the end of the day will provide great help during code upgrades etc. However, it can be a design decision to keep some library embedded into a bundle. The maven-bundle-plugin offers this choice, using the Embed-Dependency and Embed-Transitive elements. We will use this to embed the Richfaces into our WAB – Service consumer.</p>
 
 <p>The complete pom.xml that achieves the above can be found along with the rest of the source code. However, we will show here the configuration of the maven-bundle-plugin:</p>
 
@@ -403,7 +406,9 @@ However, it can be a design decision to keep some library embedded into a bundle
 <p>Going further with the JSF configuration, we want to be able to inject Spring beans inside JSF Managed Beans. In order to do that, we will need to add to the faces-config.xml the following:</p>
 
 <p><div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="nt">&lt;application&gt;</span>
-  <span class="nt">&lt;el-resolver&gt;</span>org.springframework.web.jsf.el.SpringBeanFacesELResolver<span class="nt">&lt;/el-resolver&gt;</span>
+  <span class="nt">&lt;el-resolver&gt;</span>
+    org.springframework.web.jsf.el.SpringBeanFacesELResolver
+  <span class="nt">&lt;/el-resolver&gt;</span>
 <span class="nt">&lt;/application&gt;</span>
 </code></pre></div>
 </p>
@@ -451,9 +456,10 @@ However, it can be a design decision to keep some library embedded into a bundle
 <div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
 <span class="nt">&lt;blueprint</span> <span class="na">xmlns=</span><span class="s">&quot;http://www.osgi.org/xmlns/blueprint/v1.0.0&quot;</span><span class="nt">&gt;</span>
  
-  <span class="nt">&lt;reference</span> <span class="na">id=</span><span class="s">&quot;myService&quot;</span> <span class="na">interface=</span><span class="s">&quot;org.astonbitecode.osgi.serviceProvider.service.MyService&quot;</span>
-      <span class="na">availability=</span><span class="s">&quot;mandatory&quot;</span><span class="nt">/&gt;</span>
- 
+  <span class="nt">&lt;reference</span> <span class="na">id=</span><span class="s">&quot;myService&quot;</span> 
+    <span class="na">interface=</span><span class="s">&quot;org.astonbitecode.osgi.serviceProvider.service.MyService&quot;</span>
+    <span class="na">availability=</span><span class="s">&quot;mandatory&quot;</span><span class="nt">/&gt;</span>
+
   <span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;consumerService&quot;</span> <span class="na">class=</span><span class="s">&quot;org.astonbitecode.osgi.wabConsumer.service.impl.ConsumerServiceImpl&quot;</span><span class="nt">&gt;</span>
      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;myService&quot;</span> <span class="na">ref=</span><span class="s">&quot;myService&quot;</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;/bean&gt;</span>
@@ -499,7 +505,7 @@ However, it can be a design decision to keep some library embedded into a bundle
 </code></pre></div>
 
 
-<p>Now that we have everything in place, let&rsquo;s create a simple XHTML page with JSF and Richfaces:</p>
+<p>Now that we have everything in place, let’s create a simple XHTML page with JSF and Richfaces:</p>
 
 <div class="highlight"><pre><code class="language-xml" data-lang="xml"><span></span><span class="nt">&lt;ui:composition</span> <span class="na">xmlns=</span><span class="s">&quot;http://www.w3.org/1999/xhtml&quot;</span>
     <span class="na">xmlns:h=</span><span class="s">&quot;http://java.sun.com/jsf/html&quot;</span>
@@ -525,9 +531,9 @@ However, it can be a design decision to keep some library embedded into a bundle
 
 <p>By now, the structure of our consumer WAB should be like the following:</p>
 
-<p><img src="sc2.png" alt="sc2" /></p>
+<p><img src="sc2.png" alt="sc2.png" /></p>
 
-<h2 id="virgo-server">Virgo Server</h2>
+<h1 id="virgo-server">Virgo Server</h1>
 
 <p>Download eclipse virgo and unzip it to the directory of your choice. The version used for this tutorial was virgo for apache Tomcat 3.6.3.</p>
 
@@ -535,12 +541,11 @@ However, it can be a design decision to keep some library embedded into a bundle
 
 <p><code>$VIRGO_ROOT_DIR/repository/ext/org.eclipse.virgo.web.properties</code></p>
 
-<p>and change the WABHeaders property to “defaulted”.
-For more information see <a href="http://www.eclipse.org/virgo/documentation/virgo-documentation-3.6.3.RELEASE/docs/virgo-user-guide/html/ch13s08.html">here</a> and <a href="http://www.eclipse.org/virgo/documentation/virgo-documentation-3.6.3.RELEASE/docs/virgo-programmer-guide/html/ch04s07.html">here</a>.</p>
+<p>and change the WABHeaders property to “defaulted”. For more information see <a href="http://www.eclipse.org/virgo/documentation/virgo-documentation-3.6.3.RELEASE/docs/virgo-user-guide/html/ch13s08.html">here</a> and <a href="http://www.eclipse.org/virgo/documentation/virgo-documentation-3.6.3.RELEASE/docs/virgo-programmer-guide/html/ch04s07.html">here</a>.</p>
 
-<p>As mentioned earlier, we will install the JSF library as a bundle inside the OSGi repository. In order to do this, we will need to copy the javax.faces-2.1.2.jar in the directory <code>$VIRGO_ROOT_DIR/repository/usr</code>. You can download the jar from the <a href="search.maven.org/remotecontent?filepath=org/glassfish/javax.faces/2.1.2/javax.faces-2.1.2.jar">maven central</a>.</p>
+<p>As mentioned earlier, we will install the JSF library as a bundle inside the OSGi repository. In order to do this, we will need to copy the javax.faces-2.1.2.jar in the directory <code>$VIRGO_ROOT_DIR/repository/usr</code>. You can download the jar from the <a href="https://astonbitecode.github.io/blog/post/osgijsf/search.maven.org/remotecontent?filepath=org/glassfish/javax.faces/2.1.2/javax.faces-2.1.2.jar">maven central</a>.</p>
 
-<p>Next, start the virgo server by browsing into the <code>$VIRGO_ROOT_DIR/bin</code> with a terminal and run the startup script. Once Virgo is up, copy the <strong>serviceProvider-0.0.1-SNAPSHOT.jar</strong> file in the directory  <code>$VIRGO_ROOT_DIR/pickup</code>. Virgo will automatically install the bundle and you should see something like this in the terminal:</p>
+<p>Next, start the virgo server by browsing into the <code>$VIRGO_ROOT_DIR/bin</code> with a terminal and run the startup script. Once Virgo is up, copy the <strong>serviceProvider-0.0.1-SNAPSHOT.jar</strong> file in the directory <code>$VIRGO_ROOT_DIR/pickup</code>. Virgo will automatically install the bundle and you should see something like this in the terminal:</p>
 
 <pre><code>fs-watcher        &lt;HD0001I&gt; Hot deployer processing 'CREATED' event for file 'serviceProvider-0.0.1-SNAPSHOT.jar'.
 fs-watcher        &lt;DE0000I&gt; Installing bundle 'serviceProvider' version '0.0.1.SNAPSHOT'.
@@ -560,11 +565,11 @@ start-signalling-2   &lt;WE0001I&gt; Started web bundle 'wabConsumer' version '0
 start-signalling-2   &lt;DE0005I&gt; Started bundle 'wabConsumer' version '0.0.1.SNAPSHOT'. 
 </code></pre>
 
-<p>That&rsquo;s it!</p>
+<p>That’s it!</p>
 
 <p>Browsing to the address <a href="http://localhost:8080/mywab/faces/welcome.xhtml">http://localhost:8080/mywab/faces/welcome.xhtml</a> you should see the following page:</p>
 
-<p><img src="Hello.png" alt="Hello" /></p>
+<p><img src="Hello.png" alt="Hello.png" /></p>
 
       </article>
 
