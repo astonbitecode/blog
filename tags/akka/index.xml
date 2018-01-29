@@ -7,7 +7,9 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 20 Sep 2016 06:10:10 +0000</lastBuildDate>
-    <atom:link href="https://astonbitecode.github.io/blog/tags/akka/index.xml" rel="self" type="application/rss+xml" />
+    
+	<atom:link href="https://astonbitecode.github.io/blog/tags/akka/index.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Akka: To ask, or not to ask?</title>
@@ -15,118 +17,8 @@
       <pubDate>Tue, 20 Sep 2016 06:10:10 +0000</pubDate>
       
       <guid>https://astonbitecode.github.io/blog/post/bang-not-ask/</guid>
-      <description>
-
-&lt;p&gt;There are times that &lt;a href=&#34;http://akka.io/&#34;&gt;Akka&lt;/a&gt; Actors need to contact some other Actor, get the response and then continue their processing.&lt;/p&gt;
-
-&lt;p&gt;It is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don&amp;rsquo;t have access to others&amp;rsquo; code.&lt;/p&gt;
-
-&lt;p&gt;So, how this can be achieved in an efficient way, taking into consideration the inherent asynchronous nature of the Akka Actors?&lt;/p&gt;
-
-&lt;p&gt;How someone can implement an &lt;em&gt;Actor A&lt;/em&gt; that at some point it needs to contact some &lt;em&gt;Actor B&lt;/em&gt; and then use this response to continue its processing?&lt;/p&gt;
-
-&lt;h2 id=&#34;possible-solutions&#34;&gt;Possible solutions&lt;/h2&gt;
-
-&lt;p&gt;The &lt;a href=&#34;http://doc.akka.io/docs/akka/current/scala/actors.html#Send_messages&#34;&gt;Akka Documentation mentions that Actors can be contacted with three ways&lt;/a&gt;: using &lt;strong&gt;ask&lt;/strong&gt;, &lt;strong&gt;tell&lt;/strong&gt;, and &lt;strong&gt;forward&lt;/strong&gt;. Since &lt;em&gt;forward&lt;/em&gt; is a kind of &lt;em&gt;tell&lt;/em&gt; in a way that both of them are acting like &lt;em&gt;fire and forget&lt;/em&gt;, this leaves us only with &lt;em&gt;ask&lt;/em&gt; and &lt;em&gt;tell&lt;/em&gt;.&lt;/p&gt;
-
-&lt;h3 id=&#34;ask&#34;&gt;Ask&lt;/h3&gt;
-
-&lt;p&gt;Using &lt;code&gt;ask&lt;/code&gt; is generally discouraged.&lt;/p&gt;
-
-&lt;p&gt;The main reason is because of performance implications. Each ask operation involves creating an internal Actor that:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;handles the expected response and&lt;/li&gt;
-&lt;li&gt;sets/handles possible timeout to make sure that the resources are freed in the case that the awaited response never comes, or comes late&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Additionally, there are implementation difficulties that may end-up with &lt;a href=&#34;http://stackoverflow.com/questions/16898131/sender-inside-a-future&#34;&gt;closing-over the Actors state&lt;/a&gt; etc.&lt;/p&gt;
-
-&lt;h3 id=&#34;tell&#34;&gt;Tell&lt;/h3&gt;
-
-&lt;p&gt;Using &lt;code&gt;tell&lt;/code&gt; seems like the correct way to go, as it doesn&amp;rsquo;t imply creating additional resources.&lt;/p&gt;
-
-&lt;p&gt;&amp;hellip;Or does it?&lt;/p&gt;
-
-&lt;p&gt;At least for the case that we are talking about, we need to somehow:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;capture the context&lt;/em&gt; for each message that we handle&lt;/li&gt;
-&lt;li&gt;Contact some other Actor&lt;/li&gt;
-&lt;li&gt;Receive response from the other Actor and match it with the initial request (the &lt;em&gt;captured context&lt;/em&gt;)&lt;/li&gt;
-&lt;li&gt;Continue processing using the &lt;em&gt;captured context&lt;/em&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;We can achieve all the above using the &lt;a href=&#34;https://github.com/jamie-allen/effective_akka/blob/master/src/main/scala/org/jamieallen/effectiveakka/pattern/cameo/Cameo.scala&#34;&gt;Cameo Pattern&lt;/a&gt;, as described in Jamie Allen&amp;rsquo;s &lt;em&gt;Effective Akka&lt;/em&gt; book, but this involves implementing more code and handle more or less ourselves what &lt;code&gt;ask&lt;/code&gt; was handling alone.&lt;/p&gt;
-
-&lt;h2 id=&#34;second-thoughts&#34;&gt;Second thoughts&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://groups.google.com/forum/#!searchin/akka-user/ask$20performance|sort:relevance/akka-user/A4ee5YjTYKU/qYCKP98vqyoJ&#34;&gt;Ronald Kuhn (previous lead of the Akka project), notes&lt;/a&gt; that the price to pay when using &lt;code&gt;ask&lt;/code&gt; is not zero, &lt;em&gt;but it is very close to it&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;This &lt;em&gt;close-to-zero-price&lt;/em&gt; can be acceptable per case. However, someone may choose to go by-the-book and choose using &lt;code&gt;tell&lt;/code&gt;s.&lt;/p&gt;
-
-&lt;p&gt;Does just using &lt;code&gt;tell&lt;/code&gt; instead of &lt;code&gt;ask&lt;/code&gt; worth it? The &lt;em&gt;Cameo Pattern&lt;/em&gt; implies the creation of an additional Actor for each and every message processed. Can this lead to worse performance instead of just using &lt;code&gt;ask&lt;/code&gt;? And if so, can we do something about it?&lt;/p&gt;
-
-&lt;h2 id=&#34;investigating&#34;&gt;Investigating&lt;/h2&gt;
-
-&lt;h3 id=&#34;use-case&#34;&gt;Use Case&lt;/h3&gt;
-
-&lt;p&gt;Let&amp;rsquo;s assume that we have to implement an Actor which:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Receives text messages written in English&lt;/li&gt;
-&lt;li&gt;Sends each message to a bunch of Translating Actors, each one being responsible for translating from English to a specific language (French, Spanish, German)&lt;/li&gt;
-&lt;li&gt;Gathers the translations&lt;/li&gt;
-&lt;li&gt;Does some post-translation process&lt;/li&gt;
-&lt;li&gt;Replies to the initial sender&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;img src=&#34;sequence.png&#34; alt=&#34;sequence&#34; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;implementation&#34;&gt;Implementation&lt;/h3&gt;
-
-&lt;p&gt;We will implement the above requirements in 3 ways:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Using &lt;code&gt;ask&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;With the Cameo pattern, creating one Handler per received message.&lt;/li&gt;
-&lt;li&gt;With the Cameo pattern, but instead of creating one handler per message, create a &lt;a href=&#34;http://doc.akka.io/docs/akka/2.4.10/scala/routing.html&#34;&gt;routed Handler&lt;/a&gt; once and contact this instead.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&#34;testing&#34;&gt;Testing&lt;/h3&gt;
-
-&lt;p&gt;Each implementation will be tested by measuring the time needed to handle 1000000 concurrent English translation messages.&lt;/p&gt;
-
-&lt;p&gt;The results that we will get &lt;strong&gt;should not be treated as absolute numbers&lt;/strong&gt;, since the absolute timing depends on the machine that the test runs on.&lt;/p&gt;
-
-&lt;p&gt;However, by focusing on the &lt;em&gt;differences of the results&lt;/em&gt;, we may infer useful findings.&lt;/p&gt;
-
-&lt;p&gt;You can find the code &lt;a href=&#34;https://gist.github.com/astonbitecode/efb7f4ae508edb003fbdf0574a7c9089&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Please note that each test case was executed separately. The fact that everything is gathered as one unit-test, is for readability reasons.&lt;/p&gt;
-
-&lt;h3 id=&#34;results&#34;&gt;Results&lt;/h3&gt;
-
-&lt;p&gt;&lt;img src=&#34;chart.png&#34; alt=&#34;chart.png&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;The results show that the implementation that performs best is the Cameo using a routed handler (#3).&lt;/p&gt;
-
-&lt;p&gt;Next, was the implementation with the &lt;code&gt;ask&lt;/code&gt; and the pure Cameo was the worst performer.&lt;/p&gt;
-
-&lt;h3 id=&#34;conclusions&#34;&gt;Conclusions&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;ask&lt;/code&gt; &lt;strong&gt;does not&lt;/strong&gt; perform bad.&lt;/li&gt;
-&lt;li&gt;The creation of Actors is far slower comparing to the creation of &lt;code&gt;ask&lt;/code&gt; resources. Even if the &lt;code&gt;ask&lt;/code&gt; includes the creation of an Actor as well, this is a &lt;strong&gt;special&lt;/strong&gt; Actor, rather than a normal one&amp;hellip;&lt;/li&gt;
-&lt;li&gt;Choosing the right size of Routees to act as Cameo handlers seems to be the winner because it does not imply creation of new Actors, rather than reusing the same ones.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;So, good analysis and focus on the requirements gives - once again - the best solution&lt;/p&gt;
-
-&lt;p&gt;Thanks for reading!&lt;/p&gt;
-</description>
+      <description>There are times that Akka Actors need to contact some other Actor, get the response and then continue their processing.
+It is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don&amp;rsquo;t have access to others&amp;rsquo; code.</description>
     </item>
     
   </channel>
