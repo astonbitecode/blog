@@ -6,10 +6,21 @@
     <description>Recent content in Rust on Aston&#39;s Programming Thoughts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 28 Feb 2019 00:05:58 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 24 May 2019 00:10:10 +0000</lastBuildDate>
     
 	<atom:link href="https://astonbitecode.github.io/blog/tags/rust/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Announcing j4rs</title>
+      <link>https://astonbitecode.github.io/blog/post/j4rs_0.6.0/</link>
+      <pubDate>Fri, 24 May 2019 00:10:10 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/post/j4rs_0.6.0/</guid>
+      <description>j4rs stands for &amp;lsquo;Java for Rust&amp;rsquo; and allows effortless calls to Java code, from Rust.
+Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to implement a crate that would give the ability to its users to make calls to Java easily, so that they can benefit from the huge Java ecosystem.
+By &amp;ldquo;easily&amp;rdquo;, I basically mean:</description>
+    </item>
     
     <item>
       <title>JavaFX UI in Rust</title>
