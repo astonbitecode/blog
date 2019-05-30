@@ -8,13 +8,13 @@
   <title>Announcing j4rs</title>
   <meta property="og:title" content="Announcing j4rs" />
   <meta name="twitter:title" content="Announcing j4rs" />
-  <meta name="description" content="j4rs stands for &lsquo;Java for Rust&rsquo; and allows effortless calls to Java code, from Rust.
+  <meta name="description" content="j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.
 Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to implement a crate that would give the ability to its users to make calls to Java easily, so that they can benefit from the huge Java ecosystem.
 By &ldquo;easily&rdquo;, I basically mean:">
-  <meta property="og:description" content="j4rs stands for &lsquo;Java for Rust&rsquo; and allows effortless calls to Java code, from Rust.
+  <meta property="og:description" content="j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.
 Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to implement a crate that would give the ability to its users to make calls to Java easily, so that they can benefit from the huge Java ecosystem.
 By &ldquo;easily&rdquo;, I basically mean:">
-  <meta name="twitter:description" content="j4rs stands for &lsquo;Java for Rust&rsquo; and allows effortless calls to Java code, from Rust.
+  <meta name="twitter:description" content="j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.
 Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to …">
   <meta name="author" content="Aston"/>
   <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
@@ -194,7 +194,7 @@ ga('send', 'pageview');
       <article role="main" class="blog-post">
         
 
-<p><em>j4rs stands for &lsquo;Java for Rust&rsquo; and allows effortless calls to Java code, from Rust.</em></p>
+<p><em>j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.</em></p>
 
 <hr />
 
@@ -216,7 +216,7 @@ but it seemed that the programmer&rsquo;s intervention with the &ldquo;JNI speci
 
 <p>Many of us rust programmers <a href="https://blog.rust-lang.org/2018/11/27/Rust-survey-2018.html#rust-expertise">know how to write Java</a>, but chances are that not so many know (or are willing to deal with) the peculiarities and pitfalls of JNI.</p>
 
-<p>As always, comfort comes with some sacrifices&hellip; Hiding the JNI specifics means using reflection and possibly objects serialization; this brings some performance penalty.</p>
+<p>As always, comfort comes with some sacrifices. Hiding the JNI specifics means using reflection and possibly objects serialization. This brings some performance penalty.</p>
 
 <p><code>j4rs</code> is for those of us who are willing to pay this price.</p>
 
@@ -238,7 +238,7 @@ let jvm = JvmBuilder::new().build().unwrap();
 // Create a java.lang.String instance
 let string_instance = jvm.create_instance(
     &quot;java.lang.String&quot;,	// The Java class to create an instance for
-    &amp;[]			// The `InvocationArg`s to use for the constructor call - empty for this example
+    &amp;[]			// The InvocationArgs to use for the constructor call - empty for this example
 ).unwrap();
 
 // The instances returned from invocations and instantiations
@@ -249,7 +249,7 @@ let string_instance = jvm.create_instance(
 let boolean_instance = jvm.invoke(
     &amp;string_instance,	// The String instance created above
     &quot;isEmpty&quot;,		// The method of the String instance to invoke
-    &amp;[],		// The `InvocationArg`s to use for the invocation - empty for this example
+    &amp;[],		// The InvocationArgs to use for the invocation - empty for this example
 ).unwrap();
 
 // If we need to transform an `Instance` to Rust value,
@@ -263,10 +263,10 @@ println!(&quot;The isEmpty() method of the java.lang.String instance returned {}
 
 <h1 id="deploy-maven-artifacts">Deploy <code>Maven</code> artifacts</h1>
 
-<p>JRE-included classes are not enough. We always need to call other Java libraries in order to implement something useful&hellip;
+<p>JRE-included classes are not enough. We always need to call other Java libraries in order to implement something useful.
 The <em>Maven Central</em> contains all the libraries that we would ever need.</p>
 
-<p>With <code>j4rs</code>, we can download and deploy maven artifacts in order to be used by our Rust application. Here is for example how we could deploy the Apache <a href="https://search.maven.org/artifact/org.apache.commons/commons-lang3/3.9/jar">commons-lang</a>:</p>
+<p>With <code>j4rs</code>, we can download and deploy maven artifacts in order to use them in our Rust application. Here is an example how we could deploy the Apache <a href="https://search.maven.org/artifact/org.apache.commons/commons-lang3/3.9/jar">commons-lang</a>:</p>
 
 <pre><code class="language-rust">// Create a JVM
 let jvm = JvmBuilder::new().build().unwrap();
@@ -285,7 +285,7 @@ This ensures that the classpath is properly populated during the actual Rust cod
 
 <h1 id="use-the-deployed-artifact">Use the deployed artifact</h1>
 
-<p>Let&rsquo;s now use the maven artifact from above in order to print the user&rsquo;s <code>$HOME</code> directory:</p>
+<p>Let&rsquo;s now use the aforementioned maven artifact in order to print the user&rsquo;s <code>$HOME</code> directory:</p>
 
 <pre><code class="language-rust">let jvm = JvmBuilder::new().build().unwrap();
 
@@ -308,9 +308,9 @@ println!(&quot;{}&quot;, home_path);
 <h1 id="next-steps">Next Steps</h1>
 
 <p>In the future, I plan to evolve <code>j4rs</code> with supporting <a href="https://en.wikipedia.org/wiki/Java_Platform_Module_System">modules</a>,
-using <a href="https://developers.google.com/protocol-buffers/">protocol buffers</a> for faster serialization and maybe implementing macros for a more &ldquo;Java-ish&rdquo; programming feel.</p>
+using <a href="https://developers.google.com/protocol-buffers/">protocol buffers</a> for faster serialization and implementing macros for a more &ldquo;Java-ish&rdquo; programming feel.</p>
 
-<p>I hope some will find this crate useful.</p>
+<p>I hope you find this crate useful.</p>
 
 <hr />
 

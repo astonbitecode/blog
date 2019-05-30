@@ -17,7 +17,7 @@
       <pubDate>Fri, 24 May 2019 00:10:10 +0000</pubDate>
       
       <guid>https://astonbitecode.github.io/blog/post/j4rs_0.6.0/</guid>
-      <description>j4rs stands for &amp;lsquo;Java for Rust&amp;rsquo; and allows effortless calls to Java code, from Rust.
+      <description>j4rs stands for &amp;ldquo;Java for Rust&amp;rdquo; and allows effortless calls to Java code, from Rust.
 Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to implement a crate that would give the ability to its users to make calls to Java easily, so that they can benefit from the huge Java ecosystem.
 By &amp;ldquo;easily&amp;rdquo;, I basically mean:</description>
     </item>
