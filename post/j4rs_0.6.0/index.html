@@ -10,10 +10,12 @@
   <meta name="twitter:title" content="Announcing j4rs" />
   <meta name="description" content="j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.
 Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to implement a crate that would give the ability to its users to make calls to Java easily, so that they can benefit from the huge Java ecosystem.
-By &ldquo;easily&rdquo;, I basically mean:">
+By &ldquo;easily&rdquo;, I mean:
+ Taking care about the configuration required by JNI (e.">
   <meta property="og:description" content="j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.
 Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to implement a crate that would give the ability to its users to make calls to Java easily, so that they can benefit from the huge Java ecosystem.
-By &ldquo;easily&rdquo;, I basically mean:">
+By &ldquo;easily&rdquo;, I mean:
+ Taking care about the configuration required by JNI (e.">
   <meta name="twitter:description" content="j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.
 Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to …">
   <meta name="author" content="Aston"/>
@@ -201,7 +203,7 @@ ga('send', 'pageview');
 <p>Some time ago, on a need to call Java code from Rust, I started the <a href="https://github.com/astonbitecode/j4rs">j4rs</a> project.
 The main idea was to implement a crate that would give the ability to its users to make calls to Java <em>easily</em>, so that they can benefit from the huge Java ecosystem.</p>
 
-<p>By &ldquo;<em>easily</em>&rdquo;, I basically mean:</p>
+<p>By &ldquo;<em>easily</em>&rdquo;, I mean:</p>
 
 <ul>
 <li>Taking care about the configuration required by JNI (e.g. jvm shared native library inclusion/linking).</li>
@@ -214,7 +216,7 @@ The main idea was to implement a crate that would give the ability to its users 
 <p>Along the way, I found out there were <a href="https://github.com/kud1ing/rucaja">other</a> <a href="https://github.com/benanders/rjni">crates</a> that could be used for calling Java code,
 but it seemed that the programmer&rsquo;s intervention with the &ldquo;JNI specifics&rdquo; could be minimized.</p>
 
-<p>Many of us rust programmers <a href="https://blog.rust-lang.org/2018/11/27/Rust-survey-2018.html#rust-expertise">know how to write Java</a>, but chances are that not so many know (or are willing to deal with) the peculiarities and pitfalls of JNI.</p>
+<p>Many of us, rust programmers, <a href="https://blog.rust-lang.org/2018/11/27/Rust-survey-2018.html#rust-expertise">know how to write Java</a>, but chances are that not so many know (or are willing to deal with) the peculiarities and pitfalls of JNI.</p>
 
 <p>As always, comfort comes with some sacrifices. Hiding the JNI specifics means using reflection and possibly objects serialization. This brings some performance penalty.</p>
 
@@ -228,7 +230,7 @@ but it seemed that the programmer&rsquo;s intervention with the &ldquo;JNI speci
 j4rs = &quot;0.6&quot;
 </code></pre>
 
-<p>Here is a simple example where we create an empty Java <code>String</code> and we invoke the String&rsquo;s <code>isEmpty()</code> method. It is, of course, assumed that Java should be installed in the system&hellip;</p>
+<p>Here is a simple example where we create an empty Java <code>String</code> and we invoke the String&rsquo;s <code>isEmpty()</code> method. Of course, the prerequisite is that Java is installed in the system.</p>
 
 <pre><code class="language-rust">use j4rs::{Instance, InvocationArg, Jvm, JvmBuilder};
 
@@ -244,7 +246,7 @@ let string_instance = jvm.create_instance(
 // The instances returned from invocations and instantiations
 // can be viewed as pointers to Java Objects.
 // They can be used for further Java calls.
-// For example, the following invokes the `isEmpty` 
+// For example, the following invokes the isEmpty
 // method of the created java.lang.String instance
 let boolean_instance = jvm.invoke(
     &amp;string_instance,	// The String instance created above
@@ -252,8 +254,8 @@ let boolean_instance = jvm.invoke(
     &amp;[],		// The InvocationArgs to use for the invocation - empty for this example
 ).unwrap();
 
-// If we need to transform an `Instance` to Rust value,
-// we use the `to_rust` method
+// If we need to transform an Instance to Rust value,
+// we use the to_rust method
 let rust_boolean: bool = jvm.to_rust(boolean_instance).unwrap();
 println!(&quot;The isEmpty() method of the java.lang.String instance returned {}&quot;, rust_boolean);
 // The above prints:
@@ -261,12 +263,12 @@ println!(&quot;The isEmpty() method of the java.lang.String instance returned {}
 
 </code></pre>
 
-<h1 id="deploy-maven-artifacts">Deploy <code>Maven</code> artifacts</h1>
+<h1 id="download-maven-artifacts">Download <code>Maven</code> artifacts</h1>
 
 <p>JRE-included classes are not enough. We always need to call other Java libraries in order to implement something useful.
 The <em>Maven Central</em> contains all the libraries that we would ever need.</p>
 
-<p>With <code>j4rs</code>, we can download and deploy maven artifacts in order to use them in our Rust application. Here is an example how we could deploy the Apache <a href="https://search.maven.org/artifact/org.apache.commons/commons-lang3/3.9/jar">commons-lang</a>:</p>
+<p>With <code>j4rs</code>, we can easily download maven artifacts in order to use them in our Rust application. Here is an example how we could deploy the Apache <a href="https://search.maven.org/artifact/org.apache.commons/commons-lang3/3.9/jar">commons-lang</a>:</p>
 
 <pre><code class="language-rust">// Create a JVM
 let jvm = JvmBuilder::new().build().unwrap();
@@ -278,12 +280,16 @@ let artifact = MavenArtifact::from(&quot;org.apache.commons:commons-lang3:3.9&qu
 jvm.deploy_maven(artifact).unwrap();
 </code></pre>
 
+<p><strong>Edit:</strong> A <a href="https://www.reddit.com/r/rust/comments/bur020/announcing_j4rs_calling_java_code_from_rust/ephhslx?utm_source=share&amp;utm_medium=web2x">comment in Reddit</a>
+indicated that <em>deploy</em> is misleading here because the word may refer to Maven&rsquo;s deploy phase. This is totally correct and therefore,
+the <code>deploy_maven</code> method will be deprecated and will be renamed.</p>
+
 <p>A good practice is that the deployment of maven artifacts is done by <a href="https://doc.rust-lang.org/cargo/reference/build-scripts.html">build scripts</a>, during the crate&rsquo;s compilation.
 This ensures that the classpath is properly populated during the actual Rust code execution.</p>
 
-<p><em>Note</em>: Currently, the Maven deployment does not take into consideration transitive dependencies. Hopefully this will be supported in the future.</p>
+<p><em>Note</em>: Currently, the Maven deployment does not take into consideration transitive dependencies. Hopefully, this will be supported in the future.</p>
 
-<h1 id="use-the-deployed-artifact">Use the deployed artifact</h1>
+<h2 id="use-the-maven-artifact">Use the Maven artifact</h2>
 
 <p>Let&rsquo;s now use the aforementioned maven artifact in order to print the user&rsquo;s <code>$HOME</code> directory:</p>
 
