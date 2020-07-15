@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Javafx on Aston&#39;s Programming Thoughts</title>
+    <title>javafx on Aston&#39;s Programming Thoughts</title>
     <link>https://astonbitecode.github.io/blog/tags/javafx/</link>
-    <description>Recent content in Javafx on Aston&#39;s Programming Thoughts</description>
+    <description>Recent content in javafx on Aston&#39;s Programming Thoughts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 28 Feb 2019 00:05:58 +0000</lastBuildDate>

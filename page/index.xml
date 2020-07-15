@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Pages on Aston&#39;s Programming Thoughts</title>
@@ -17,7 +17,7 @@
       
       <guid>https://astonbitecode.github.io/blog/page/about/</guid>
       <description>In this blog, I post anything that might help someone, or (hopefully) even inspire.
-&amp;ldquo;Probably I am very naive but I also think I prefer to remain so&amp;rdquo;
+ Simplicity is a great virtue but it requires hard work to achieve it and education to appreciate it. And to make matters worse: complexity sells better.
 Edsger W. Dijkstra</description>
     </item>
     

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Aston&#39;s Programming Thoughts</title>
@@ -6,76 +6,40 @@
     <description>Recent content in Tags on Aston&#39;s Programming Thoughts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 20 Sep 2016 06:10:10 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 15 Jul 2020 00:10:10 +0000</lastBuildDate>
     
 	<atom:link href="https://astonbitecode.github.io/blog/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Akka</title>
-      <link>https://astonbitecode.github.io/blog/tags/akka/</link>
-      <pubDate>Tue, 20 Sep 2016 06:10:10 +0000</pubDate>
-      
-      <guid>https://astonbitecode.github.io/blog/tags/akka/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Ask</title>
-      <link>https://astonbitecode.github.io/blog/tags/ask/</link>
-      <pubDate>Tue, 20 Sep 2016 06:10:10 +0000</pubDate>
-      
-      <guid>https://astonbitecode.github.io/blog/tags/ask/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Dependency Injection</title>
-      <link>https://astonbitecode.github.io/blog/tags/dependency-injection/</link>
-      <pubDate>Sat, 25 Apr 2015 08:05:58 +0000</pubDate>
-      
-      <guid>https://astonbitecode.github.io/blog/tags/dependency-injection/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Fold</title>
-      <link>https://astonbitecode.github.io/blog/tags/fold/</link>
-      <pubDate>Sun, 04 Oct 2015 08:05:58 +0000</pubDate>
-      
-      <guid>https://astonbitecode.github.io/blog/tags/fold/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>For</title>
-      <link>https://astonbitecode.github.io/blog/tags/for/</link>
-      <pubDate>Sun, 04 Oct 2015 08:05:58 +0000</pubDate>
-      
-      <guid>https://astonbitecode.github.io/blog/tags/for/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>J4rs</title>
+      <title>j4rs</title>
       <link>https://astonbitecode.github.io/blog/tags/j4rs/</link>
-      <pubDate>Fri, 24 May 2019 00:10:10 +0000</pubDate>
+      <pubDate>Wed, 15 Jul 2020 00:10:10 +0000</pubDate>
       
       <guid>https://astonbitecode.github.io/blog/tags/j4rs/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Java</title>
+      <title>java</title>
       <link>https://astonbitecode.github.io/blog/tags/java/</link>
-      <pubDate>Fri, 24 May 2019 00:10:10 +0000</pubDate>
+      <pubDate>Wed, 15 Jul 2020 00:10:10 +0000</pubDate>
       
       <guid>https://astonbitecode.github.io/blog/tags/java/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Javafx</title>
+      <title>rust</title>
+      <link>https://astonbitecode.github.io/blog/tags/rust/</link>
+      <pubDate>Wed, 15 Jul 2020 00:10:10 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/tags/rust/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>javafx</title>
       <link>https://astonbitecode.github.io/blog/tags/javafx/</link>
       <pubDate>Thu, 28 Feb 2019 00:05:58 +0000</pubDate>
       
@@ -84,16 +48,25 @@
     </item>
     
     <item>
-      <title>Rust</title>
-      <link>https://astonbitecode.github.io/blog/tags/rust/</link>
-      <pubDate>Fri, 24 May 2019 00:10:10 +0000</pubDate>
+      <title>akka</title>
+      <link>https://astonbitecode.github.io/blog/tags/akka/</link>
+      <pubDate>Tue, 20 Sep 2016 06:10:10 +0000</pubDate>
       
-      <guid>https://astonbitecode.github.io/blog/tags/rust/</guid>
+      <guid>https://astonbitecode.github.io/blog/tags/akka/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>Scala</title>
+      <title>ask</title>
+      <link>https://astonbitecode.github.io/blog/tags/ask/</link>
+      <pubDate>Tue, 20 Sep 2016 06:10:10 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/tags/ask/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>scala</title>
       <link>https://astonbitecode.github.io/blog/tags/scala/</link>
       <pubDate>Tue, 20 Sep 2016 06:10:10 +0000</pubDate>
       
@@ -102,11 +75,38 @@
     </item>
     
     <item>
-      <title>Tell</title>
+      <title>tell</title>
       <link>https://astonbitecode.github.io/blog/tags/tell/</link>
       <pubDate>Tue, 20 Sep 2016 06:10:10 +0000</pubDate>
       
       <guid>https://astonbitecode.github.io/blog/tags/tell/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>fold</title>
+      <link>https://astonbitecode.github.io/blog/tags/fold/</link>
+      <pubDate>Sun, 04 Oct 2015 08:05:58 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/tags/fold/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>for</title>
+      <link>https://astonbitecode.github.io/blog/tags/for/</link>
+      <pubDate>Sun, 04 Oct 2015 08:05:58 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/tags/for/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>dependency injection</title>
+      <link>https://astonbitecode.github.io/blog/tags/dependency-injection/</link>
+      <pubDate>Sat, 25 Apr 2015 08:05:58 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/tags/dependency-injection/</guid>
       <description></description>
     </item>
     

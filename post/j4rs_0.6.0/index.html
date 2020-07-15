@@ -1,48 +1,175 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
   <head>
+    
+
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Announcing j4rs</title>
-  <meta property="og:title" content="Announcing j4rs" />
-  <meta name="twitter:title" content="Announcing j4rs" />
+  <title>Announcing j4rs - Aston&#39;s Programming Thoughts</title>
   <meta name="description" content="j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.
-Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to implement a crate that would give the ability to its users to make calls to Java easily, so that they can benefit from the huge Java ecosystem.
+ Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to implement a crate that would give the ability to its users to make calls to Java easily, so that they can benefit from the huge Java ecosystem.
 By &ldquo;easily&rdquo;, I mean:
  Taking care about the configuration required by JNI (e.">
-  <meta property="og:description" content="j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.
-Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to implement a crate that would give the ability to its users to make calls to Java easily, so that they can benefit from the huge Java ecosystem.
+  <meta name="author" content="Aston"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Aston\u0027s Programming Thoughts",
+    
+    "url": "https:\/\/astonbitecode.github.io\/blog"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/astonbitecode.github.io\/blog"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog\/post\/j4rs_0.6.0\/",
+          "name": "Announcing j4rs"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Aston"
+  },
+  "headline": "Announcing j4rs",
+  "description" : "j4rs stands for \u0026ldquo;Java for Rust\u0026rdquo; and allows effortless calls to Java code, from Rust.\n Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to implement a crate that would give the ability to its users to make calls to Java easily, so that they can benefit from the huge Java ecosystem.\nBy \u0026ldquo;easily\u0026rdquo;, I mean:\n Taking care about the configuration required by JNI (e.",
+  "inLanguage" : "en",
+  "wordCount":  664 ,
+  "datePublished" : "2019-05-24T00:10:10",
+  "dateModified" : "2019-05-24T00:10:10",
+  "image" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+  "keywords" : [ "rust, java, j4rs" ],
+  "mainEntityOfPage" : "https:\/\/astonbitecode.github.io\/blog\/post\/j4rs_0.6.0\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/astonbitecode.github.io\/blog",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="Announcing j4rs" />
+<meta property="og:description" content="j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.
+ Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to implement a crate that would give the ability to its users to make calls to Java easily, so that they can benefit from the huge Java ecosystem.
 By &ldquo;easily&rdquo;, I mean:
  Taking care about the configuration required by JNI (e.">
+<meta property="og:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
+<meta property="og:url" content="https://astonbitecode.github.io/blog/post/j4rs_0.6.0/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Aston&#39;s Programming Thoughts" />
+
+  <meta name="twitter:title" content="Announcing j4rs" />
   <meta name="twitter:description" content="j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.
-Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to …">
-  <meta name="author" content="Aston"/>
-  <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
-  <meta property="og:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
+ Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to …">
   <meta name="twitter:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
   <meta name="twitter:card" content="summary" />
-  <meta property="og:url" content="https://astonbitecode.github.io/blog/post/j4rs_0.6.0/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Aston&#39;s Programming Thoughts" />
-
-  <meta name="generator" content="Hugo 0.21-DEV" />
-  <link rel="canonical" href="https://astonbitecode.github.io/blog/post/j4rs_0.6.0/" />
-  <link rel="alternate" href="https://astonbitecode.github.io/blog/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
-  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/codeblock.css" />
-  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/highlight.min.css" />
+  <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta name="generator" content="Hugo 0.72.0" />
+  <link rel="alternate" href="https://astonbitecode.github.io/blog/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/syntax.css" /><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-84657729-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.css" integrity="sha256-sCl5PUOGMLfFYctzDW3MtRib0ctyUvI9Qsmq2wXOeBY=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/default-skin/default-skin.min.css" integrity="sha256-BFeI1V+Vh1Rk37wswuOYn5lsTcaU96hGaI7OUVCLjPc=" crossorigin="anonymous" />
 
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://astonbitecode.github.io/blog">Aston&#39;s Programming Thoughts</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/blog">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/blog/page/about/">About</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+      <div class="avatar-container">
+        <div class="avatar-img-border">
+          <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog">
+            <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" alt="Aston&#39;s Programming Thoughts" />
+          </a>
+        </div>
+      </div>
+    
+
+  </div>
+</nav>
+
+
+
+
+    
 
 
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
@@ -89,70 +216,12 @@ Some time ago, on a need to call Java code from Rust, I started the j4rs project
     </div>
 </div>
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-84657729-1', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
 
-</head>
-
-  <body>
-    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="https://astonbitecode.github.io/blog">Aston&#39;s Programming Thoughts</a>
-    </div>
-
-    <div class="collapse navbar-collapse" id="main-navbar">
-      <ul class="nav navbar-nav navbar-right">
-        
-          
-            <li>
-              <a title="Blog" href="/blog">Blog</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="About" href="/blog/page/about/">About</a>
-            </li>
-          
-        
-
-        
-
-        
-      </ul>
-    </div>
-
-    <div class="avatar-container">
-      <div class="avatar-img-border">
-        
-          <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog">
-            <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" alt="Aston&#39;s Programming Thoughts" />
-          </a>
-        
-      </div>
-    </div>
-
-  </div>
-</nav>
-
-
-
-
-    
   
   
   
+
+
 
 
 
@@ -162,25 +231,33 @@ ga('send', 'pageview');
   <header class="header-section ">
     
     <div class="intro-header no-img">
-      
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="post-heading">
-              <h1>Announcing j4rs</h1>
-                
-                
-                  <span class="post-meta">
+              
+                <h1>Announcing j4rs</h1>
+              
+              
+              
+              
+                <span class="post-meta">
   
   
-  <i class="fa fa-calendar-o"></i>&nbsp;Posted on May 24, 2019
+  <i class="fas fa-calendar"></i>&nbsp;Posted on May 24, 2019
   
+  
+  
+  
+    
+      &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Aston
+    
   
   
 </span>
 
 
-                
+              
             </div>
           </div>
         </div>
@@ -194,17 +271,11 @@ ga('send', 'pageview');
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
-        
-
-<p><em>j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.</em></p>
-
-<hr />
-
+        <p><em>j4rs stands for &ldquo;Java for Rust&rdquo; and allows effortless calls to Java code, from Rust.</em></p>
+<hr>
 <p>Some time ago, on a need to call Java code from Rust, I started the <a href="https://github.com/astonbitecode/j4rs">j4rs</a> project.
 The main idea was to implement a crate that would give the ability to its users to make calls to Java <em>easily</em>, so that they can benefit from the huge Java ecosystem.</p>
-
 <p>By &ldquo;<em>easily</em>&rdquo;, I mean:</p>
-
 <ul>
 <li>Taking care about the configuration required by JNI (e.g. jvm shared native library inclusion/linking).</li>
 <li>Creating an intuitive, simple API to make Java calls (Rust -&gt; Java direction).</li>
@@ -212,116 +283,104 @@ The main idea was to implement a crate that would give the ability to its users 
 <li>Seamlessly using the crate on Linux or Windows machines (provided that Java is installed, of course).</li>
 <li>Following a &ldquo;Rust-first&rdquo; approach: Rust code should create and manage the JVM rather the <a href="https://github.com/drrb/java-rust-example">other</a> <a href="https://github.com/seanjensengrey/rust-jna-example">way</a> round.</li>
 </ul>
-
 <p>Along the way, I found out there were <a href="https://github.com/kud1ing/rucaja">other</a> <a href="https://github.com/benanders/rjni">crates</a> that could be used for calling Java code,
 but it seemed that the programmer&rsquo;s intervention with the &ldquo;JNI specifics&rdquo; could be minimized.</p>
-
 <p>Many of us, rust programmers, <a href="https://blog.rust-lang.org/2018/11/27/Rust-survey-2018.html#rust-expertise">know how to write Java</a>, but chances are that not so many know (or are willing to deal with) the peculiarities and pitfalls of JNI.</p>
-
 <p>As always, comfort comes with some sacrifices. Hiding the JNI specifics means using reflection and possibly objects serialization. This brings some performance penalty.</p>
-
 <p><code>j4rs</code> is for those of us who are willing to pay this price.</p>
-
 <h1 id="quickstart">Quickstart</h1>
-
 <p>Just define the <code>j4rs</code> dependency in the Cargo.toml:</p>
-
 <pre><code>[dependencies]
 j4rs = &quot;0.6&quot;
-</code></pre>
-
-<p>Here is a simple example where we create an empty Java <code>String</code> and we invoke the String&rsquo;s <code>isEmpty()</code> method. Of course, the prerequisite is that Java is installed in the system.</p>
-
-<pre><code class="language-rust">use j4rs::{Instance, InvocationArg, Jvm, JvmBuilder};
-
-// Create a JVM
-let jvm = JvmBuilder::new().build().unwrap();
-
-// Create a java.lang.String instance
-let string_instance = jvm.create_instance(
-    &quot;java.lang.String&quot;,	// The Java class to create an instance for
-    &amp;[]			// The InvocationArgs to use for the constructor call - empty for this example
-).unwrap();
-
-// The instances returned from invocations and instantiations
-// can be viewed as pointers to Java Objects.
-// They can be used for further Java calls.
-// For example, the following invokes the isEmpty
-// method of the created java.lang.String instance
-let boolean_instance = jvm.invoke(
-    &amp;string_instance,	// The String instance created above
-    &quot;isEmpty&quot;,		// The method of the String instance to invoke
-    &amp;[],		// The InvocationArgs to use for the invocation - empty for this example
-).unwrap();
-
-// If we need to transform an Instance to Rust value,
-// we use the to_rust method
-let rust_boolean: bool = jvm.to_rust(boolean_instance).unwrap();
-println!(&quot;The isEmpty() method of the java.lang.String instance returned {}&quot;, rust_boolean);
-// The above prints:
-// The isEmpty() method of the java.lang.String instance returned true
-
-</code></pre>
-
-<h1 id="download-maven-artifacts">Download <code>Maven</code> artifacts</h1>
-
+</code></pre><p>Here is a simple example where we create an empty Java <code>String</code> and we invoke the String&rsquo;s <code>isEmpty()</code> method. Of course, the prerequisite is that Java is installed in the system.</p>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">use</span><span class="w"> </span><span class="n">j4rs</span>::<span class="p">{</span><span class="n">Instance</span><span class="p">,</span><span class="w"> </span><span class="n">InvocationArg</span><span class="p">,</span><span class="w"> </span><span class="n">Jvm</span><span class="p">,</span><span class="w"> </span><span class="n">JvmBuilder</span><span class="p">};</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Create a JVM
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">().</span><span class="n">build</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Create a java.lang.String instance
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">string_instance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">create_instance</span><span class="p">(</span><span class="w">
+</span><span class="w">    </span><span class="s">&#34;java.lang.String&#34;</span><span class="p">,</span><span class="w">	</span><span class="c1">// The Java class to create an instance for
+</span><span class="c1"></span><span class="w">    </span><span class="o">&amp;</span><span class="p">[]</span><span class="w">			</span><span class="c1">// The InvocationArgs to use for the constructor call - empty for this example
+</span><span class="c1"></span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// The instances returned from invocations and instantiations
+</span><span class="c1">// can be viewed as pointers to Java Objects.
+</span><span class="c1">// They can be used for further Java calls.
+</span><span class="c1">// For example, the following invokes the isEmpty
+</span><span class="c1">// method of the created java.lang.String instance
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">boolean_instance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="w">
+</span><span class="w">    </span><span class="o">&amp;</span><span class="n">string_instance</span><span class="p">,</span><span class="w">	</span><span class="c1">// The String instance created above
+</span><span class="c1"></span><span class="w">    </span><span class="s">&#34;isEmpty&#34;</span><span class="p">,</span><span class="w">		</span><span class="c1">// The method of the String instance to invoke
+</span><span class="c1"></span><span class="w">    </span><span class="o">&amp;</span><span class="p">[],</span><span class="w">		</span><span class="c1">// The InvocationArgs to use for the invocation - empty for this example
+</span><span class="c1"></span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// If we need to transform an Instance to Rust value,
+</span><span class="c1">// we use the to_rust method
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">rust_boolean</span>: <span class="kt">bool</span> <span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">to_rust</span><span class="p">(</span><span class="n">boolean_instance</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w"></span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;The isEmpty() method of the java.lang.String instance returned {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">rust_boolean</span><span class="p">);</span><span class="w">
+</span><span class="w"></span><span class="c1">// The above prints:
+</span><span class="c1">// The isEmpty() method of the java.lang.String instance returned true
+</span><span class="c1"></span><span class="w">
+</span></code></pre></div><h1 id="download-maven-artifacts">Download <code>Maven</code> artifacts</h1>
 <p>JRE-included classes are not enough. We always need to call other Java libraries in order to implement something useful.
 The <em>Maven Central</em> contains all the libraries that we would ever need.</p>
-
 <p>With <code>j4rs</code>, we can easily download maven artifacts in order to use them in our Rust application. Here is an example how we could deploy the Apache <a href="https://search.maven.org/artifact/org.apache.commons/commons-lang3/3.9/jar">commons-lang</a>:</p>
-
-<pre><code class="language-rust">// Create a JVM
-let jvm = JvmBuilder::new().build().unwrap();
-
-// Define a Maven Artifact
-let artifact = MavenArtifact::from(&quot;org.apache.commons:commons-lang3:3.9&quot;);
-
-// Deploy the artifact in order to call it from our Rust code
-jvm.deploy_maven(artifact).unwrap();
-</code></pre>
-
-<p><strong>Edit:</strong> A <a href="https://www.reddit.com/r/rust/comments/bur020/announcing_j4rs_calling_java_code_from_rust/ephhslx?utm_source=share&amp;utm_medium=web2x">comment in Reddit</a>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// Create a JVM
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">().</span><span class="n">build</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Define a Maven Artifact
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">artifact</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MavenArtifact</span>::<span class="n">from</span><span class="p">(</span><span class="s">&#34;org.apache.commons:commons-lang3:3.9&#34;</span><span class="p">);</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Deploy the artifact in order to call it from our Rust code
+</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">deploy_maven</span><span class="p">(</span><span class="n">artifact</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span></code></pre></div><p><strong>Edit:</strong> A <a href="https://www.reddit.com/r/rust/comments/bur020/announcing_j4rs_calling_java_code_from_rust/ephhslx?utm_source=share&amp;utm_medium=web2x">comment in Reddit</a>
 indicated that <em>deploy</em> is misleading here because the word may refer to Maven&rsquo;s deploy phase. This is totally correct and therefore,
 the <code>deploy_maven</code> method will be deprecated and will be renamed.</p>
-
 <p>A good practice is that the deployment of maven artifacts is done by <a href="https://doc.rust-lang.org/cargo/reference/build-scripts.html">build scripts</a>, during the crate&rsquo;s compilation.
 This ensures that the classpath is properly populated during the actual Rust code execution.</p>
-
 <p><em>Note</em>: Currently, the Maven deployment does not take into consideration transitive dependencies. Hopefully, this will be supported in the future.</p>
-
 <h2 id="use-the-maven-artifact">Use the Maven artifact</h2>
-
 <p>Let&rsquo;s now use the aforementioned maven artifact in order to print the user&rsquo;s <code>$HOME</code> directory:</p>
-
-<pre><code class="language-rust">let jvm = JvmBuilder::new().build().unwrap();
-
-// Equivalent Java code: SystemUtils system_utils = new SystemUtils();
-let system_utils = jvm.create_instance(
-    &quot;org.apache.commons.lang3.SystemUtils&quot;,
-    &amp;[]
-).unwrap();
-
-// Equivalent Java code:
-// system_utils.getUserHome().getAbsolutePath();
-let home_path: String = jvm.chain(system_utils)
-    .invoke(&quot;getUserHome&quot;, &amp;[]).unwrap()
-    .invoke(&quot;getAbsolutePath&quot;, &amp;[]).unwrap()
-    .to_rust().unwrap();
-
-println!(&quot;{}&quot;, home_path);
-</code></pre>
-
-<h1 id="next-steps">Next Steps</h1>
-
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">().</span><span class="n">build</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Equivalent Java code: SystemUtils system_utils = new SystemUtils();
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">system_utils</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">create_instance</span><span class="p">(</span><span class="w">
+</span><span class="w">    </span><span class="s">&#34;org.apache.commons.lang3.SystemUtils&#34;</span><span class="p">,</span><span class="w">
+</span><span class="w">    </span><span class="o">&amp;</span><span class="p">[]</span><span class="w">
+</span><span class="w"></span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Equivalent Java code:
+</span><span class="c1">// system_utils.getUserHome().getAbsolutePath();
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">home_path</span>: <span class="nb">String</span> <span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">chain</span><span class="p">(</span><span class="n">system_utils</span><span class="p">)</span><span class="w">
+</span><span class="w">    </span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="s">&#34;getUserHome&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[]).</span><span class="n">unwrap</span><span class="p">()</span><span class="w">
+</span><span class="w">    </span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="s">&#34;getAbsolutePath&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[]).</span><span class="n">unwrap</span><span class="p">()</span><span class="w">
+</span><span class="w">    </span><span class="p">.</span><span class="n">to_rust</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;{}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">home_path</span><span class="p">);</span><span class="w">
+</span></code></pre></div><h1 id="next-steps">Next Steps</h1>
 <p>In the future, I plan to evolve <code>j4rs</code> with supporting <a href="https://en.wikipedia.org/wiki/Java_Platform_Module_System">modules</a>,
 using <a href="https://developers.google.com/protocol-buffers/">protocol buffers</a> for faster serialization and implementing macros for a more &ldquo;Java-ish&rdquo; programming feel.</p>
-
 <p>I hope you find this crate useful.</p>
-
-<hr />
-
+<hr>
 <p>Thanks for reading!</p>
 
+
+        
+          <div class="blog-tags">
+            
+              <a href="https://astonbitecode.github.io/blog/tags/rust/">rust</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/java/">java</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/j4rs/">j4rs</a>&nbsp;
+            
+          </div>
+        
+
+        
+
+        
       </article>
 
       
@@ -331,6 +390,10 @@ using <a href="https://developers.google.com/protocol-buffers/">protocol buffers
               <a href="https://astonbitecode.github.io/blog/post/rust-javafx/" data-toggle="tooltip" data-placement="top" title="JavaFX UI in Rust">&larr; Previous Post</a>
             </li>
           
+          
+            <li class="next">
+              <a href="https://astonbitecode.github.io/blog/post/j4rs_0.12.0/" data-toggle="tooltip" data-placement="top" title="j4rs v0.12.0: Java to Rust direction">Next Post &rarr;</a>
+            </li>
           
         </ul>
       
@@ -342,7 +405,8 @@ using <a href="https://developers.google.com/protocol-buffers/">protocol buffers
   </div>
 </div>
 
-    <footer>
+      
+<footer>
   <div class="container">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -351,19 +415,17 @@ using <a href="https://developers.google.com/protocol-buffers/">protocol buffers
               <li>
                 <a href="https://github.com/astonbitecode" title="GitHub">
                   <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
                   </span>
                 </a>
               </li>
           
           <li>
-            
-            <a href="https://astonbitecode.github.io/blog/index.xml" title="RSS">
-            
+            <a href="" title="RSS">
               <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
               </span>
             </a>
           </li>
@@ -376,8 +438,10 @@ using <a href="https://developers.google.com/protocol-buffers/">protocol buffers
             
           
 
-          &nbsp;&bull;&nbsp;
-          2019
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2020
+          
 
           
             &nbsp;&bull;&nbsp;
@@ -386,30 +450,29 @@ using <a href="https://developers.google.com/protocol-buffers/">protocol buffers
         </p>
         
         <p class="credits theme-by text-muted">
-          <a href="http://gohugo.io">Hugo v0.21-DEV</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          <a href="https://gohugo.io">Hugo v0.72.0</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
     </div>
   </div>
-</footer>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="https://astonbitecode.github.io/blog/js/main.js"></script>
-<script src="https://astonbitecode.github.io/blog/js/highlight.min.js"></script>
-<script> hljs.initHighlightingOnLoad(); </script><script> renderMathInElement(document.body); </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.js" integrity="sha256-UplRCs9v4KXVJvVY+p+RSo5Q4ilAUXh7kpjyIP5odyc=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe-ui-default.min.js" integrity="sha256-PWHOlUzc96pMc8ThwRIXPn8yH4NOLu42RQ0b9SpnpFk=" crossorigin="anonymous"></script>
-<script src="https://astonbitecode.github.io/blog/js/load-photoswipe.js"></script>
+
+<script src="https://astonbitecode.github.io/blog/js/main.js"></script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://astonbitecode.github.io/blog/js/load-photoswipe.js"></script>
 
 
 
 
 
 
+
+
+
+    
   </body>
 </html>
 

@@ -1,44 +1,171 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
   <head>
+    
+
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Akka: To ask, or not to ask?</title>
-  <meta property="og:title" content="Akka: To ask, or not to ask?" />
-  <meta name="twitter:title" content="Akka: To ask, or not to ask?" />
+  <title>Akka: To ask, or not to ask? - Aston&#39;s Programming Thoughts</title>
   <meta name="description" content="There are times that Akka Actors need to contact some other Actor, get the response and then continue their processing.
 It is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don&rsquo;t have access to others&rsquo; code.">
-  <meta property="og:description" content="There are times that Akka Actors need to contact some other Actor, get the response and then continue their processing.
+  <meta name="author" content="Aston"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Aston\u0027s Programming Thoughts",
+    
+    "url": "https:\/\/astonbitecode.github.io\/blog"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/astonbitecode.github.io\/blog"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog\/post\/bang-not-ask\/",
+          "name": "Akka to ask, or not to ask?"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Aston"
+  },
+  "headline": "Akka: To ask, or not to ask?",
+  "description" : "There are times that Akka Actors need to contact some other Actor, get the response and then continue their processing.\nIt is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries\/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don\u0026rsquo;t have access to others\u0026rsquo; code.",
+  "inLanguage" : "en",
+  "wordCount":  736 ,
+  "datePublished" : "2016-09-20T06:10:10",
+  "dateModified" : "2016-09-20T06:10:10",
+  "image" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+  "keywords" : [ "scala, akka, ask, tell" ],
+  "mainEntityOfPage" : "https:\/\/astonbitecode.github.io\/blog\/post\/bang-not-ask\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/astonbitecode.github.io\/blog",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="Akka: To ask, or not to ask?" />
+<meta property="og:description" content="There are times that Akka Actors need to contact some other Actor, get the response and then continue their processing.
 It is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don&rsquo;t have access to others&rsquo; code.">
+<meta property="og:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
+<meta property="og:url" content="https://astonbitecode.github.io/blog/post/bang-not-ask/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Aston&#39;s Programming Thoughts" />
+
+  <meta name="twitter:title" content="Akka: To ask, or not to ask?" />
   <meta name="twitter:description" content="There are times that Akka Actors need to contact some other Actor, get the response and then continue their processing.
 It is debatable whether this is a good design or not. However, when designing â€¦">
-  <meta name="author" content="Aston"/>
-  <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
-  <meta property="og:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
   <meta name="twitter:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
   <meta name="twitter:card" content="summary" />
-  <meta property="og:url" content="https://astonbitecode.github.io/blog/post/bang-not-ask/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Aston&#39;s Programming Thoughts" />
-
-  <meta name="generator" content="Hugo 0.21-DEV" />
-  <link rel="canonical" href="https://astonbitecode.github.io/blog/post/bang-not-ask/" />
-  <link rel="alternate" href="https://astonbitecode.github.io/blog/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
-  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/codeblock.css" />
-  <link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/highlight.min.css" />
+  <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta name="generator" content="Hugo 0.72.0" />
+  <link rel="alternate" href="https://astonbitecode.github.io/blog/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/syntax.css" /><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
 
 
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-84657729-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.css" integrity="sha256-sCl5PUOGMLfFYctzDW3MtRib0ctyUvI9Qsmq2wXOeBY=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/default-skin/default-skin.min.css" integrity="sha256-BFeI1V+Vh1Rk37wswuOYn5lsTcaU96hGaI7OUVCLjPc=" crossorigin="anonymous" />
 
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://astonbitecode.github.io/blog">Aston&#39;s Programming Thoughts</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/blog">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/blog/page/about/">About</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+      <div class="avatar-container">
+        <div class="avatar-img-border">
+          <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog">
+            <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" alt="Aston&#39;s Programming Thoughts" />
+          </a>
+        </div>
+      </div>
+    
+
+  </div>
+</nav>
+
+
+
+
+    
 
 
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
@@ -85,70 +212,12 @@ It is debatable whether this is a good design or not. However, when designing â€
     </div>
 </div>
 
-<script>
-window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
-ga('create', 'UA-84657729-1', 'auto');
-ga('send', 'pageview');
-</script>
-<script async src='//www.google-analytics.com/analytics.js'></script>
 
-</head>
-
-  <body>
-    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="https://astonbitecode.github.io/blog">Aston&#39;s Programming Thoughts</a>
-    </div>
-
-    <div class="collapse navbar-collapse" id="main-navbar">
-      <ul class="nav navbar-nav navbar-right">
-        
-          
-            <li>
-              <a title="Blog" href="/blog">Blog</a>
-            </li>
-          
-        
-          
-            <li>
-              <a title="About" href="/blog/page/about/">About</a>
-            </li>
-          
-        
-
-        
-
-        
-      </ul>
-    </div>
-
-    <div class="avatar-container">
-      <div class="avatar-img-border">
-        
-          <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog">
-            <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" alt="Aston&#39;s Programming Thoughts" />
-          </a>
-        
-      </div>
-    </div>
-
-  </div>
-</nav>
-
-
-
-
-    
   
   
   
+
+
 
 
 
@@ -158,25 +227,33 @@ ga('send', 'pageview');
   <header class="header-section ">
     
     <div class="intro-header no-img">
-      
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
             <div class="post-heading">
-              <h1>Akka: To ask, or not to ask?</h1>
-                
-                
-                  <span class="post-meta">
+              
+                <h1>Akka: To ask, or not to ask?</h1>
+              
+              
+              
+              
+                <span class="post-meta">
   
   
-  <i class="fa fa-calendar-o"></i>&nbsp;Posted on September 20, 2016
+  <i class="fas fa-calendar"></i>&nbsp;Posted on September 20, 2016
   
+  
+  
+  
+    
+      &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Aston
+    
   
   
 </span>
 
 
-                
+              
             </div>
           </div>
         </div>
@@ -190,64 +267,38 @@ ga('send', 'pageview');
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
-        
-
-<p>There are times that <a href="http://akka.io/">Akka</a> Actors need to contact some other Actor, get the response and then continue their processing.</p>
-
+        <p>There are times that <a href="http://akka.io/">Akka</a> Actors need to contact some other Actor, get the response and then continue their processing.</p>
 <p>It is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don&rsquo;t have access to others&rsquo; code.</p>
-
 <p>So, how this can be achieved in an efficient way, taking into consideration the inherent asynchronous nature of the Akka Actors?</p>
-
 <p>How someone can implement an <em>Actor A</em> that at some point it needs to contact some <em>Actor B</em> and then use this response to continue its processing?</p>
-
 <h2 id="possible-solutions">Possible solutions</h2>
-
 <p>The <a href="http://doc.akka.io/docs/akka/current/scala/actors.html#Send_messages">Akka Documentation mentions that Actors can be contacted with three ways</a>: using <strong>ask</strong>, <strong>tell</strong>, and <strong>forward</strong>. Since <em>forward</em> is a kind of <em>tell</em> in a way that both of them are acting like <em>fire and forget</em>, this leaves us only with <em>ask</em> and <em>tell</em>.</p>
-
 <h3 id="ask">Ask</h3>
-
 <p>Using <code>ask</code> is generally discouraged.</p>
-
 <p>The main reason is because of performance implications. Each ask operation involves creating an internal Actor that:</p>
-
 <ul>
 <li>handles the expected response and</li>
 <li>sets/handles possible timeout to make sure that the resources are freed in the case that the awaited response never comes, or comes late</li>
 </ul>
-
 <p>Additionally, there are implementation difficulties that may end-up with <a href="http://stackoverflow.com/questions/16898131/sender-inside-a-future">closing-over the Actors state</a> etc.</p>
-
 <h3 id="tell">Tell</h3>
-
 <p>Using <code>tell</code> seems like the correct way to go, as it doesn&rsquo;t imply creating additional resources.</p>
-
 <p>&hellip;Or does it?</p>
-
 <p>At least for the case that we are talking about, we need to somehow:</p>
-
 <ul>
 <li><em>capture the context</em> for each message that we handle</li>
 <li>Contact some other Actor</li>
 <li>Receive response from the other Actor and match it with the initial request (the <em>captured context</em>)</li>
 <li>Continue processing using the <em>captured context</em></li>
 </ul>
-
 <p>We can achieve all the above using the <a href="https://github.com/jamie-allen/effective_akka/blob/master/src/main/scala/org/jamieallen/effectiveakka/pattern/cameo/Cameo.scala">Cameo Pattern</a>, as described in Jamie Allen&rsquo;s <em>Effective Akka</em> book, but this involves implementing more code and handle more or less ourselves what <code>ask</code> was handling alone.</p>
-
 <h2 id="second-thoughts">Second thoughts</h2>
-
-<p><a href="https://groups.google.com/forum/#!searchin/akka-user/ask$20performance|sort:relevance/akka-user/A4ee5YjTYKU/qYCKP98vqyoJ">Ronald Kuhn (previous lead of the Akka project), notes</a> that the price to pay when using <code>ask</code> is not zero, <em>but it is very close to it</em>.</p>
-
+<p><a href="https://groups.google.com/forum/#!searchin/akka-user/ask$20performance%7Csort:relevance/akka-user/A4ee5YjTYKU/qYCKP98vqyoJ">Ronald Kuhn (previous lead of the Akka project), notes</a> that the price to pay when using <code>ask</code> is not zero, <em>but it is very close to it</em>.</p>
 <p>This <em>close-to-zero-price</em> can be acceptable per case. However, someone may choose to go by-the-book and choose using <code>tell</code>s.</p>
-
 <p>Does just using <code>tell</code> instead of <code>ask</code> worth it? The <em>Cameo Pattern</em> implies the creation of an additional Actor for each and every message processed. Can this lead to worse performance instead of just using <code>ask</code>? And if so, can we do something about it?</p>
-
 <h2 id="investigating">Investigating</h2>
-
 <h3 id="use-case">Use Case</h3>
-
 <p>Let&rsquo;s assume that we have to implement an Actor which:</p>
-
 <ol>
 <li>Receives text messages written in English</li>
 <li>Sends each message to a bunch of Translating Actors, each one being responsible for translating from English to a specific language (French, Spanish, German)</li>
@@ -255,53 +306,52 @@ ga('send', 'pageview');
 <li>Does some post-translation process</li>
 <li>Replies to the initial sender</li>
 </ol>
-
-<p><img src="sequence.png" alt="sequence" /></p>
-
+<p><img src="sequence.png" alt="sequence"></p>
 <h3 id="implementation">Implementation</h3>
-
 <p>We will implement the above requirements in 3 ways:</p>
-
 <ol>
 <li>Using <code>ask</code>.</li>
 <li>With the Cameo pattern, creating one Handler per received message.</li>
 <li>With the Cameo pattern, but instead of creating one handler per message, create a <a href="http://doc.akka.io/docs/akka/2.4.10/scala/routing.html">routed Handler</a> once and contact this instead.</li>
 </ol>
-
 <h3 id="testing">Testing</h3>
-
 <p>Each implementation will be tested by measuring the time needed to handle 1000000 concurrent English translation messages.</p>
-
 <p>The results that we will get <strong>should not be treated as absolute numbers</strong>, since the absolute timing depends on the machine that the test runs on.</p>
-
 <p>However, by focusing on the <em>differences of the results</em>, we may infer useful findings.</p>
-
 <p>You can find the code <a href="https://gist.github.com/astonbitecode/efb7f4ae508edb003fbdf0574a7c9089">here</a>.</p>
-
 <p>Please note that each test case was executed separately. The fact that everything is gathered as one unit-test, is for readability reasons.</p>
-
 <h3 id="results">Results</h3>
-
-<p><img src="chart.png" alt="chart.png" /></p>
-
+<p><img src="chart.png" alt="chart.png"></p>
 <p>The results show that the implementation that performs best is the Cameo using a routed handler (#3).</p>
-
 <p>Next, was the implementation with the <code>ask</code> and the pure Cameo was the worst performer.</p>
-
 <h3 id="conclusions">Conclusions</h3>
-
 <ul>
 <li><code>ask</code> <strong>does not</strong> perform bad.</li>
 <li>The creation of Actors is far slower comparing to the creation of <code>ask</code> resources. Even if the <code>ask</code> includes the creation of an Actor as well, this is a <strong>special</strong> Actor, rather than a normal one&hellip;</li>
 <li>Choosing the right size of Routees to act as Cameo handlers seems to be the winner because it does not imply creation of new Actors, rather than reusing the same ones.</li>
 </ul>
-
-<hr />
-
+<hr>
 <p>So, good analysis and focus on the requirements gives - once again - the best solution</p>
-
 <p>Thanks for reading!</p>
 
+
+        
+          <div class="blog-tags">
+            
+              <a href="https://astonbitecode.github.io/blog/tags/scala/">scala</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/akka/">akka</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/ask/">ask</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/tell/">tell</a>&nbsp;
+            
+          </div>
+        
+
+        
+
+        
       </article>
 
       
@@ -326,7 +376,8 @@ ga('send', 'pageview');
   </div>
 </div>
 
-    <footer>
+      
+<footer>
   <div class="container">
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -335,19 +386,17 @@ ga('send', 'pageview');
               <li>
                 <a href="https://github.com/astonbitecode" title="GitHub">
                   <span class="fa-stack fa-lg">
-                    <i class="fa fa-circle fa-stack-2x"></i>
-                    <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
                   </span>
                 </a>
               </li>
           
           <li>
-            
-            <a href="https://astonbitecode.github.io/blog/index.xml" title="RSS">
-            
+            <a href="" title="RSS">
               <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
               </span>
             </a>
           </li>
@@ -360,8 +409,10 @@ ga('send', 'pageview');
             
           
 
-          &nbsp;&bull;&nbsp;
-          2019
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2020
+          
 
           
             &nbsp;&bull;&nbsp;
@@ -370,30 +421,29 @@ ga('send', 'pageview');
         </p>
         
         <p class="credits theme-by text-muted">
-          <a href="http://gohugo.io">Hugo v0.21-DEV</a> powered &nbsp;&bull;&nbsp; Theme by <a href="http://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a> adapted to <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a>
+          <a href="https://gohugo.io">Hugo v0.72.0</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>
     </div>
   </div>
-</footer>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js" integrity="sha384-dq1/gEHSxPZQ7DdrM82ID4YVol9BYyU7GbWlIwnwyPzotpoc57wDw/guX8EaYGPx" crossorigin="anonymous"></script>
+</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="https://astonbitecode.github.io/blog/js/main.js"></script>
-<script src="https://astonbitecode.github.io/blog/js/highlight.min.js"></script>
-<script> hljs.initHighlightingOnLoad(); </script><script> renderMathInElement(document.body); </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe.min.js" integrity="sha256-UplRCs9v4KXVJvVY+p+RSo5Q4ilAUXh7kpjyIP5odyc=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.1/photoswipe-ui-default.min.js" integrity="sha256-PWHOlUzc96pMc8ThwRIXPn8yH4NOLu42RQ0b9SpnpFk=" crossorigin="anonymous"></script>
-<script src="https://astonbitecode.github.io/blog/js/load-photoswipe.js"></script>
+
+<script src="https://astonbitecode.github.io/blog/js/main.js"></script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://astonbitecode.github.io/blog/js/load-photoswipe.js"></script>
 
 
 
 
 
 
+
+
+
+    
   </body>
 </html>
 
