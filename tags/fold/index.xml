@@ -13,10 +13,10 @@
     
     <item>
       <title>Scala: Use fold to serialize any number of Futures</title>
-      <link>https://astonbitecode.github.io/blog/post/foldfor/</link>
+      <link>https://astonbitecode.github.io/blog/post/003-foldfor/</link>
       <pubDate>Sun, 04 Oct 2015 08:05:58 +0000</pubDate>
       
-      <guid>https://astonbitecode.github.io/blog/post/foldfor/</guid>
+      <guid>https://astonbitecode.github.io/blog/post/003-foldfor/</guid>
       <description>Scala&amp;rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More specifically, for serializing Futures.
 Let&amp;rsquo;s assume that we have a function that performs some kind of logic and returns a Future:
 def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num + 1 print(addedOne + &amp;#34; &amp;#34;) } } Users of such a fuction, may want to call it more than one time and additionally, to call it serially.</description>

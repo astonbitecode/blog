@@ -13,10 +13,10 @@
     
     <item>
       <title>j4rs v0.12.0: Java to Rust direction</title>
-      <link>https://astonbitecode.github.io/blog/post/j4rs_0.12.0/</link>
+      <link>https://astonbitecode.github.io/blog/post/007-j4rs_0.12.0/</link>
       <pubDate>Wed, 15 Jul 2020 00:10:10 +0000</pubDate>
       
-      <guid>https://astonbitecode.github.io/blog/post/j4rs_0.12.0/</guid>
+      <guid>https://astonbitecode.github.io/blog/post/007-j4rs_0.12.0/</guid>
       <description>I would like to share a new direction that my j4rs project took after its 0.12.0 release.
 Until v0.12.0, j4rs provided to Rust applications the tools to achieve calls to the Java world. This included setting up and manage JVMs, instantiating Java Classes, making calls to Java methods, providing the means for Java to Rust callbacks etc.
 The project was following solely a Rust-first approach, giving the Rust applications the ability to take advantage of the huge amount of libraries and tools existing in the Java ecosystem.</description>
@@ -24,10 +24,10 @@ The project was following solely a Rust-first approach, giving the Rust applicat
     
     <item>
       <title>Announcing j4rs</title>
-      <link>https://astonbitecode.github.io/blog/post/j4rs_0.6.0/</link>
+      <link>https://astonbitecode.github.io/blog/post/006-j4rs_0.6.0/</link>
       <pubDate>Fri, 24 May 2019 00:10:10 +0000</pubDate>
       
-      <guid>https://astonbitecode.github.io/blog/post/j4rs_0.6.0/</guid>
+      <guid>https://astonbitecode.github.io/blog/post/006-j4rs_0.6.0/</guid>
       <description>j4rs stands for &amp;ldquo;Java for Rust&amp;rdquo; and allows effortless calls to Java code, from Rust.
  Some time ago, on a need to call Java code from Rust, I started the j4rs project. The main idea was to implement a crate that would give the ability to its users to make calls to Java easily, so that they can benefit from the huge Java ecosystem.
 By &amp;ldquo;easily&amp;rdquo;, I mean:

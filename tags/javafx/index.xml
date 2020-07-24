@@ -13,10 +13,10 @@
     
     <item>
       <title>JavaFX UI in Rust</title>
-      <link>https://astonbitecode.github.io/blog/post/rust-javafx/</link>
+      <link>https://astonbitecode.github.io/blog/post/005-rust-javafx/</link>
       <pubDate>Thu, 28 Feb 2019 00:05:58 +0000</pubDate>
       
-      <guid>https://astonbitecode.github.io/blog/post/rust-javafx/</guid>
+      <guid>https://astonbitecode.github.io/blog/post/005-rust-javafx/</guid>
       <description>In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.
 A brief description follows, but you may see the full code here.
 General description We will create a Rust application that:

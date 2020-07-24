@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>cipher on Aston&#39;s Programming Thoughts</title>
+    <link>https://astonbitecode.github.io/blog/tags/cipher/</link>
+    <description>Recent content in cipher on Aston&#39;s Programming Thoughts</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 24 Jul 2020 00:00:10 +0000</lastBuildDate>
+    
+	<atom:link href="https://astonbitecode.github.io/blog/tags/cipher/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Hiding secrets in public view</title>
+      <link>https://astonbitecode.github.io/blog/post/008-secrets-in-public/</link>
+      <pubDate>Fri, 24 Jul 2020 00:00:10 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/post/008-secrets-in-public/</guid>
+      <description>Some time ago, I got intrigued by an article on the Register, finding out about the Baconian cipher.
+I started writing some code, initially implementing Baconian cipher codecs, which encode text to As and Bs and decode them back to text.
+This was not enough, though, so I thought of implementing a steganographer, which would help hiding these As and Bs into text, mapping As to lowercase characters and Bs to uppercase characters.</description>
+    </item>
+    
+  </channel>
+</rss>

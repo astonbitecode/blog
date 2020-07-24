@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Hiding secrets in public view - Aston&#39;s Programming Thoughts</title>
+  <meta name="description" content="Some time ago, I got intrigued by an article on the Register, finding out about the Baconian cipher.
+I started writing some code, initially implementing Baconian cipher codecs, which encode text to As and Bs and decode them back to text.
+This was not enough, though, so I thought of implementing a steganographer, which would help hiding these As and Bs into text, mapping As to lowercase characters and Bs to uppercase characters.">
+  <meta name="author" content="Aston"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Aston\u0027s Programming Thoughts",
+    
+    "url": "https:\/\/astonbitecode.github.io\/blog"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/astonbitecode.github.io\/blog"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog\/post\/008-secrets-in-public\/",
+          "name": "Hiding secrets in public view"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Aston"
+  },
+  "headline": "Hiding secrets in public view",
+  "description" : "Some time ago, I got intrigued by an article on the Register, finding out about the Baconian cipher.\nI started writing some code, initially implementing Baconian cipher codecs, which encode text to As and Bs and decode them back to text.\nThis was not enough, though, so I thought of implementing a steganographer, which would help hiding these As and Bs into text, mapping As to lowercase characters and Bs to uppercase characters.",
+  "inLanguage" : "en",
+  "wordCount":  455 ,
+  "datePublished" : "2020-07-24T00:00:10",
+  "dateModified" : "2020-07-24T00:00:10",
+  "image" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+  "keywords" : [ "cipher, steganography, encoding" ],
+  "mainEntityOfPage" : "https:\/\/astonbitecode.github.io\/blog\/post\/008-secrets-in-public\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/astonbitecode.github.io\/blog",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="Hiding secrets in public view" />
+<meta property="og:description" content="Some time ago, I got intrigued by an article on the Register, finding out about the Baconian cipher.
+I started writing some code, initially implementing Baconian cipher codecs, which encode text to As and Bs and decode them back to text.
+This was not enough, though, so I thought of implementing a steganographer, which would help hiding these As and Bs into text, mapping As to lowercase characters and Bs to uppercase characters.">
+<meta property="og:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
+<meta property="og:url" content="https://astonbitecode.github.io/blog/post/008-secrets-in-public/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Aston&#39;s Programming Thoughts" />
+
+  <meta name="twitter:title" content="Hiding secrets in public view" />
+  <meta name="twitter:description" content="Some time ago, I got intrigued by an article on the Register, finding out about the Baconian cipher.
+I started writing some code, initially implementing Baconian cipher codecs, which encode text to As …">
+  <meta name="twitter:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
+  <meta name="twitter:card" content="summary" />
+  <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta name="generator" content="Hugo 0.72.0" />
+  <link rel="alternate" href="https://astonbitecode.github.io/blog/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/syntax.css" /><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-84657729-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://astonbitecode.github.io/blog">Aston&#39;s Programming Thoughts</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/blog">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/blog/page/about/">About</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+      <div class="avatar-container">
+        <div class="avatar-img-border">
+          <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog">
+            <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" alt="Aston&#39;s Programming Thoughts" />
+          </a>
+        </div>
+      </div>
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>Hiding secrets in public view</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on July 24, 2020
+  
+  
+  
+  
+    
+      &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Aston
+    
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        
+<!--
+Cryptography is definately an art. It is fascinating watching a plain, understandable "thing" transforming into something that looks like garbage 
+and later on, getting *resurrected* back in normal...
+
+As always, art awakes inspiration and inspiration produces more art. 
+Steganography goes one step further, hiding "things" (encrypted or not) inside other "things".
+
+-->
+
+
+<p>Some time ago, I got intrigued by <a href="https://www.theregister.com/2018/01/20/friedman_cryptographic_grave_message/">an article</a> on <em>the Register</em>,
+finding out about the <a href="https://en.wikipedia.org/wiki/Bacon's_cipher">Baconian cipher</a>.</p>
+<p>I started writing some code, initially implementing Baconian cipher codecs, which encode text to <code>A</code>s and <code>B</code>s and decode them back to text.</p>
+<p>This was not enough, though, so I thought of implementing a steganographer, which would help hiding these <code>A</code>s and <code>B</code>s into text,
+mapping <code>A</code>s to lowercase characters and <code>B</code>s to uppercase characters.</p>
+<p>After that, I was able to hide <strong>rust</strong> <code>InsidE thE LInux KErnEl</code></p>
+<p>:)</p>
+<p>The public message is: <code>inside the linux kernel</code>.</p>
+<p>The secret message is: <code>rust</code>.</p>
+<p>The public message that contains the secret one becomes: <code>InsidE thE LInux KErnEl</code>.</p>
+<p>Here is how:</p>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">use</span><span class="w"> </span><span class="n">bacon_cipher</span>::<span class="n">codecs</span>::<span class="n">char_codec</span>::<span class="n">CharCodec</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">bacon_cipher</span>::<span class="n">stega</span>::<span class="n">letter_case</span>::<span class="n">LetterCaseSteganographer</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">bacon_cipher</span>::<span class="p">{</span><span class="n">BaconCodec</span><span class="p">,</span><span class="w"> </span><span class="n">Steganographer</span><span class="p">};</span><span class="w">
+</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">iter</span>::<span class="n">FromIterator</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Define a Bacon Codec that encodes using the characters &#39;A&#39; and &#39;B&#39;
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">codec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CharCodec</span>::<span class="n">new</span><span class="p">(</span><span class="sc">&#39;a&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;b&#39;</span><span class="p">);</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Apply steganography based on the case of the characters
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LetterCaseSteganographer</span>::<span class="n">new</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// This is the public message in which we want to hide the secret one.
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">public_chars</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">char</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;inside the linux kernel&#34;</span><span class="p">.</span><span class="n">chars</span><span class="p">().</span><span class="n">collect</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// This is the message that we want to hide.
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">secret_chars</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">char</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;rust&#34;</span><span class="p">.</span><span class="n">chars</span><span class="p">().</span><span class="n">collect</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// This is the public message that contains the secret one
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">disguised_public</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">disguise</span><span class="p">(</span><span class="o">&amp;</span><span class="n">secret_chars</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">public_chars</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">codec</span><span class="p">);</span><span class="w">
+</span><span class="w"></span><span class="kd">let</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from_iter</span><span class="p">(</span><span class="n">disguised_public</span><span class="p">.</span><span class="n">unwrap</span><span class="p">().</span><span class="n">iter</span><span class="p">());</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="n">assert</span><span class="o">!</span><span class="p">(</span><span class="n">string</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&#34;InsidE thE LInux KErnEl&#34;</span><span class="p">);</span><span class="w">
+</span></code></pre></div><p>And here is how to reveal the hidden message:</p>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="kd">let</span><span class="w"> </span><span class="n">public_chars</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">char</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#34;InsidE thE LInux KErnEl&#34;</span><span class="p">.</span><span class="n">chars</span><span class="p">().</span><span class="n">collect</span><span class="p">();</span><span class="w">
+</span><span class="w"></span><span class="kd">let</span><span class="w"> </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">reveal</span><span class="p">(</span><span class="o">&amp;</span><span class="n">public_chars</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">codec</span><span class="p">);</span><span class="w">
+</span><span class="w"></span><span class="kd">let</span><span class="w"> </span><span class="n">hidden_message</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span>::<span class="n">from_iter</span><span class="p">(</span><span class="n">output</span><span class="p">.</span><span class="n">unwrap</span><span class="p">().</span><span class="n">iter</span><span class="p">());</span><span class="w">
+</span><span class="w"></span><span class="n">assert</span><span class="o">!</span><span class="p">(</span><span class="n">hidden_message</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&#34;RUST&#34;</span><span class="p">);</span><span class="w">
+</span></code></pre></div><h1 id="more-steganography">More steganography</h1>
+<p>I went along and implemented more steganographers:</p>
+<ul>
+<li>
+<p>A <code>MarkdownSteganographer</code> allowed hiding <code>rust</code> in the following markdown:</p>
+<p><code>**i**nsid**e** th**e** **li**nux **ke**rn**e**l</code></p>
+<p>rendering into:</p>
+<p><strong>i</strong>nsid<strong>e</strong> th<strong>e</strong> <strong>li</strong>nux <strong>ke</strong>rn<strong>e</strong>l</p>
+</li>
+<li>
+<p>A <code>SimpleTagSteganographer</code> allowed hiding <code>rust</code> in the following HTML code:</p>
+<p><code>&lt;b style=&quot;color: red;&quot;&gt;i&lt;/b&gt;nsid&lt;b style=&quot;color: red;&quot;&gt;e&lt;/b&gt; th&lt;b style=&quot;color: red;&quot;&gt;e&lt;/b&gt; &lt;b style=&quot;color: red;&quot;&gt;li&lt;/b&gt;nux &lt;b style=&quot;color: red;&quot;&gt;ke&lt;/b&gt;rn&lt;b style=&quot;color: red;&quot;&gt;e&lt;/b&gt;l</code></p>
+<p>rendering into:</p>
+
+		<b style="color: red;">i</b>nsid<b style="color: red;">e</b> th<b style="color: red;">e</b> <b style="color: red;">li</b>nux <b style="color: red;">ke</b>rn<b style="color: red;">e</b>l
+	
+
+</li>
+</ul>
+<h1 id="no-limits">No limits&hellip;</h1>
+<p>Encoding and Steganography are two separate processes and they can be combined in any way.</p>
+<p>Moreover, the <a href="https://docs.rs/bacon-cipher/0.2.0/bacon_cipher/trait.BaconCodec.html">BaconCodec</a> is a <code>trait</code> and accepts two associated types:</p>
+<ul>
+<li>
+<p>The <code>ABTYPE</code> is the type of the substitution characters A and B. For the <a href="https://docs.rs/bacon-cipher/0.2.0/bacon_cipher/codecs/char_codec/struct.CharCodec.html">CharCodec</a>, this is a <code>char</code>, but we could implement codecs with
+<code>bool</code>, <code>isize</code> or whatever, even a custom <code>struct</code> or <code>trait</code>.</p>
+</li>
+<li>
+<p>The <code>CONTENT</code> associated type is the type of the content that we want to encode or decode.  The <a href="https://docs.rs/bacon-cipher/0.2.0/bacon_cipher/codecs/char_codec/struct.CharCodec.html">CharCodec</a> defines a <code>char</code>, but again, this could be implemented into anything.</p>
+</li>
+</ul>
+<p>Someone could implement any kind of <a href="https://docs.rs/bacon-cipher/0.2.0/bacon_cipher/trait.Steganographer.html">Steganographer</a> and hide messages in images,
+or even in the code itself (maybe code obfuscation works like this?).</p>
+<p>Moreover, the secret message can be further encoded, or even encrypted, so that we could have <em>encrypted secret messages</em> hidden in public.</p>
+<h1 id="next-steps">Next steps</h1>
+<p>One thing that can definately be done, is to create codecs that do encryption during encoding and decryption during decoding.
+Other than that, more steganographers can be implemented for processing <strong>images</strong>, or <strong>sound</strong>, or&hellip;</p>
+<p>One day&hellip;</p>
+<hr>
+<p>If someone is interested, the code is <a href="https://github.com/astonbitecode/bacon-cipher">on Github</a>
+and the crate is called <a href="https://crates.io/crates/bacon-cipher">bacon-cipher</a>.</p>
+<p>ThaNks fOR ReaDing aNd haVE a nice DAy!</p>
+
+
+        
+          <div class="blog-tags">
+            
+              <a href="https://astonbitecode.github.io/blog/tags/cipher/">cipher</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/steganography/">steganography</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/encoding/">encoding</a>&nbsp;
+            
+          </div>
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://astonbitecode.github.io/blog/post/007-j4rs_0.12.0/" data-toggle="tooltip" data-placement="top" title="j4rs v0.12.0: Java to Rust direction">&larr; Previous Post</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/astonbitecode" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            <a href="" title="RSS">
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              Aston
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2020
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://astonbitecode.github.io/blog">Aston&#39;s Programming Thoughts</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="https://gohugo.io">Hugo v0.72.0</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://astonbitecode.github.io/blog/js/main.js"></script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://astonbitecode.github.io/blog/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+

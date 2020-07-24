@@ -57,9 +57,9 @@
     "name" : "Aston"
   },
   "headline": "About",
-  "description" : "In this blog, I post anything that might help someone, or (hopefully) even inspire.\n Simplicity is a great virtue but it requires hard work to achieve it and education to appreciate it. And to make matters worse: complexity sells better.\nEdsger W. Dijkstra",
+  "description" : "In this blog, I post things that I implement or simply think, with the hope that they might help someone, or even inspire.\n function getmail() { var m = document.getElementById(\u0022laim\u0022).innerText.split(\u0022\u0022).reverse().join(\u0022\u0022); document.getElementById(\u0022mailmelink\u0022).href=\u0022mailto:\u0022 \u002b m; }  Contact me if you have any suggestions or you would like to give feedback. moc.liamnotorp@edocetibnotsa  Simplicity is a great virtue but it requires hard work to achieve it and education to appreciate it. And to make matters worse: complexity sells better.",
   "inLanguage" : "en",
-  "wordCount":  43 ,
+  "wordCount":  78 ,
   "datePublished" : "0001-01-01T00:00:00",
   "dateModified" : "0001-01-01T00:00:00",
   "image" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
@@ -253,10 +253,37 @@ if (!doNotTrack) {
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
-        <p>In this blog, I post anything that might help someone, or (hopefully) even inspire.</p>
+        <p>In this blog, I post things that I implement or simply think, with the hope that they might help someone, or even inspire.</p>
+
+
+<script>
+function getmail() {
+  var m = document.getElementById("laim").innerText.split("").reverse().join("");
+  document.getElementById("mailmelink").href="mailto:" + m;
+}
+</script>
+
+<a id="mailmelink" href="#" onclick="getmail()" title="Email me">Contact me</a> if you have any suggestions or you would like to give feedback.
+
+<i hidden id="laim" style="unicode-bidi:bidi-override;direction:rtl;color:white;">moc.liamnotorp@edocetibnotsa</i>
+
+
+
 <hr>
-<p>Sim<strong>pl</strong>i<strong>c</strong>ity i<strong>s</strong> a <strong>gr</strong>e<strong>a</strong>t vi<strong>r</strong>tu<strong>e</strong> b<strong>u</strong>t it re<strong>q</strong>uire<strong>s</strong> <strong>h</strong>a<strong>rd</strong> wor<strong>k</strong> t<strong>o</strong> ac<strong>h</strong>i<strong>ev</strong>e <strong>i</strong>t <strong>an</strong>d ed<strong>u</strong>c<strong>a</strong>ti<strong>o</strong>n to appreciate it. And to make matters worse: complexity sells better.</p>
-<p>Edsger W. Dijkstra</p>
+<p><em>Simplicity is a great virtue but it requires hard work to achieve it and education to appreciate it. And to make matters worse: complexity sells better.</em></p>
+<p><em>Edsger W. Dijkstra</em></p>
+<hr>
+
+<!--
+Sim**pl**i**c**ity i**s** a **gr**e**a**t vi**r**tu**e** b**u**t it re**q**uire**s** **h**a**rd** wor**k** t**o** ac**h**i**ev**e **i**t **an**d ed**u**c**a**ti**o**n to appreciate it. And to make matters worse: complexity sells better.
+
+Edsger W. Dijkstra
+-->
+
+
+
+
+
 
 
         

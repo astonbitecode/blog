@@ -16,9 +16,8 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://astonbitecode.github.io/blog/page/about/</guid>
-      <description>In this blog, I post anything that might help someone, or (hopefully) even inspire.
- Simplicity is a great virtue but it requires hard work to achieve it and education to appreciate it. And to make matters worse: complexity sells better.
-Edsger W. Dijkstra</description>
+      <description>In this blog, I post things that I implement or simply think, with the hope that they might help someone, or even inspire.
+ function getmail() { var m = document.getElementById(&#34;laim&#34;).innerText.split(&#34;&#34;).reverse().join(&#34;&#34;); document.getElementById(&#34;mailmelink&#34;).href=&#34;mailto:&#34; + m; }  Contact me if you have any suggestions or you would like to give feedback. moc.liamnotorp@edocetibnotsa  Simplicity is a great virtue but it requires hard work to achieve it and education to appreciate it. And to make matters worse: complexity sells better.</description>
     </item>
     
   </channel>
