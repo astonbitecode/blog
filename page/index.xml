@@ -17,7 +17,7 @@
       
       <guid>https://astonbitecode.github.io/blog/page/about/</guid>
       <description>In this blog, I post things that I implement or simply think, with the hope that they might help someone, or even inspire.
- function getmail() { var m = document.getElementById(&#34;laim&#34;).innerText.split(&#34;&#34;).reverse().join(&#34;&#34;); document.getElementById(&#34;mailmelink&#34;).href=&#34;mailto:&#34; + m; }  Contact me if you have any suggestions or you would like to give feedback. moc.liamnotorp@edocetibnotsa  Simplicity is a great virtue but it requires hard work to achieve it and education to appreciate it. And to make matters worse: complexity sells better.</description>
+ function getmail() { var m = document.getElementById(&#34;laim&#34;).innerText.split(&#34;&#34;).reverse().join(&#34;&#34;); document.getElementById(&#34;mailmelink&#34;).href=&#34;mailto:&#34; + m; }  Contact me if you have any suggestions or would like to give feedback. moc.liamnotorp@edocetibnotsa  Simplicity is a great virtue but it requires hard work to achieve it and education to appreciate it. And to make matters worse: complexity sells better.</description>
     </item>
     
   </channel>

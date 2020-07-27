@@ -9,8 +9,9 @@
 
   <title>Hiding secrets in public view - Aston&#39;s Programming Thoughts</title>
   <meta name="description" content="Some time ago, I got intrigued by an article on the Register, finding out about the Baconian cipher.
-I started writing some code, initially implementing Baconian cipher codecs, which encode text to As and Bs and decode them back to text.
-This was not enough, though, so I thought of implementing a steganographer, which would help hiding these As and Bs into text, mapping As to lowercase characters and Bs to uppercase characters.">
+As cited in wikipedia:
+Bacon&rsquo;s cipher is a method of message encoding devised by Francis Bacon in 1605. A message is concealed in the presentation of text, rather than its content.
+So I started writing some code, initially implementing Baconian cipher codecs, which encode text to As and Bs and decode it back to text.">
   <meta name="author" content="Aston"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -59,13 +60,13 @@ This was not enough, though, so I thought of implementing a steganographer, whic
     "name" : "Aston"
   },
   "headline": "Hiding secrets in public view",
-  "description" : "Some time ago, I got intrigued by an article on the Register, finding out about the Baconian cipher.\nI started writing some code, initially implementing Baconian cipher codecs, which encode text to As and Bs and decode them back to text.\nThis was not enough, though, so I thought of implementing a steganographer, which would help hiding these As and Bs into text, mapping As to lowercase characters and Bs to uppercase characters.",
+  "description" : "Some time ago, I got intrigued by an article on the Register, finding out about the Baconian cipher.\nAs cited in wikipedia:\nBacon\u0026rsquo;s cipher is a method of message encoding devised by Francis Bacon in 1605. A message is concealed in the presentation of text, rather than its content.\nSo I started writing some code, initially implementing Baconian cipher codecs, which encode text to As and Bs and decode it back to text.",
   "inLanguage" : "en",
-  "wordCount":  455 ,
+  "wordCount":  486 ,
   "datePublished" : "2020-07-24T00:00:10",
   "dateModified" : "2020-07-24T00:00:10",
   "image" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
-  "keywords" : [ "cipher, steganography, encoding" ],
+  "keywords" : [ "bacon-cipher, steganography, encoding" ],
   "mainEntityOfPage" : "https:\/\/astonbitecode.github.io\/blog\/post\/008-secrets-in-public\/",
   "publisher" : {
     "@type": "Organization",
@@ -82,8 +83,9 @@ This was not enough, though, so I thought of implementing a steganographer, whic
 
 <meta property="og:title" content="Hiding secrets in public view" />
 <meta property="og:description" content="Some time ago, I got intrigued by an article on the Register, finding out about the Baconian cipher.
-I started writing some code, initially implementing Baconian cipher codecs, which encode text to As and Bs and decode them back to text.
-This was not enough, though, so I thought of implementing a steganographer, which would help hiding these As and Bs into text, mapping As to lowercase characters and Bs to uppercase characters.">
+As cited in wikipedia:
+Bacon&rsquo;s cipher is a method of message encoding devised by Francis Bacon in 1605. A message is concealed in the presentation of text, rather than its content.
+So I started writing some code, initially implementing Baconian cipher codecs, which encode text to As and Bs and decode it back to text.">
 <meta property="og:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
 <meta property="og:url" content="https://astonbitecode.github.io/blog/post/008-secrets-in-public/" />
 <meta property="og:type" content="website" />
@@ -91,7 +93,8 @@ This was not enough, though, so I thought of implementing a steganographer, whic
 
   <meta name="twitter:title" content="Hiding secrets in public view" />
   <meta name="twitter:description" content="Some time ago, I got intrigued by an article on the Register, finding out about the Baconian cipher.
-I started writing some code, initially implementing Baconian cipher codecs, which encode text to As …">
+As cited in wikipedia:
+Bacon&rsquo;s cipher is a method of message encoding devised by Francis …">
   <meta name="twitter:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
   <meta name="twitter:card" content="summary" />
   <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
@@ -280,9 +283,12 @@ Steganography goes one step further, hiding "things" (encrypted or not) inside o
 -->
 
 
-<p>Some time ago, I got intrigued by <a href="https://www.theregister.com/2018/01/20/friedman_cryptographic_grave_message/">an article</a> on <em>the Register</em>,
+<p>Some time ago, I got intrigued by <a href="https://www.theregister.com/2018/01/20/friedman_cryptographic_grave_message/">an article on the Register</a>,
 finding out about the <a href="https://en.wikipedia.org/wiki/Bacon's_cipher">Baconian cipher</a>.</p>
-<p>I started writing some code, initially implementing Baconian cipher codecs, which encode text to <code>A</code>s and <code>B</code>s and decode them back to text.</p>
+<p>As cited in wikipedia:</p>
+<p>Bacon&rsquo;s cipher is a method of message encoding devised by Francis Bacon in 1605.
+<strong>A message is concealed in the presentation of text, rather than its content.</strong></p>
+<p>So I started writing some code, initially implementing Baconian cipher codecs, which encode text to <code>A</code>s and <code>B</code>s and decode it back to text.</p>
 <p>This was not enough, though, so I thought of implementing a steganographer, which would help hiding these <code>A</code>s and <code>B</code>s into text,
 mapping <code>A</code>s to lowercase characters and <code>B</code>s to uppercase characters.</p>
 <p>After that, I was able to hide <strong>rust</strong> <code>InsidE thE LInux KErnEl</code></p>
@@ -339,7 +345,7 @@ mapping <code>A</code>s to lowercase characters and <code>B</code>s to uppercase
 </ul>
 <h1 id="no-limits">No limits&hellip;</h1>
 <p>Encoding and Steganography are two separate processes and they can be combined in any way.</p>
-<p>Moreover, the <a href="https://docs.rs/bacon-cipher/0.2.0/bacon_cipher/trait.BaconCodec.html">BaconCodec</a> is a <code>trait</code> and accepts two associated types:</p>
+<p>The <a href="https://docs.rs/bacon-cipher/0.2.0/bacon_cipher/trait.BaconCodec.html">BaconCodec</a> is a <code>trait</code> and accepts two associated types:</p>
 <ul>
 <li>
 <p>The <code>ABTYPE</code> is the type of the substitution characters A and B. For the <a href="https://docs.rs/bacon-cipher/0.2.0/bacon_cipher/codecs/char_codec/struct.CharCodec.html">CharCodec</a>, this is a <code>char</code>, but we could implement codecs with
@@ -365,7 +371,7 @@ and the crate is called <a href="https://crates.io/crates/bacon-cipher">bacon-ci
         
           <div class="blog-tags">
             
-              <a href="https://astonbitecode.github.io/blog/tags/cipher/">cipher</a>&nbsp;
+              <a href="https://astonbitecode.github.io/blog/tags/bacon-cipher/">bacon-cipher</a>&nbsp;
             
               <a href="https://astonbitecode.github.io/blog/tags/steganography/">steganography</a>&nbsp;
             

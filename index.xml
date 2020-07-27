@@ -18,8 +18,9 @@
       
       <guid>https://astonbitecode.github.io/blog/post/008-secrets-in-public/</guid>
       <description>Some time ago, I got intrigued by an article on the Register, finding out about the Baconian cipher.
-I started writing some code, initially implementing Baconian cipher codecs, which encode text to As and Bs and decode them back to text.
-This was not enough, though, so I thought of implementing a steganographer, which would help hiding these As and Bs into text, mapping As to lowercase characters and Bs to uppercase characters.</description>
+As cited in wikipedia:
+Bacon&amp;rsquo;s cipher is a method of message encoding devised by Francis Bacon in 1605. A message is concealed in the presentation of text, rather than its content.
+So I started writing some code, initially implementing Baconian cipher codecs, which encode text to As and Bs and decode it back to text.</description>
     </item>
     
     <item>
@@ -106,7 +107,7 @@ Even if the Virgo documentation provides detailed explanations, it seemed diffic
       
       <guid>https://astonbitecode.github.io/blog/page/about/</guid>
       <description>In this blog, I post things that I implement or simply think, with the hope that they might help someone, or even inspire.
- function getmail() { var m = document.getElementById(&#34;laim&#34;).innerText.split(&#34;&#34;).reverse().join(&#34;&#34;); document.getElementById(&#34;mailmelink&#34;).href=&#34;mailto:&#34; + m; }  Contact me if you have any suggestions or you would like to give feedback. moc.liamnotorp@edocetibnotsa  Simplicity is a great virtue but it requires hard work to achieve it and education to appreciate it. And to make matters worse: complexity sells better.</description>
+ function getmail() { var m = document.getElementById(&#34;laim&#34;).innerText.split(&#34;&#34;).reverse().join(&#34;&#34;); document.getElementById(&#34;mailmelink&#34;).href=&#34;mailto:&#34; + m; }  Contact me if you have any suggestions or would like to give feedback. moc.liamnotorp@edocetibnotsa  Simplicity is a great virtue but it requires hard work to achieve it and education to appreciate it. And to make matters worse: complexity sells better.</description>
     </item>
     
   </channel>
