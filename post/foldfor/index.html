@@ -7,8 +7,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <title>Overview of all pages with the tag #for - Aston&#39;s Programming Thoughts</title>
-  <meta name="description" content="Overview of all pages with the tag #for, such as: Scala: Use fold to serialize any number of Futures">
+  <title>Scala: Use fold to serialize any number of Futures - Aston&#39;s Programming Thoughts</title>
+  <meta name="description" content="Scala&rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More specifically, for serializing Futures.
+Let&rsquo;s assume that we have a function that performs some kind of logic and returns a Future:
+def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num &#43; 1 print(addedOne &#43; &#34; &#34;) } } Users of such a fuction, may want to call it more than one time and additionally, to call it serially.">
   <meta name="author" content="Aston"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -29,14 +31,66 @@
   
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog\/post\/foldfor\/",
+          "name": "Scala use fold to serialize any number of futures"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Aston"
+  },
+  "headline": "Scala: Use fold to serialize any number of Futures",
+  "description" : "Scala\u0026rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More specifically, for serializing Futures.\nLet\u0026rsquo;s assume that we have a function that performs some kind of logic and returns a Future:\ndef addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num \u002b 1 print(addedOne \u002b \u0026#34; \u0026#34;) } } Users of such a fuction, may want to call it more than one time and additionally, to call it serially.",
+  "inLanguage" : "en",
+  "wordCount":  237 ,
+  "datePublished" : "2015-10-04T08:05:58",
+  "dateModified" : "2015-10-04T08:05:58",
+  "image" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+  "keywords" : [ "scala, for, fold" ],
+  "mainEntityOfPage" : "https:\/\/astonbitecode.github.io\/blog\/post\/foldfor\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/astonbitecode.github.io\/blog",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
 
-<meta property="og:title" content="for" />
+<meta property="og:title" content="Scala: Use fold to serialize any number of Futures" />
+<meta property="og:description" content="Scala&rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More specifically, for serializing Futures.
+Let&rsquo;s assume that we have a function that performs some kind of logic and returns a Future:
+def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num &#43; 1 print(addedOne &#43; &#34; &#34;) } } Users of such a fuction, may want to call it more than one time and additionally, to call it serially.">
 <meta property="og:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
-<meta property="og:url" content="https://astonbitecode.github.io/blog/tags/for/" />
+<meta property="og:url" content="https://astonbitecode.github.io/blog/post/foldfor/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Aston&#39;s Programming Thoughts" />
 
-  <meta name="twitter:title" content="for" />
+  <meta name="twitter:title" content="Scala: Use fold to serialize any number of Futures" />
+  <meta name="twitter:description" content="Scala&rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More …">
   <meta name="twitter:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
   <meta name="twitter:card" content="summary" />
   <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
@@ -177,40 +231,14 @@ if (!doNotTrack) {
       <div class="container">
         <div class="row">
           <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="tags-heading">
+            <div class="post-heading">
               
-                <h1>for</h1>
-              
-              
-                <hr class="small">
+                <h1>Scala: Use fold to serialize any number of Futures</h1>
               
               
               
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-
-    
-  <div class="container" role="main">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        
-        <div class="posts-list">
-          
-            <article class="post-preview">
-    <a href="https://astonbitecode.github.io/blog/post/foldfor/">
-        <h2 class="post-title">Scala: Use fold to serialize any number of Futures</h2>
-        
-        
-        
-    </a>
-
-    <p class="post-meta">
-        <span class="post-meta">
+              
+                <span class="post-meta">
   
   
   <i class="fas fa-calendar"></i>&nbsp;Posted on October 4, 2015
@@ -226,35 +254,91 @@ if (!doNotTrack) {
 </span>
 
 
-    </p>
-    <div class="post-entry">
-        
-        Scala&rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More specifically, for serializing Futures.
-Let&rsquo;s assume that we have a function that performs some kind of logic and returns a Future:
-def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num + 1 print(addedOne + &#34; &#34;) } } Users of such a fuction, may want to call it more than one time and additionally, to call it serially.
-        <a href="https://astonbitecode.github.io/blog/post/foldfor/" class="post-read-more">[Read More]</a>
-        
-    </div>
-
-    
-    <div class="blog-tags">
-        
-        <a href="https://astonbitecode.github.io/blog/tags/scala/">scala</a>&nbsp;
-        
-        <a href="https://astonbitecode.github.io/blog/tags/for/">for</a>&nbsp;
-        
-        <a href="https://astonbitecode.github.io/blog/tags/fold/">fold</a>&nbsp;
-        
-    </div>
-    
-
-</article>
-          
+              
+            </div>
+          </div>
         </div>
-        
       </div>
     </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>Scala&rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More specifically, for serializing Futures.</p>
+<p>Let&rsquo;s assume that we have a function that performs some kind of logic and returns a Future:</p>
+<p><div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">addOneAndPrint</span><span class="o">(</span><span class="n">num</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Unit</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="nc">Future</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">addedOne</span> <span class="k">=</span> <span class="n">num</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">print</span><span class="o">(</span><span class="n">addedOne</span> <span class="o">+</span> <span class="s">&#34; &#34;</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span></code></pre></div>
+Users of such a fuction, may want to call it more than one time and additionally, to call it serially. This is easily done by using a for-comprehension like following:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">for</span> <span class="o">{</span>
+  <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">addOneAndPrint</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+  <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">addOneAndPrint</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="nc">Unit</span><span class="o">)</span></code></pre></div>
+<p>This assures that addOneAndPrint(1) will be executed first, the result will be returned and then the addOneAndPrint(2) will be executed.</p>
+<p>However, using the for like that, is a bit awkward if this should include many serialized calls (or unknown number of calls).
+For example, how could someone call the addOneAndPrint function one time for each element of a List of Integers?</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">ints</span> <span class="k">=</span> <span class="nc">List</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">5</span><span class="o">,</span> <span class="mi">7</span><span class="o">,</span> <span class="mi">9</span><span class="o">)</span></code></pre></div>
+<p>One nice solution is to use foldLeft for this List, combining a for-comprehension like following:</p>
+<div class="highlight"><pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">dummy</span> <span class="k">=</span> <span class="nc">Future</span> <span class="o">{}</span>
+ 
+<span class="n">ints</span><span class="o">.</span><span class="n">foldLeft</span><span class="o">(</span><span class="n">dummy</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="o">(</span><span class="n">prevFuture</span><span class="o">,</span> <span class="n">currentNumber</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">{</span>
+    <span class="k">for</span> <span class="o">{</span>
+      <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">prevFuture</span>
+      <span class="k">_</span> <span class="k">&lt;-</span> <span class="n">addOneAndPrint</span><span class="o">(</span><span class="n">currentNumber</span><span class="o">)</span>
+    <span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="nc">Unit</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span></code></pre></div>
+<p>The output will be the result of calling the addOneAndPrint serially:</p>
+<p><em>2 4 6 8 10</em></p>
+<p>Thanks for reading!</p>
+
+
+        
+          <div class="blog-tags">
+            
+              <a href="https://astonbitecode.github.io/blog/tags/scala/">scala</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/for/">for</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/fold/">fold</a>&nbsp;
+            
+          </div>
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://astonbitecode.github.io/blog/post/kindofdi/" data-toggle="tooltip" data-placement="top" title="A (kind-of) Dependency Injection in Scala">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://astonbitecode.github.io/blog/post/bang-not-ask/" data-toggle="tooltip" data-placement="top" title="Akka: To ask, or not to ask?">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+
+    </div>
   </div>
+</div>
 
       
 <footer>
@@ -273,7 +357,7 @@ def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num + 1 p
               </li>
           
           <li>
-            <a href="/blog/tags/for/index.xml" title="RSS">
+            <a href="" title="RSS">
               <span class="fa-stack fa-lg">
                 <i class="fas fa-circle fa-stack-2x"></i>
                 <i class="fas fa-rss fa-stack-1x fa-inverse"></i>

@@ -13,19 +13,19 @@
     
     <item>
       <title>A (kind-of) Dependency Injection in Scala</title>
-      <link>https://astonbitecode.github.io/blog/post/002-kindofdi/</link>
+      <link>https://astonbitecode.github.io/blog/post/kindofdi/</link>
       <pubDate>Sat, 25 Apr 2015 08:05:58 +0000</pubDate>
       
-      <guid>https://astonbitecode.github.io/blog/post/002-kindofdi/</guid>
+      <guid>https://astonbitecode.github.io/blog/post/kindofdi/</guid>
       <description>The problem While projects evolve, the lines of code increase and the dependencies between the classes are becoming more and more complicated. With the absence of some Dependency Injection (DI) framework/library, this ends up quickly in having to pass instances here and there through constructors of classes. The constructors may end up having something like 10+ arguments. To make things worse, for some cases, these arguments are not used by the logic of the classes themselves, but instead, they are just used to create subclasses!</description>
     </item>
     
     <item>
       <title>OSGi: Finding the way to JEE and JSF</title>
-      <link>https://astonbitecode.github.io/blog/post/001-osgijsf/</link>
+      <link>https://astonbitecode.github.io/blog/post/osgijsf/</link>
       <pubDate>Thu, 05 Mar 2015 08:05:58 +0000</pubDate>
       
-      <guid>https://astonbitecode.github.io/blog/post/001-osgijsf/</guid>
+      <guid>https://astonbitecode.github.io/blog/post/osgijsf/</guid>
       <description>Note: You may find the complete source code for this tutorial here.
 Combining the modularity offered by OSGi with the EE technologies may result to powerful, scalable and maintainable applications.
 Eclipse Virgo bridges OSGi and JEE worlds and provides a “completely module-based Java application server”.

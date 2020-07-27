@@ -202,7 +202,7 @@ if (!doNotTrack) {
         <div class="posts-list">
           
             <article class="post-preview">
-    <a href="https://astonbitecode.github.io/blog/post/004-bang-not-ask/">
+    <a href="https://astonbitecode.github.io/blog/post/bang-not-ask/">
         <h2 class="post-title">Akka: To ask, or not to ask?</h2>
         
         
@@ -231,7 +231,7 @@ if (!doNotTrack) {
         
         There are times that Akka Actors need to contact some other Actor, get the response and then continue their processing.
 It is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don&rsquo;t have access to others&rsquo; code.
-        <a href="https://astonbitecode.github.io/blog/post/004-bang-not-ask/" class="post-read-more">[Read More]</a>
+        <a href="https://astonbitecode.github.io/blog/post/bang-not-ask/" class="post-read-more">[Read More]</a>
         
     </div>
 
@@ -252,7 +252,7 @@ It is debatable whether this is a good design or not. However, when designing Ak
 </article>
           
             <article class="post-preview">
-    <a href="https://astonbitecode.github.io/blog/post/003-foldfor/">
+    <a href="https://astonbitecode.github.io/blog/post/foldfor/">
         <h2 class="post-title">Scala: Use fold to serialize any number of Futures</h2>
         
         
@@ -282,7 +282,7 @@ It is debatable whether this is a good design or not. However, when designing Ak
         Scala&rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More specifically, for serializing Futures.
 Let&rsquo;s assume that we have a function that performs some kind of logic and returns a Future:
 def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num + 1 print(addedOne + &#34; &#34;) } } Users of such a fuction, may want to call it more than one time and additionally, to call it serially.
-        <a href="https://astonbitecode.github.io/blog/post/003-foldfor/" class="post-read-more">[Read More]</a>
+        <a href="https://astonbitecode.github.io/blog/post/foldfor/" class="post-read-more">[Read More]</a>
         
     </div>
 
@@ -301,7 +301,7 @@ def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num + 1 p
 </article>
           
             <article class="post-preview">
-    <a href="https://astonbitecode.github.io/blog/post/002-kindofdi/">
+    <a href="https://astonbitecode.github.io/blog/post/kindofdi/">
         <h2 class="post-title">A (kind-of) Dependency Injection in Scala</h2>
         
         
@@ -329,7 +329,7 @@ def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num + 1 p
     <div class="post-entry">
         
         The problem While projects evolve, the lines of code increase and the dependencies between the classes are becoming more and more complicated. With the absence of some Dependency Injection (DI) framework/library, this ends up quickly in having to pass instances here and there through constructors of classes. The constructors may end up having something like 10+ arguments. To make things worse, for some cases, these arguments are not used by the logic of the classes themselves, but instead, they are just used to create subclasses!
-        <a href="https://astonbitecode.github.io/blog/post/002-kindofdi/" class="post-read-more">[Read More]</a>
+        <a href="https://astonbitecode.github.io/blog/post/kindofdi/" class="post-read-more">[Read More]</a>
         
     </div>
 
@@ -346,7 +346,7 @@ def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num + 1 p
 </article>
           
             <article class="post-preview">
-    <a href="https://astonbitecode.github.io/blog/post/001-osgijsf/">
+    <a href="https://astonbitecode.github.io/blog/post/osgijsf/">
         <h2 class="post-title">OSGi: Finding the way to JEE and JSF</h2>
         
         
@@ -377,7 +377,7 @@ def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num + 1 p
 Combining the modularity offered by OSGi with the EE technologies may result to powerful, scalable and maintainable applications.
 Eclipse Virgo bridges OSGi and JEE worlds and provides a “completely module-based Java application server”.
 Even if the Virgo documentation provides detailed explanations, it seemed difficult to find tutorials that are functional and build up to a JEE Web application that is powered by OSGi bundles and services.
-        <a href="https://astonbitecode.github.io/blog/post/001-osgijsf/" class="post-read-more">[Read More]</a>
+        <a href="https://astonbitecode.github.io/blog/post/osgijsf/" class="post-read-more">[Read More]</a>
         
     </div>
 

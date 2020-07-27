@@ -13,10 +13,10 @@
     
     <item>
       <title>Hiding secrets in public view</title>
-      <link>https://astonbitecode.github.io/blog/post/008-secrets-in-public/</link>
+      <link>https://astonbitecode.github.io/blog/post/secrets-in-public/</link>
       <pubDate>Fri, 24 Jul 2020 00:00:10 +0000</pubDate>
       
-      <guid>https://astonbitecode.github.io/blog/post/008-secrets-in-public/</guid>
+      <guid>https://astonbitecode.github.io/blog/post/secrets-in-public/</guid>
       <description>Some time ago, I got intrigued by an article on the Register, finding out about the Baconian cipher.
 As cited in wikipedia:
 Bacon&amp;rsquo;s cipher is a method of message encoding devised by Francis Bacon in 1605. A message is concealed in the presentation of text, rather than its content.

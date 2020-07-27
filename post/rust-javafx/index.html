@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>JavaFX UI in Rust - Aston&#39;s Programming Thoughts</title>
+  <meta name="description" content="In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.
+A brief description follows, but you may see the full code here.
+General description We will create a Rust application that:
+ Creates a JVM Starts a JavaFX application Accepts callbacks from the Java world and prints them in the console.  Creating a JVM from Rust code and communicating with the Java world is achieved using the j4rs crate.">
+  <meta name="author" content="Aston"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Aston\u0027s Programming Thoughts",
+    
+    "url": "https:\/\/astonbitecode.github.io\/blog"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/astonbitecode.github.io\/blog"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog\/post\/rust-javafx\/",
+          "name": "Java f x u i in rust"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Aston"
+  },
+  "headline": "JavaFX UI in Rust",
+  "description" : "In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.\nA brief description follows, but you may see the full code here.\nGeneral description We will create a Rust application that:\n Creates a JVM Starts a JavaFX application Accepts callbacks from the Java world and prints them in the console.  Creating a JVM from Rust code and communicating with the Java world is achieved using the j4rs crate.",
+  "inLanguage" : "en",
+  "wordCount":  704 ,
+  "datePublished" : "2019-02-28T00:05:58",
+  "dateModified" : "2019-02-28T00:05:58",
+  "image" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+  "keywords" : [ "rust, javafx, j4rs" ],
+  "mainEntityOfPage" : "https:\/\/astonbitecode.github.io\/blog\/post\/rust-javafx\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/astonbitecode.github.io\/blog",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="JavaFX UI in Rust" />
+<meta property="og:description" content="In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.
+A brief description follows, but you may see the full code here.
+General description We will create a Rust application that:
+ Creates a JVM Starts a JavaFX application Accepts callbacks from the Java world and prints them in the console.  Creating a JVM from Rust code and communicating with the Java world is achieved using the j4rs crate.">
+<meta property="og:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
+<meta property="og:url" content="https://astonbitecode.github.io/blog/post/rust-javafx/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Aston&#39;s Programming Thoughts" />
+
+  <meta name="twitter:title" content="JavaFX UI in Rust" />
+  <meta name="twitter:description" content="In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.
+A brief description follows, but you may see the full code here. …">
+  <meta name="twitter:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
+  <meta name="twitter:card" content="summary" />
+  <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta name="generator" content="Hugo 0.72.0" />
+  <link rel="alternate" href="https://astonbitecode.github.io/blog/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/syntax.css" /><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-84657729-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://astonbitecode.github.io/blog">Aston&#39;s Programming Thoughts</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/blog">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/blog/page/about/">About</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+      <div class="avatar-container">
+        <div class="avatar-img-border">
+          <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog">
+            <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" alt="Aston&#39;s Programming Thoughts" />
+          </a>
+        </div>
+      </div>
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>JavaFX UI in Rust</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on February 28, 2019
+  
+  
+  
+  
+    
+      &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Aston
+    
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>In this post, I would like to share the way how we can implement a <a href="https://www.rust-lang.org/">Rust</a> application that has a User Interface written in <a href="https://openjfx.io/">JavaFX</a>.</p>
+<p>A brief description follows, but you may see the full code <a href="https://github.com/astonbitecode/j4rs-showcase">here</a>.</p>
+<h2 id="general-description">General description</h2>
+<p>We will create a <strong>Rust</strong> application that:</p>
+<ul>
+<li>Creates a JVM</li>
+<li>Starts a JavaFX application</li>
+<li>Accepts callbacks from the Java world and prints them in the console.</li>
+</ul>
+<p>Creating a JVM from Rust code and communicating with the Java world is achieved using the <a href="https://crates.io/crates/j4rs">j4rs</a> crate.</p>
+<p>For the sake of simplicity, the JavaFX application is a simple window with a button. Once the button is pressed, that Java code generates a String and sends it to Rust.</p>
+<p>There are two <em>worlds</em> that we should code into&hellip; <em>Java</em> and <em>Rust</em>.</p>
+<h2 id="the-java-world">The Java world</h2>
+<p>We will use the Hello World project that is provided with the <a href="https://docs.oracle.com/javafx/2/get_started/hello_world.htm">Oracle documentation</a>.</p>
+<p>Our JavaFX application is created with the <code>FxUiApp</code> <a href="https://github.com/astonbitecode/j4rs-showcase/blob/master/java/src/main/java/io/github/astonbitecode/FxUiApp.java">class</a>. It will be launched when the Rust code will call the <code>launchFxUiApp</code> method.</p>
+<p>It contains just a button. Once the button is pressed, the <code>ButtonEventHandler</code> class performs the callback to the Rust world, sending <em>&ldquo;Hello World&rdquo;</em> messages.</p>
+<p><em>Note: You may read the comments for more details.</em></p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FxUiApp</span> <span class="kd">extends</span> <span class="n">Application</span> <span class="o">{</span>
+    <span class="c1">// The application instance is created by the JavaFX framework.
+</span><span class="c1"></span>    <span class="c1">// We need a way to access the instance from Rust though,
+</span><span class="c1"></span>    <span class="c1">// in order to initialize the callbacks.
+</span><span class="c1"></span>    <span class="c1">//
+</span><span class="c1"></span>    <span class="c1">// To keep things simple for this example,
+</span><span class="c1"></span>    <span class="c1">// we keep here the root of the JavaFX Scene.
+</span><span class="c1"></span>    <span class="c1">// From this, we will be able to get the ButtonEventHandler
+</span><span class="c1"></span>    <span class="c1">// and setup the rust callbacks in order for Java
+</span><span class="c1"></span>    <span class="c1">// to communicate with Rust.
+</span><span class="c1"></span>    <span class="kd">private</span> <span class="kd">static</span> <span class="n">StackPane</span> <span class="n">root</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StackPane</span><span class="o">();</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">start</span><span class="o">(</span><span class="n">Stage</span> <span class="n">primaryStage</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Create the button
+</span><span class="c1"></span>        <span class="n">Button</span> <span class="n">btn</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Button</span><span class="o">();</span>
+        <span class="n">btn</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="s">&#34;Say Hello World to Rust&#34;</span><span class="o">);</span>
+        <span class="n">btn</span><span class="o">.</span><span class="na">setOnAction</span><span class="o">(</span><span class="k">new</span> <span class="n">ButtonEventHandler</span><span class="o">());</span>
+        <span class="n">root</span><span class="o">.</span><span class="na">getChildren</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="n">btn</span><span class="o">);</span>
+
+        <span class="c1">// Create the Scene
+</span><span class="c1"></span>        <span class="n">Scene</span> <span class="n">scene</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Scene</span><span class="o">(</span><span class="n">root</span><span class="o">,</span> <span class="n">300</span><span class="o">,</span> <span class="n">250</span><span class="o">);</span>
+
+        <span class="n">primaryStage</span><span class="o">.</span><span class="na">setTitle</span><span class="o">(</span><span class="s">&#34;Hello Rust world!&#34;</span><span class="o">);</span>
+        <span class="n">primaryStage</span><span class="o">.</span><span class="na">setScene</span><span class="o">(</span><span class="n">scene</span><span class="o">);</span>
+        <span class="n">primaryStage</span><span class="o">.</span><span class="na">show</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Rust code will call this method to launch the JavaFX application
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">launchFxUiApp</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">new</span> <span class="n">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="c1">// Launch the javafx app
+</span><span class="c1"></span>            <span class="n">Application</span><span class="o">.</span><span class="na">launch</span><span class="o">();</span>
+        <span class="o">}).</span><span class="na">start</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="c1">// Rust code will call this method to retrieve the
+</span><span class="c1"></span>    <span class="c1">// ButtonEventHandler instance that handles events of the Button.
+</span><span class="c1"></span>    <span class="c1">// Rust code will use this instance to initialize a callback channel.
+</span><span class="c1"></span>    <span class="kd">public</span> <span class="kd">static</span> <span class="n">ButtonEventHandler</span> <span class="nf">getButtonEventHandler</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="c1">// Wait until the JavaFX launches.
+</span><span class="c1"></span>        <span class="c1">// This is a hack to keep things readable.
+</span><span class="c1"></span>        <span class="c1">// Better approaches may include using latches, atomic references etc.
+</span><span class="c1"></span>        <span class="k">while</span> <span class="o">(</span><span class="n">root</span><span class="o">.</span><span class="na">getChildren</span><span class="o">().</span><span class="na">isEmpty</span><span class="o">())</span>
+            <span class="n">Thread</span><span class="o">.</span><span class="na">sleep</span><span class="o">(</span><span class="n">100</span><span class="o">);</span>
+        <span class="c1">// We know exactly what is being created in this example.
+</span><span class="c1"></span>        <span class="c1">// This is totally unsafe for other use cases.
+</span><span class="c1"></span>        <span class="k">return</span> <span class="o">(</span><span class="n">ButtonEventHandler</span><span class="o">)((</span><span class="n">Button</span><span class="o">)</span><span class="n">root</span><span class="o">.</span><span class="na">getChildren</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">0</span><span class="o">)).</span><span class="na">getOnAction</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></div>
+<h2 id="the-rust-world">The Rust world</h2>
+<p>The ony dependency needed for our <a href="https://github.com/astonbitecode/j4rs-showcase/blob/master/rust/Cargo.toml">Cargo.toml</a>, is the <code>j4rs</code> crate.</p>
+<p>The main function creates a new JVM and starts the JavaFX application by calling the <code>FxUiApp.launchFxUiApp</code> <a href="https://github.com/astonbitecode/j4rs-showcase/blob/cb61dc9fd2b67a7d13c3d9f19052a8d2bb27c5d2/java/src/main/java/io/github/astonbitecode/FxUiApp.java#L27">method</a> in Java.</p>
+<p>It then initializes a callback channel to the <code>ButtonEventHandler</code> <a href="https://github.com/astonbitecode/j4rs-showcase/blob/cb61dc9fd2b67a7d13c3d9f19052a8d2bb27c5d2/java/src/main/java/io/github/astonbitecode/ButtonEventHandler.java">class</a> and uses the Receiver of the channel to get messages from the Java world.</p>
+<p>The messages are printed to the console upon reception.</p>
+<p><em>Note: You may read the comments for more details.</em>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">use</span><span class="w"> </span><span class="n">std</span>::<span class="n">env</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">j4rs</span>::<span class="p">{</span><span class="n">ClasspathEntry</span><span class="p">,</span><span class="w"> </span><span class="n">InstanceReceiver</span><span class="p">};</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">    </span><span class="c1">// We need to add the jar file that contains
+</span><span class="c1"></span><span class="w">    </span><span class="c1">// the UI code in the classpath.
+</span><span class="c1"></span><span class="w">    </span><span class="c1">// We assume that the env var &#34;FX_UI_JAR_PATH&#34; exists
+</span><span class="c1"></span><span class="w">    </span><span class="c1">// and contains the absolute path of the jar file.
+</span><span class="c1"></span><span class="w">    </span><span class="c1">// E.g. /home/myuser/git/j4rs-showcase/java/target/fx-ui-0.1.0.jar
+</span><span class="c1"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">ui_jar_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">env</span>::<span class="n">var</span><span class="p">(</span><span class="s">&#34;FX_UI_JAR_PATH&#34;</span><span class="p">).</span><span class="n">expect</span><span class="p">(</span><span class="s">&#34;The FX_UI_JAR_PATH env var is not set.&#34;</span><span class="p">);</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span><span class="c1">// Create the `ClasspathEntry` for the jar
+</span><span class="c1"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">cp_entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ClasspathEntry</span>::<span class="n">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ui_jar_path</span><span class="p">);</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span><span class="c1">// Create a new Jvm, adding the FX_UI_JAR_PATH to the classpath
+</span><span class="c1"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">j4rs</span>::<span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">()</span><span class="w">
+</span><span class="w">        </span><span class="p">.</span><span class="n">classpath_entry</span><span class="p">(</span><span class="n">cp_entry</span><span class="p">)</span><span class="w">
+</span><span class="w">        </span><span class="p">.</span><span class="n">build</span><span class="p">().</span><span class="n">expect</span><span class="p">(</span><span class="s">&#34;Could not create the JVM&#34;</span><span class="p">);</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span><span class="c1">// Launch the JavaFX UI
+</span><span class="c1"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke_static</span><span class="p">(</span><span class="w">
+</span><span class="w">        </span><span class="s">&#34;io.github.astonbitecode.FxUiApp&#34;</span><span class="p">,</span><span class="w">
+</span><span class="w">        </span><span class="s">&#34;launchFxUiApp&#34;</span><span class="p">,</span><span class="w">
+</span><span class="w">        </span><span class="o">&amp;</span><span class="n">vec</span><span class="o">!</span><span class="p">[])</span><span class="w">
+</span><span class="w">        </span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span><span class="c1">// Retrieve the ButtonEventHandler instance
+</span><span class="c1"></span><span class="w">    </span><span class="c1">// that is used to handle the JavaFX button events.
+</span><span class="c1"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">button_event_handler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke_static</span><span class="p">(</span><span class="w">
+</span><span class="w">        </span><span class="s">&#34;io.github.astonbitecode.FxUiApp&#34;</span><span class="p">,</span><span class="w">
+</span><span class="w">        </span><span class="s">&#34;getButtonEventHandler&#34;</span><span class="p">,</span><span class="w">
+</span><span class="w">        </span><span class="o">&amp;</span><span class="n">vec</span><span class="o">!</span><span class="p">[])</span><span class="w">
+</span><span class="w">        </span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span><span class="c1">// Install a callback channel in the ButtonEventHandler instance
+</span><span class="c1"></span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">instance_receiver</span>: <span class="nc">InstanceReceiver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="w">
+</span><span class="w">        </span><span class="p">.</span><span class="n">init_callback_channel</span><span class="p">(</span><span class="o">&amp;</span><span class="n">button_event_handler</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w">    </span><span class="c1">// Wait for messages from the receiver
+</span><span class="c1"></span><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">received</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instance_receiver</span><span class="p">.</span><span class="n">rx</span><span class="p">().</span><span class="n">recv</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">message_from_java</span>: <span class="nb">String</span> <span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">to_rust</span><span class="p">(</span><span class="n">received</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">        </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;Rust received: {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">message_from_java</span><span class="p">);</span><span class="w">
+</span><span class="w">    </span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></div></p>
+<h2 id="steps-for-building-and-executing">Steps for building and executing</h2>
+<p>For this demo, we used <code>Java 11</code> and <code>maven</code> to build the Java code. Therefore, these should be installed in the host before building.</p>
+<ol>
+<li>
+<p><strong>Build</strong> with</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">cargo build --manifest-path<span class="o">=</span>rust/Cargo.toml
+</code></pre></div><p>During building, you should get a warning like:</p>
+<blockquote>
+<p>warning: Please export the env var &ldquo;FX_UI_JAR_PATH&rdquo; with the value &ldquo;/home/myuser/git/j4rs-showcase/java/target/fx-ui-0.1.0.jar&rdquo; before running the application</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Export</strong> the FX_UI_JAR_PATH variable</p>
+<p>For linux:</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">export</span> <span class="nv">FX_UI_JAR_PATH</span><span class="o">=</span>/home/myuser/git/j4rs-showcase/java/target/fx-ui-0.1.0.jar
+</code></pre></div></li>
+<li>
+<p><strong>Execute</strong> with</p>
+<div class="highlight"><pre class="chroma"><code class="language-bash" data-lang="bash">cargo run --manifest-path<span class="o">=</span>rust/Cargo.toml
+</code></pre></div></li>
+</ol>
+<h2 id="execution-output">Execution output</h2>
+<p><img src="fxui.png" alt="fxui.png"></p>
+<p><img src="console.png" alt="console.png"></p>
+<hr>
+<p>Thanks for reading!</p>
+
+
+        
+          <div class="blog-tags">
+            
+              <a href="https://astonbitecode.github.io/blog/tags/rust/">rust</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/javafx/">javafx</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/j4rs/">j4rs</a>&nbsp;
+            
+          </div>
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://astonbitecode.github.io/blog/post/bang-not-ask/" data-toggle="tooltip" data-placement="top" title="Akka: To ask, or not to ask?">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://astonbitecode.github.io/blog/post/j4rs_0.6.0/" data-toggle="tooltip" data-placement="top" title="Announcing j4rs">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/astonbitecode" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            <a href="" title="RSS">
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              Aston
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2020
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://astonbitecode.github.io/blog">Aston&#39;s Programming Thoughts</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="https://gohugo.io">Hugo v0.72.0</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://astonbitecode.github.io/blog/js/main.js"></script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://astonbitecode.github.io/blog/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+

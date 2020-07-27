@@ -13,20 +13,20 @@
     
     <item>
       <title>Akka: To ask, or not to ask?</title>
-      <link>https://astonbitecode.github.io/blog/post/004-bang-not-ask/</link>
+      <link>https://astonbitecode.github.io/blog/post/bang-not-ask/</link>
       <pubDate>Tue, 20 Sep 2016 06:10:10 +0000</pubDate>
       
-      <guid>https://astonbitecode.github.io/blog/post/004-bang-not-ask/</guid>
+      <guid>https://astonbitecode.github.io/blog/post/bang-not-ask/</guid>
       <description>There are times that Akka Actors need to contact some other Actor, get the response and then continue their processing.
 It is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don&amp;rsquo;t have access to others&amp;rsquo; code.</description>
     </item>
     
     <item>
       <title>Scala: Use fold to serialize any number of Futures</title>
-      <link>https://astonbitecode.github.io/blog/post/003-foldfor/</link>
+      <link>https://astonbitecode.github.io/blog/post/foldfor/</link>
       <pubDate>Sun, 04 Oct 2015 08:05:58 +0000</pubDate>
       
-      <guid>https://astonbitecode.github.io/blog/post/003-foldfor/</guid>
+      <guid>https://astonbitecode.github.io/blog/post/foldfor/</guid>
       <description>Scala&amp;rsquo;s for-comprehensions are extremely useful and offer much more than just looping. For this post, I would like to focus on using for-comprehensions for manipulating Futures. More specifically, for serializing Futures.
 Let&amp;rsquo;s assume that we have a function that performs some kind of logic and returns a Future:
 def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num + 1 print(addedOne + &amp;#34; &amp;#34;) } } Users of such a fuction, may want to call it more than one time and additionally, to call it serially.</description>
@@ -34,19 +34,19 @@ def addOneAndPrint(num: Int): Future[Unit] = { Future { val addedOne = num + 1 p
     
     <item>
       <title>A (kind-of) Dependency Injection in Scala</title>
-      <link>https://astonbitecode.github.io/blog/post/002-kindofdi/</link>
+      <link>https://astonbitecode.github.io/blog/post/kindofdi/</link>
       <pubDate>Sat, 25 Apr 2015 08:05:58 +0000</pubDate>
       
-      <guid>https://astonbitecode.github.io/blog/post/002-kindofdi/</guid>
+      <guid>https://astonbitecode.github.io/blog/post/kindofdi/</guid>
       <description>The problem While projects evolve, the lines of code increase and the dependencies between the classes are becoming more and more complicated. With the absence of some Dependency Injection (DI) framework/library, this ends up quickly in having to pass instances here and there through constructors of classes. The constructors may end up having something like 10+ arguments. To make things worse, for some cases, these arguments are not used by the logic of the classes themselves, but instead, they are just used to create subclasses!</description>
     </item>
     
     <item>
       <title>OSGi: Finding the way to JEE and JSF</title>
-      <link>https://astonbitecode.github.io/blog/post/001-osgijsf/</link>
+      <link>https://astonbitecode.github.io/blog/post/osgijsf/</link>
       <pubDate>Thu, 05 Mar 2015 08:05:58 +0000</pubDate>
       
-      <guid>https://astonbitecode.github.io/blog/post/001-osgijsf/</guid>
+      <guid>https://astonbitecode.github.io/blog/post/osgijsf/</guid>
       <description>Note: You may find the complete source code for this tutorial here.
 Combining the modularity offered by OSGi with the EE technologies may result to powerful, scalable and maintainable applications.
 Eclipse Virgo bridges OSGi and JEE worlds and provides a “completely module-based Java application server”.

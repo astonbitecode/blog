@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>j4rs v0.12.0: Java to Rust direction - Aston&#39;s Programming Thoughts</title>
+  <meta name="description" content="I would like to share a new direction that my j4rs project took after its 0.12.0 release.
+Until v0.12.0, j4rs provided to Rust applications the tools to achieve calls to the Java world. This included setting up and manage JVMs, instantiating Java Classes, making calls to Java methods, providing the means for Java to Rust callbacks etc.
+The project was following solely a Rust-first approach, giving the Rust applications the ability to take advantage of the huge amount of libraries and tools existing in the Java ecosystem.">
+  <meta name="author" content="Aston"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Aston\u0027s Programming Thoughts",
+    
+    "url": "https:\/\/astonbitecode.github.io\/blog"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/astonbitecode.github.io\/blog"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog\/post\/j4rs_0.12.0\/",
+          "name": "J4rs v0.12.0 java to rust direction"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Aston"
+  },
+  "headline": "j4rs v0.12.0: Java to Rust direction",
+  "description" : "I would like to share a new direction that my j4rs project took after its 0.12.0 release.\nUntil v0.12.0, j4rs provided to Rust applications the tools to achieve calls to the Java world. This included setting up and manage JVMs, instantiating Java Classes, making calls to Java methods, providing the means for Java to Rust callbacks etc.\nThe project was following solely a Rust-first approach, giving the Rust applications the ability to take advantage of the huge amount of libraries and tools existing in the Java ecosystem.",
+  "inLanguage" : "en",
+  "wordCount":  858 ,
+  "datePublished" : "2020-07-15T00:10:10",
+  "dateModified" : "2020-07-15T00:10:10",
+  "image" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+  "keywords" : [ "rust, java, j4rs" ],
+  "mainEntityOfPage" : "https:\/\/astonbitecode.github.io\/blog\/post\/j4rs_0.12.0\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/astonbitecode.github.io\/blog",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="j4rs v0.12.0: Java to Rust direction" />
+<meta property="og:description" content="I would like to share a new direction that my j4rs project took after its 0.12.0 release.
+Until v0.12.0, j4rs provided to Rust applications the tools to achieve calls to the Java world. This included setting up and manage JVMs, instantiating Java Classes, making calls to Java methods, providing the means for Java to Rust callbacks etc.
+The project was following solely a Rust-first approach, giving the Rust applications the ability to take advantage of the huge amount of libraries and tools existing in the Java ecosystem.">
+<meta property="og:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
+<meta property="og:url" content="https://astonbitecode.github.io/blog/post/j4rs_0.12.0/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Aston&#39;s Programming Thoughts" />
+
+  <meta name="twitter:title" content="j4rs v0.12.0: Java to Rust direction" />
+  <meta name="twitter:description" content="I would like to share a new direction that my j4rs project took after its 0.12.0 release.
+Until v0.12.0, j4rs provided to Rust applications the tools to achieve calls to the Java world. This included …">
+  <meta name="twitter:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
+  <meta name="twitter:card" content="summary" />
+  <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta name="generator" content="Hugo 0.72.0" />
+  <link rel="alternate" href="https://astonbitecode.github.io/blog/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/syntax.css" /><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-84657729-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://astonbitecode.github.io/blog">Aston&#39;s Programming Thoughts</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/blog">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/blog/page/about/">About</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+      <div class="avatar-container">
+        <div class="avatar-img-border">
+          <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog">
+            <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" alt="Aston&#39;s Programming Thoughts" />
+          </a>
+        </div>
+      </div>
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>j4rs v0.12.0: Java to Rust direction</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on July 15, 2020
+  
+  
+  
+  
+    
+      &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Aston
+    
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p>I would like to share a new direction that my <a href="https://github.com/astonbitecode/j4rs">j4rs</a> project took after its <code>0.12.0</code> release.</p>
+<p>Until v0.12.0, <code>j4rs</code> provided to Rust applications the tools to achieve calls to the Java world.
+This included setting up and manage JVMs, instantiating Java Classes, making calls to Java methods, providing the means for Java to Rust callbacks etc.</p>
+<p>The project was following solely a <em>Rust-first</em> approach, giving the Rust applications the ability to take advantage of the huge amount of libraries and tools existing in the Java ecosystem.</p>
+<p>This Rust-&gt;Java only approach changed in v0.12.0. <strong>j4rs can now be used as well in Java projects that want to achieve JNI calls to Rust libraries</strong>.</p>
+<p><code>j4rs</code> achieves this with the use of <a href="https://doc.rust-lang.org/reference/procedural-macros.html#attribute-macros">procedural macros</a>.</p>
+<p>I have created a <a href="https://github.com/astonbitecode/j4rs-java-call-rust">Github repository</a> with some examples,
+but I will try to summarize the most important points here.</p>
+<p>Overall, what we want to achieve is to have a Java application that can call Rust functions.</p>
+<h1 id="rust-world">Rust world</h1>
+<p>We need to create a <code>cdylib</code> Cargo project, in order to have a shared library as output. This output will be loaded and used by the Java code.
+We also need to define and use the <code>j4rs_derive</code> dependency in the Cargo.toml, since the Rust functions that can be accessible
+from Java should be annotated with the <code>call_from_java</code> attribute, provided by it.</p>
+<p>Having said that, the <code>Cargo.toml</code> should contain the following:</p>
+<div class="highlight"><pre class="chroma"><code class="language-toml" data-lang="toml"><span class="p">[</span><span class="nx">lib</span><span class="p">]</span>
+<span class="nx">crate</span><span class="err">-</span><span class="nx">type</span> <span class="p">=</span> <span class="p">[</span><span class="s2">&#34;cdylib&#34;</span><span class="p">]</span>
+
+<span class="p">[</span><span class="nx">dependencies</span><span class="p">]</span>
+<span class="nx">j4rs</span> <span class="p">=</span> <span class="s2">&#34;0.12&#34;</span>
+<span class="nx">j4rs_derive</span> <span class="p">=</span> <span class="s2">&#34;0.1&#34;</span>
+</code></pre></div><p>The source code for a <em>java-callable</em> function is simply:</p>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">use</span><span class="w"> </span><span class="n">j4rs</span>::<span class="n">prelude</span>::<span class="o">*</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">j4rs_derive</span>::<span class="o">*</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="cp">#[call_from_java(</span><span class="s">&#34;io.github.astonbitecode.j4rs.example.RustSimpleFunctionCall.fnnoargs&#34;</span><span class="cp">)]</span><span class="w">
+</span><span class="w"></span><span class="k">fn</span> <span class="nf">my_function_with_no_args</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">    </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;Hello from the Rust world!&#34;</span><span class="p">);</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></div><p>The <code>call_from_java</code> attribute contains the name of the native method as it is defined in Java, along with the package and the Class itself.</p>
+<p>The code above, will accept calls from a native method called <code>fnnoargs</code>, defined in the Java class <code>io.github.astonbitecode.j4rs.example.RustSimpleFunctionCall</code>.</p>
+<h1 id="java-world">Java World</h1>
+<p>Here we have the actual application that will run and call the Rust code defined above.
+The following class contains the definition of the native function that maps to the <code>my_function_with_no_args</code> in the Rust code defined above.</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nn">io.github.astonbitecode.j4rs.example</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">RustSimpleFunctionCall</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">native</span> <span class="kt">void</span> <span class="nf">fnnoargs</span><span class="o">();</span>
+
+    <span class="kd">static</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">loadLibrary</span><span class="o">(</span><span class="s">&#34;rustlib&#34;</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">doCallNoArgs</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">fnnoargs</span><span class="o">();</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>The thing to take attention here, is to load the dynamic library that is created by compiling the Rust code.
+This is done with the call to <code>loadLibrary</code>, but the actual location of the library should be defined in the <code>java.library.path</code>.
+For example, you could define it with a VM option:</p>
+<p><code>-Djava.library.path=/home/myuser/my_rust_lib/target/debug</code></p>
+<p>After that, the only thing remaining for a demonstration, is to define a main method that will call the native one. E.g.:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;Welcome. This is a simple example that demonstrates calls to rust functions using j4rs.\n&#34;</span><span class="o">);</span>
+
+        <span class="n">var</span> <span class="n">rustFnCalls</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RustSimpleFunctionCall</span><span class="o">();</span>
+        <span class="n">rustFnCalls</span><span class="o">.</span><span class="na">doCallNoArgs</span><span class="o">();</span>
+
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;\nBye!&#34;</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><p>Executing the above should produce the following output:</p>
+<pre><code>Welcome. This is a simple example that demonstrates calls to rust functions using j4rs.
+
+Hello from the Rust world!
+
+Bye!
+</code></pre><h1 id="conventions">Conventions</h1>
+<p><code>j4rs</code> implies some conventions for the arguments and the return types of the native functions.</p>
+<p>You may find <a href="https://github.com/astonbitecode/j4rs-java-call-rust/blob/master/java/src/main/java/io/github/astonbitecode/j4rs/example/RustFunctionCalls.java">here</a> some examples of Java code that demonstrate these conventions  and <a href="https://github.com/astonbitecode/j4rs-java-call-rust/blob/master/rust/src/lib.rs">here</a> some examples of Rust code.</p>
+<h3 id="native-arguments">Native arguments</h3>
+<p>In the Rust world, the functions that are accessible from Java must be annotated with the <code>call_from_java</code> attribute.
+They can have any number of arguments, but their type must be <a href="https://docs.rs/j4rs/0.12.0/j4rs/struct.Instance.html">j4rs::Instance</a>.</p>
+<p>As always, the transformation of <code>Instance</code>s to rust values, can be achieved with a call to <code>Jvm.to_rust</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="kd">let</span><span class="w"> </span><span class="n">s</span>: <span class="nb">String</span> <span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">to_rust</span><span class="p">(</span><span class="n">string_instance</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="kd">let</span><span class="w"> </span><span class="n">s</span>: <span class="kt">i32</span> <span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">to_rust</span><span class="p">(</span><span class="n">integer_instance</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span></code></pre></div><p>In the Java world, the native methods can have any number of arguments again and they must be of type <code>Instance&lt;T&gt;</code>.
+A Instance object can be created for any Java Object, using the <code>Java2RustUtils.createInstance</code> method:</p>
+<div class="highlight"><pre class="chroma"><code class="language-java" data-lang="java"><span class="n">var</span> <span class="n">integerNativeInvocation</span> <span class="o">=</span> <span class="n">Java2RustUtils</span><span class="o">.</span><span class="na">createInstance</span><span class="o">(</span><span class="n">1</span><span class="o">);</span>
+<span class="n">var</span> <span class="n">stringNativeInvocation</span> <span class="o">=</span> <span class="n">Java2RustUtils</span><span class="o">.</span><span class="na">createInstance</span><span class="o">(</span><span class="s">&#34;My String&#34;</span><span class="o">);</span>
+<span class="n">var</span> <span class="n">anObjectNativeInvocation</span> <span class="o">=</span> <span class="n">Java2RustUtils</span><span class="o">.</span><span class="na">createInstance</span><span class="o">(</span><span class="k">new</span> <span class="n">AnObject</span><span class="o">());</span>
+</code></pre></div><p>In other words the <code>j4rs::Instance</code> type in Rust, maps to the <code>org.astonbitecode.j4rs.api.Instance</code> type in Java.</p>
+<h3 id="return-types">Return types</h3>
+<p>In the Rust world, the return type of functions can be either void, or a Result of <code>Instance</code>.
+The <code>Instance</code>s can be created from an <a href="https://docs.rs/j4rs/0.12.0/j4rs/enum.InvocationArg.html">InvocationArg</a>, like following:</p>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// Creates an arg of java.lang.String
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">ia1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="s">&#34;a str&#34;</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="c1">// Creates an Instance for the ia1 InvocationArg
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">i1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Instance</span>::<span class="n">try_from</span><span class="p">(</span><span class="n">ia1</span><span class="p">)</span><span class="o">?</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Creates an arg of java.lang.Long
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">ia2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="mi">1_</span><span class="k">i64</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="c1">// Creates an Instance for the ia2 InvocationArg
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">i2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Instance</span>::<span class="n">try_from</span><span class="p">(</span><span class="n">ia2</span><span class="p">)</span><span class="o">?</span><span class="w">
+</span></code></pre></div><p>and be returned to the Java world.</p>
+<p>In the Java world, the return type can be either void or <code>Instance&lt;T&gt;</code>.</p>
+<p>In the case that the Rust function returns an <code>Err</code>, an <code>InvocationException</code> will be thrown in the Java world.</p>
+<p>Again, the <code>j4rs::Instance</code> type in Rust, maps to the <code>org.astonbitecode.j4rs.api.Instance</code> type in Java.</p>
+<h1 id="type-safety-thoughts">Type-safety thoughts</h1>
+<p>Even though generics are involved for <code>Instance</code>s generation on the Java side,
+the type-safety during the transition from Java types to Rust types is not enforced during the compilation.</p>
+<p>Nothing stops an <code>Instance</code> that is created in the Java code for an <code>Integer</code> to be attempted in the Rust code to get transformed into something else,
+like for example a <code>String</code>. This will fail during runtime instead of compile time and unfortunately, I am not aware of something that can be done about it&hellip;</p>
+<hr>
+<p>I hope you find the <a href="https://github.com/astonbitecode/j4rs">j4rs</a> crate interesting and useful.</p>
+<p>Thanks for reading!</p>
+
+
+        
+          <div class="blog-tags">
+            
+              <a href="https://astonbitecode.github.io/blog/tags/rust/">rust</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/java/">java</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/j4rs/">j4rs</a>&nbsp;
+            
+          </div>
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://astonbitecode.github.io/blog/post/j4rs_0.6.0/" data-toggle="tooltip" data-placement="top" title="Announcing j4rs">&larr; Previous Post</a>
+            </li>
+          
+          
+            <li class="next">
+              <a href="https://astonbitecode.github.io/blog/post/secrets-in-public/" data-toggle="tooltip" data-placement="top" title="Hiding secrets in public view">Next Post &rarr;</a>
+            </li>
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/astonbitecode" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            <a href="" title="RSS">
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              Aston
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2020
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://astonbitecode.github.io/blog">Aston&#39;s Programming Thoughts</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+          <a href="https://gohugo.io">Hugo v0.72.0</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://astonbitecode.github.io/blog/js/main.js"></script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://astonbitecode.github.io/blog/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+
