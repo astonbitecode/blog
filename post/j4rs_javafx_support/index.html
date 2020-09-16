@@ -60,7 +60,7 @@ Introduction Some time ago, I was exploring things that can be achieved by using
   "headline": "j4rs: JavaFX support (WIP)",
   "description" : "Note: JavaFX support in j4rs is a work in progress. Adding features as the time passes and versioning evolves seems better than attempting to create full-feature JavaFX support for Rust. The latter feels rather difficult, frightening and time-demanding.\nIntroduction Some time ago, I was exploring things that can be achieved by using j4rs and had the idea to implement a JavaFX GUI. This indeed happened, but the attempt included implementing some parts in Java and some in Rust, along with several hacks.",
   "inLanguage" : "en",
-  "wordCount":  445 ,
+  "wordCount":  444 ,
   "datePublished" : "2020-09-15T00:10:10",
   "dateModified" : "2020-09-15T00:10:10",
   "image" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
@@ -282,7 +282,7 @@ attempting to create full-feature JavaFX support for Rust. The latter feels rath
 <p>Some time ago, I was exploring things that can be achieved by using <code>j4rs</code> and had the idea to implement a JavaFX GUI.
 This indeed <a href="https://astonbitecode.github.io/blog/post/rust-javafx/">happened</a>, but the attempt included implementing some parts in <a href="https://github.com/astonbitecode/j4rs-showcase/tree/v1/java">Java</a>
 and some in <a href="https://github.com/astonbitecode/j4rs-showcase/tree/v1/rust">Rust</a>, along with several hacks.</p>
-<p>With this JavaFX support WIP, there is no need to write Java code any more and things are lot simpler. Of course, a prerequisite is the knowledge of JavaFX.
+<p>With this JavaFX support WIP, there is no need to write Java code any more and things are simpler. Of course, a prerequisite is the knowledge of JavaFX.
 <code>j4rs</code> does not create an API or DSL above the JavaFX API, like, for example <a href="http://www.scalafx.org/">ScalaFX</a> does.</p>
 <p>The approach for now is to use <code>j4rs</code> to manipulate the JavaFX API itself, while implementing special Rust API calls when needed.</p>
 <h1 id="steps-to-build-a-javafx-ui">Steps to build a JavaFX UI</h1>
@@ -301,6 +301,7 @@ This can happen by adding the following in a <a href="https://doc.rust-lang.org/
 </span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">().</span><span class="n">build</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
 </span><span class="w">    </span><span class="n">jvm</span><span class="p">.</span><span class="n">deploy_javafx_dependencies</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
 </span><span class="w"></span><span class="p">}</span><span class="w">
+</span><span class="w">
 </span></code></pre></div><p>``</p>
 </li>
 <li>
@@ -313,9 +314,10 @@ This can happen by adding the following in a <a href="https://doc.rust-lang.org/
 </span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">().</span><span class="n">with_javafx_support</span><span class="p">().</span><span class="n">build</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
 </span><span class="w">
 </span><span class="w"></span><span class="c1">// Start the JavaFX application.
-</span><span class="c1">// When the JavaFX application starts, the `InstanceReceiver` channel 
+</span><span class="c1">// When the JavaFX application starts, the `InstanceReceiver` 
 </span><span class="c1">// that is returned from the `start_javafx_app` invocation
 </span><span class="c1">// will receive an Instance of `javafx.stage.Stage`.
+</span><span class="c1">// 
 </span><span class="c1">// The UI may start being built using the provided `Stage`.
 </span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">start_javafx_app</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="n">rx</span><span class="p">().</span><span class="n">recv</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
 </span><span class="w">
