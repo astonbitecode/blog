@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+  <head>
+    
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>j4rs: JavaFX support (WIP) - Aston&#39;s Programming Thoughts</title>
+  <meta name="description" content="Note: JavaFX support in j4rs is a work in progress. Adding features as the time passes and versioning evolves seems better than attempting to create full-feature JavaFX support for Rust. The latter feels rather difficult, frightening and time-demanding.
+Introduction Some time ago, I was exploring things that can be achieved by using j4rs and had the idea to implement a JavaFX GUI. This indeed happened, but the attempt included implementing some parts in Java and some in Rust, along with several hacks.">
+  <meta name="author" content="Aston"/><script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "WebSite",
+    "name": "Aston\u0027s Programming Thoughts",
+    
+    "url": "https:\/\/astonbitecode.github.io\/blog"
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "name": "",
+  "url": "https:\/\/astonbitecode.github.io\/blog"
+  
+  
+  
+  
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog",
+          "name": "home"
+        }
+    },{
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@id": "https:\/\/astonbitecode.github.io\/blog\/post\/j4rs_javafx_support\/",
+          "name": "J4rs java f x support ( w i p)"
+        }
+    }]
+}
+</script><script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "author": {
+    "name" : "Aston"
+  },
+  "headline": "j4rs: JavaFX support (WIP)",
+  "description" : "Note: JavaFX support in j4rs is a work in progress. Adding features as the time passes and versioning evolves seems better than attempting to create full-feature JavaFX support for Rust. The latter feels rather difficult, frightening and time-demanding.\nIntroduction Some time ago, I was exploring things that can be achieved by using j4rs and had the idea to implement a JavaFX GUI. This indeed happened, but the attempt included implementing some parts in Java and some in Rust, along with several hacks.",
+  "inLanguage" : "en",
+  "wordCount":  445 ,
+  "datePublished" : "2020-09-15T00:10:10",
+  "dateModified" : "2020-09-15T00:10:10",
+  "image" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+  "keywords" : [ "rust, java, j4rs, javafx" ],
+  "mainEntityOfPage" : "https:\/\/astonbitecode.github.io\/blog\/post\/j4rs_javafx_support\/",
+  "publisher" : {
+    "@type": "Organization",
+    "name" : "https:\/\/astonbitecode.github.io\/blog",
+    "logo" : {
+        "@type" : "ImageObject",
+        "url" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
+        "height" :  60 ,
+        "width" :  60
+    }
+  }
+}
+</script>
+
+<meta property="og:title" content="j4rs: JavaFX support (WIP)" />
+<meta property="og:description" content="Note: JavaFX support in j4rs is a work in progress. Adding features as the time passes and versioning evolves seems better than attempting to create full-feature JavaFX support for Rust. The latter feels rather difficult, frightening and time-demanding.
+Introduction Some time ago, I was exploring things that can be achieved by using j4rs and had the idea to implement a JavaFX GUI. This indeed happened, but the attempt included implementing some parts in Java and some in Rust, along with several hacks.">
+<meta property="og:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
+<meta property="og:url" content="https://astonbitecode.github.io/blog/post/j4rs_javafx_support/" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Aston&#39;s Programming Thoughts" />
+
+  <meta name="twitter:title" content="j4rs: JavaFX support (WIP)" />
+  <meta name="twitter:description" content="Note: JavaFX support in j4rs is a work in progress. Adding features as the time passes and versioning evolves seems better than attempting to create full-feature JavaFX support for Rust. The latter …">
+  <meta name="twitter:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
+  <meta name="twitter:card" content="summary" />
+  <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
+  <meta name="generator" content="Hugo 0.74.3" />
+  <link rel="alternate" href="https://astonbitecode.github.io/blog/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" /><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/syntax.css" /><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/codeblock.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.css" integrity="sha384-h/L2W9KefUClHWaty3SLE5F/qvc4djlyR4qY3NUV5HGQBBW7stbcfff1+I/vmsHh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/default-skin/default-skin.min.css" integrity="sha384-iD0dNku6PYSIQLyfTOpB06F2KCZJAKLOThS5HRe8b3ibhdEQ6eKsFf/EeFxdOt5R" crossorigin="anonymous">
+
+
+<script type="application/javascript">
+var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+var doNotTrack = (dnt == "1" || dnt == "yes");
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	if (window.sessionStorage) {
+		var GA_SESSION_STORAGE_KEY = 'ga:clientId';
+		ga('create', 'UA-84657729-1', {
+	    'storage': 'none',
+	    'clientId': sessionStorage.getItem(GA_SESSION_STORAGE_KEY)
+	   });
+	   ga(function(tracker) {
+	    sessionStorage.setItem(GA_SESSION_STORAGE_KEY, tracker.get('clientId'));
+	   });
+   }
+	ga('set', 'anonymizeIp', true);
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+  </head>
+  <body>
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="https://astonbitecode.github.io/blog">Aston&#39;s Programming Thoughts</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+        
+          
+            <li>
+              <a title="Blog" href="/blog">Blog</a>
+            </li>
+          
+        
+          
+            <li>
+              <a title="About" href="/blog/page/about/">About</a>
+            </li>
+          
+        
+
+        
+
+        
+      </ul>
+    </div>
+
+    
+      <div class="avatar-container">
+        <div class="avatar-img-border">
+          <a title="Aston&#39;s Programming Thoughts" href="https://astonbitecode.github.io/blog">
+            <img class="avatar-img" src="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" alt="Aston&#39;s Programming Thoughts" />
+          </a>
+        </div>
+      </div>
+    
+
+  </div>
+</nav>
+
+
+
+
+    
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+  
+  
+  
+
+
+
+
+
+
+  
+
+  <header class="header-section ">
+    
+    <div class="intro-header no-img">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+              
+                <h1>j4rs: JavaFX support (WIP)</h1>
+              
+              
+              
+              
+                <span class="post-meta">
+  
+  
+  <i class="fas fa-calendar"></i>&nbsp;Posted on September 15, 2020
+  
+  
+  
+  
+    
+      &nbsp;|&nbsp;<i class="fas fa-user"></i>&nbsp;Aston
+    
+  
+  
+</span>
+
+
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+    
+<div class="container" role="main">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+        <p><em>Note: JavaFX support in <a href="https://github.com/astonbitecode/j4rs">j4rs</a> is a work in progress. Adding features as the time passes and versioning evolves seems better than
+attempting to create full-feature JavaFX support for Rust. The latter feels rather <strong>difficult</strong>, <strong>frightening</strong> and <strong>time-demanding</strong>.</em></p>
+<h1 id="introduction">Introduction</h1>
+<p>Some time ago, I was exploring things that can be achieved by using <code>j4rs</code> and had the idea to implement a JavaFX GUI.
+This indeed <a href="https://astonbitecode.github.io/blog/post/rust-javafx/">happened</a>, but the attempt included implementing some parts in <a href="https://github.com/astonbitecode/j4rs-showcase/tree/v1/java">Java</a>
+and some in <a href="https://github.com/astonbitecode/j4rs-showcase/tree/v1/rust">Rust</a>, along with several hacks.</p>
+<p>With this JavaFX support WIP, there is no need to write Java code any more and things are lot simpler. Of course, a prerequisite is the knowledge of JavaFX.
+<code>j4rs</code> does not create an API or DSL above the JavaFX API, like, for example <a href="http://www.scalafx.org/">ScalaFX</a> does.</p>
+<p>The approach for now is to use <code>j4rs</code> to manipulate the JavaFX API itself, while implementing special Rust API calls when needed.</p>
+<h1 id="steps-to-build-a-javafx-ui">Steps to build a JavaFX UI</h1>
+<ol>
+<li>
+<p>Have Rust, cargo and JDK 11 (or above) installed</p>
+</li>
+<li>
+<p>Retrieve the JavaFX dependencies for j4rs:
+A good idea is that this happens during build time, in order the dependencies to be available when the actual Rust application starts and the JVM is initialized.
+This can happen by adding the following in a <a href="https://doc.rust-lang.org/cargo/reference/build-scripts.html?highlight=build,scrpit#build-scripts">build script</a>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">use</span><span class="w"> </span><span class="n">j4rs</span>::<span class="n">JvmBuilder</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">j4rs</span>::<span class="n">jfx</span>::<span class="n">JavaFxSupport</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">().</span><span class="n">build</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">    </span><span class="n">jvm</span><span class="p">.</span><span class="n">deploy_javafx_dependencies</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></div><p>``</p>
+</li>
+<li>
+<p>Implement the application.</p>
+<p>In the comments below, you may read a short description for each line and see the respective Java code:</p>
+</li>
+</ol>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="w">
+</span><span class="w"></span><span class="c1">// Create a Jvm with JavaFX support
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">().</span><span class="n">with_javafx_support</span><span class="p">().</span><span class="n">build</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Start the JavaFX application.
+</span><span class="c1">// When the JavaFX application starts, the `InstanceReceiver` channel 
+</span><span class="c1">// that is returned from the `start_javafx_app` invocation
+</span><span class="c1">// will receive an Instance of `javafx.stage.Stage`.
+</span><span class="c1">// The UI may start being built using the provided `Stage`.
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">start_javafx_app</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="n">rx</span><span class="p">().</span><span class="n">recv</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Create a StackPane. Java code: StackPane root = new StackPane();
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">create_instance</span><span class="p">(</span><span class="s">&#34;javafx.scene.layout.StackPane&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[])</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Create the button. Java code: Button btn = new Button();
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">btn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">create_instance</span><span class="p">(</span><span class="s">&#34;javafx.scene.control.Button&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[])</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Set the text of the button. Java code: btn.setText(&#34;Say Hello World to Rust&#34;);
+</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">btn</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;setText&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="s">&#34;A button that sends events to Rust&#34;</span><span class="p">)</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Get the action channel for this button.
+</span><span class="c1">// Each time the button is clicked, there will be an Instance received by the channel.
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">btn_action_channel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">set_javafx_event_receiver</span><span class="p">(</span><span class="o">&amp;</span><span class="n">btn</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;setOnAction&#34;</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Add the button to the GUI. Java code: root.getChildren().add(btn);
+</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">chain</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">)</span><span class="o">?</span><span class="w">
+</span><span class="w">	</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="s">&#34;getChildren&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[])</span><span class="o">?</span><span class="w">
+</span><span class="w">	</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="s">&#34;add&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="n">btn</span><span class="p">)</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="w">
+</span><span class="w">	</span><span class="p">.</span><span class="n">collect</span><span class="p">();</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Create a new Scene. Java code: Scene scene = new Scene(root, 300, 250);
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">scene</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">create_instance</span><span class="p">(</span><span class="s">&#34;javafx.scene.Scene&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="w">
+</span><span class="w">	</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">?</span><span class="p">,</span><span class="w">
+</span><span class="w">	</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="mi">300_</span><span class="k">f64</span><span class="p">)</span><span class="o">?</span><span class="p">.</span><span class="n">into_primitive</span><span class="p">()</span><span class="o">?</span><span class="p">,</span><span class="w">
+</span><span class="w">	</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="mi">250_</span><span class="k">f64</span><span class="p">)</span><span class="o">?</span><span class="p">.</span><span class="n">into_primitive</span><span class="p">()</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Set the title for the scene. Java code: stage.setTitle(&#34;Hello Rust world!&#34;);
+</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;setTitle&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="s">&#34;Hello Rust world!&#34;</span><span class="p">)</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Set the scene in the stage. Java code: stage.setScene(scene);
+</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;setScene&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Show the stage. Java code: stage.show();
+</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;show&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[])</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span></code></pre></div><p>The <a href="https://github.com/astonbitecode/j4rs-showcase">j4rs-showcase</a> repo is updated with the above approach.</p>
+<h1 id="todo">TODO:</h1>
+<ol>
+<li>fxml support</li>
+<li>Extend the API for more JavaFX functionality support</li>
+<li>Allow more options regarding the JavaFX version to use underneath</li>
+</ol>
+<hr>
+<p>You are welcome to share any thoughts, improvements or proposals.</p>
+<p>Thanks for reading!</p>
+
+
+        
+          <div class="blog-tags">
+            
+              <a href="https://astonbitecode.github.io/blog/tags/rust/">rust</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/java/">java</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/j4rs/">j4rs</a>&nbsp;
+            
+              <a href="https://astonbitecode.github.io/blog/tags/javafx/">javafx</a>&nbsp;
+            
+          </div>
+        
+
+        
+
+        
+      </article>
+
+      
+        <ul class="pager blog-pager">
+          
+            <li class="previous">
+              <a href="https://astonbitecode.github.io/blog/post/secrets-in-public/" data-toggle="tooltip" data-placement="top" title="Hiding secrets in public view">&larr; Previous Post</a>
+            </li>
+          
+          
+        </ul>
+      
+
+
+      
+
+    </div>
+  </div>
+</div>
+
+      
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+              <li>
+                <a href="https://github.com/astonbitecode" title="GitHub">
+                  <span class="fa-stack fa-lg">
+                    <i class="fas fa-circle fa-stack-2x"></i>
+                    <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  </span>
+                </a>
+              </li>
+          
+          <li>
+            <a href="" title="RSS">
+              <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x"></i>
+                <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+        </ul>
+        <p class="credits copyright text-muted">
+          
+            
+              Aston
+            
+          
+
+          &nbsp;&bull;&nbsp;&copy;
+          
+            2020
+          
+
+          
+            &nbsp;&bull;&nbsp;
+            <a href="https://astonbitecode.github.io/blog">Aston&#39;s Programming Thoughts</a>
+          
+        </p>
+        
+        <p class="credits theme-by text-muted">
+			This site uses Google Analytics. The IPs are anonymized, the “Do Not Track” HTTP header is respected and the GA Client ID is stored in the Session Storage.
+		</p>
+        <p class="credits theme-by text-muted">
+          <a href="https://gohugo.io">Hugo v0.74.3</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          
+        </p>
+      </div>
+    </div>
+  </div>
+</footer><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="https://astonbitecode.github.io/blog/js/main.js"></script><script> renderMathInElement(document.body); </script><script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe.min.js" integrity="sha384-QELNnmcmU8IR9ZAykt67vGr9/rZJdHbiWi64V88fCPaOohUlHCqUD/unNN0BXSqy" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/4.1.2/photoswipe-ui-default.min.js" integrity="sha384-m67o7SkQ1ALzKZIFh4CiTA8tmadaujiTa9Vu+nqPSwDOqHrDmxLezTdFln8077+q" crossorigin="anonymous"></script><script src="https://astonbitecode.github.io/blog/js/load-photoswipe.js"></script>
+
+
+
+
+
+
+
+
+
+    
+  </body>
+</html>
+

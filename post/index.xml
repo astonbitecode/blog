@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Aston&#39;s Programming Thoughts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 24 Jul 2020 00:00:10 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 15 Sep 2020 00:10:10 +0000</lastBuildDate>
     
 	<atom:link href="https://astonbitecode.github.io/blog/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>j4rs: JavaFX support (WIP)</title>
+      <link>https://astonbitecode.github.io/blog/post/j4rs_javafx_support/</link>
+      <pubDate>Tue, 15 Sep 2020 00:10:10 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/post/j4rs_javafx_support/</guid>
+      <description>Note: JavaFX support in j4rs is a work in progress. Adding features as the time passes and versioning evolves seems better than attempting to create full-feature JavaFX support for Rust. The latter feels rather difficult, frightening and time-demanding.
+Introduction Some time ago, I was exploring things that can be achieved by using j4rs and had the idea to implement a JavaFX GUI. This indeed happened, but the attempt included implementing some parts in Java and some in Rust, along with several hacks.</description>
+    </item>
     
     <item>
       <title>Hiding secrets in public view</title>
@@ -52,10 +62,11 @@ By &amp;ldquo;easily&amp;rdquo;, I mean:
       <pubDate>Thu, 28 Feb 2019 00:05:58 +0000</pubDate>
       
       <guid>https://astonbitecode.github.io/blog/post/rust-javafx/</guid>
-      <description>In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.
+      <description>Dear reader, this post describes an approach that is outdated. You may be interested in this post instead.
+ In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.
 A brief description follows, but you may see the full code here.
 General description We will create a Rust application that:
- Creates a JVM Starts a JavaFX application Accepts callbacks from the Java world and prints them in the console.  Creating a JVM from Rust code and communicating with the Java world is achieved using the j4rs crate.</description>
+ Creates a JVM Starts a JavaFX application Accepts callbacks from the Java world and prints them in the console.</description>
     </item>
     
     <item>

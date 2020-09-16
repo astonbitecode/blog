@@ -6,10 +6,20 @@
     <description>Recent content in java on Aston&#39;s Programming Thoughts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 15 Jul 2020 00:10:10 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 15 Sep 2020 00:10:10 +0000</lastBuildDate>
     
 	<atom:link href="https://astonbitecode.github.io/blog/tags/java/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>j4rs: JavaFX support (WIP)</title>
+      <link>https://astonbitecode.github.io/blog/post/j4rs_javafx_support/</link>
+      <pubDate>Tue, 15 Sep 2020 00:10:10 +0000</pubDate>
+      
+      <guid>https://astonbitecode.github.io/blog/post/j4rs_javafx_support/</guid>
+      <description>Note: JavaFX support in j4rs is a work in progress. Adding features as the time passes and versioning evolves seems better than attempting to create full-feature JavaFX support for Rust. The latter feels rather difficult, frightening and time-demanding.
+Introduction Some time ago, I was exploring things that can be achieved by using j4rs and had the idea to implement a JavaFX GUI. This indeed happened, but the attempt included implementing some parts in Java and some in Rust, along with several hacks.</description>
+    </item>
     
     <item>
       <title>j4rs v0.12.0: Java to Rust direction</title>

@@ -8,10 +8,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
   <title>JavaFX UI in Rust - Aston&#39;s Programming Thoughts</title>
-  <meta name="description" content="In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.
+  <meta name="description" content="Dear reader, this post describes an approach that is outdated. You may be interested in this post instead.
+ In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.
 A brief description follows, but you may see the full code here.
 General description We will create a Rust application that:
- Creates a JVM Starts a JavaFX application Accepts callbacks from the Java world and prints them in the console.  Creating a JVM from Rust code and communicating with the Java world is achieved using the j4rs crate.">
+ Creates a JVM Starts a JavaFX application Accepts callbacks from the Java world and prints them in the console.">
   <meta name="author" content="Aston"/><script type="application/ld+json">
 {
     "@context": "http://schema.org",
@@ -60,9 +61,9 @@ General description We will create a Rust application that:
     "name" : "Aston"
   },
   "headline": "JavaFX UI in Rust",
-  "description" : "In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.\nA brief description follows, but you may see the full code here.\nGeneral description We will create a Rust application that:\n Creates a JVM Starts a JavaFX application Accepts callbacks from the Java world and prints them in the console.  Creating a JVM from Rust code and communicating with the Java world is achieved using the j4rs crate.",
+  "description" : "Dear reader, this post describes an approach that is outdated. You may be interested in this post instead.\n In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.\nA brief description follows, but you may see the full code here.\nGeneral description We will create a Rust application that:\n Creates a JVM Starts a JavaFX application Accepts callbacks from the Java world and prints them in the console.",
   "inLanguage" : "en",
-  "wordCount":  704 ,
+  "wordCount":  722 ,
   "datePublished" : "2019-02-28T00:05:58",
   "dateModified" : "2019-02-28T00:05:58",
   "image" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
@@ -82,18 +83,19 @@ General description We will create a Rust application that:
 </script>
 
 <meta property="og:title" content="JavaFX UI in Rust" />
-<meta property="og:description" content="In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.
+<meta property="og:description" content="Dear reader, this post describes an approach that is outdated. You may be interested in this post instead.
+ In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.
 A brief description follows, but you may see the full code here.
 General description We will create a Rust application that:
- Creates a JVM Starts a JavaFX application Accepts callbacks from the Java world and prints them in the console.  Creating a JVM from Rust code and communicating with the Java world is achieved using the j4rs crate.">
+ Creates a JVM Starts a JavaFX application Accepts callbacks from the Java world and prints them in the console.">
 <meta property="og:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
 <meta property="og:url" content="https://astonbitecode.github.io/blog/post/rust-javafx/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Aston&#39;s Programming Thoughts" />
 
   <meta name="twitter:title" content="JavaFX UI in Rust" />
-  <meta name="twitter:description" content="In this post, I would like to share the way how we can implement a Rust application that has a User Interface written in JavaFX.
-A brief description follows, but you may see the full code here. …">
+  <meta name="twitter:description" content="Dear reader, this post describes an approach that is outdated. You may be interested in this post instead.
+ In this post, I would like to share the way how we can implement a Rust application that has …">
   <meta name="twitter:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
   <meta name="twitter:card" content="summary" />
   <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
@@ -281,7 +283,10 @@ if (!doNotTrack) {
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <article role="main" class="blog-post">
-        <p>In this post, I would like to share the way how we can implement a <a href="https://www.rust-lang.org/">Rust</a> application that has a User Interface written in <a href="https://openjfx.io/">JavaFX</a>.</p>
+        <hr>
+<p><strong>Dear reader, this post describes an approach that is outdated. You may be interested in <a href="https://astonbitecode.github.io/blog/post/j4rs_javafx_support/">this post</a> instead.</strong></p>
+<hr>
+<p>In this post, I would like to share the way how we can implement a <a href="https://www.rust-lang.org/">Rust</a> application that has a User Interface written in <a href="https://openjfx.io/">JavaFX</a>.</p>
 <p>A brief description follows, but you may see the full code <a href="https://github.com/astonbitecode/j4rs-showcase">here</a>.</p>
 <h2 id="general-description">General description</h2>
 <p>We will create a <strong>Rust</strong> application that:</p>
