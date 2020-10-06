@@ -6,11 +6,7 @@
     <description>Recent content in steganography on Aston&#39;s Programming Thoughts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 24 Jul 2020 00:00:10 +0000</lastBuildDate>
-    
-	<atom:link href="https://astonbitecode.github.io/blog/tags/steganography/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Fri, 24 Jul 2020 00:00:10 +0000</lastBuildDate><atom:link href="https://astonbitecode.github.io/blog/tags/steganography/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Hiding secrets in public view</title>
       <link>https://astonbitecode.github.io/blog/post/secrets-in-public/</link>

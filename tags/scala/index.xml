@@ -6,11 +6,7 @@
     <description>Recent content in scala on Aston&#39;s Programming Thoughts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 20 Sep 2016 06:10:10 +0000</lastBuildDate>
-    
-	<atom:link href="https://astonbitecode.github.io/blog/tags/scala/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 20 Sep 2016 06:10:10 +0000</lastBuildDate><atom:link href="https://astonbitecode.github.io/blog/tags/scala/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Akka: To ask, or not to ask?</title>
       <link>https://astonbitecode.github.io/blog/post/bang-not-ask/</link>
@@ -18,7 +14,7 @@
       
       <guid>https://astonbitecode.github.io/blog/post/bang-not-ask/</guid>
       <description>There are times that Akka Actors need to contact some other Actor, get the response and then continue their processing.
-It is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don&amp;rsquo;t have access to others&amp;rsquo; code.</description>
+It is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don&amp;rsquo;t have access to others&#39; code.</description>
     </item>
     
     <item>

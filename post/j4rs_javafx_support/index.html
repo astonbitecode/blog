@@ -60,7 +60,7 @@ Introduction Some time ago, I was exploring things that can be achieved by using
   "headline": "j4rs: JavaFX support (WIP)",
   "description" : "Note: JavaFX support in j4rs is a work in progress. Adding features as the time passes and versioning evolves seems better than attempting to create full-feature JavaFX support for Rust. The latter feels rather difficult, frightening and time-demanding.\nIntroduction Some time ago, I was exploring things that can be achieved by using j4rs and had the idea to implement a JavaFX GUI. This indeed happened, but the attempt included implementing some parts in Java and some in Rust, along with several hacks.",
   "inLanguage" : "en",
-  "wordCount":  444 ,
+  "wordCount":  740 ,
   "datePublished" : "2020-09-15T00:10:10",
   "dateModified" : "2020-09-15T00:10:10",
   "image" : "https:\/\/astonbitecode.github.io\/blog\/images\/bitten-cake-64.png",
@@ -92,7 +92,7 @@ Introduction Some time ago, I was exploring things that can be achieved by using
   <meta name="twitter:image" content="https://astonbitecode.github.io/blog/images/bitten-cake-64.png" />
   <meta name="twitter:card" content="summary" />
   <link href='https://astonbitecode.github.io/blog/images/favicon.ico' rel='icon' type='image/x-icon'/>
-  <meta name="generator" content="Hugo 0.74.3" />
+  <meta name="generator" content="Hugo 0.75.1" />
   <link rel="alternate" href="https://astonbitecode.github.io/blog/index.xml" type="application/rss+xml" title="Aston&#39;s Programming Thoughts"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"><link rel="stylesheet" href="https://astonbitecode.github.io/blog/css/main.css" /><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
@@ -286,82 +286,126 @@ and some in <a href="https://github.com/astonbitecode/j4rs-showcase/tree/v1/rust
 <code>j4rs</code> does not create an API or DSL above the JavaFX API, like, for example <a href="http://www.scalafx.org/">ScalaFX</a> does.</p>
 <p>The approach for now is to use <code>j4rs</code> to manipulate the JavaFX API itself, while implementing special Rust API calls when needed.</p>
 <h1 id="steps-to-build-a-javafx-ui">Steps to build a JavaFX UI</h1>
-<ol>
-<li>
-<p>Have Rust, cargo and JDK 11 (or above) installed</p>
-</li>
-<li>
-<p>Retrieve the JavaFX dependencies for j4rs:
-A good idea is that this happens during build time, in order the dependencies to be available when the actual Rust application starts and the JVM is initialized.
+<h3 id="1-have-rust-cargo-and-jdk-11-or-above-installed">1. Have Rust, cargo and JDK 11 (or above) installed</h3>
+<h3 id="2-retrieve-the-javafx-dependencies-for-j4rs">2. Retrieve the JavaFX dependencies for j4rs:</h3>
+<p>A good idea is that this happens during build time, in order the dependencies to be available when the actual Rust application starts and the JVM is initialized.
 This can happen by adding the following in a <a href="https://doc.rust-lang.org/cargo/reference/build-scripts.html?highlight=build,scrpit#build-scripts">build script</a>:</p>
-<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">use</span><span class="w"> </span><span class="n">j4rs</span>::<span class="n">JvmBuilder</span><span class="p">;</span><span class="w">
-</span><span class="w"></span><span class="k">use</span><span class="w"> </span><span class="n">j4rs</span>::<span class="n">jfx</span>::<span class="n">JavaFxSupport</span><span class="p">;</span><span class="w">
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="w">	</span><span class="k">use</span><span class="w"> </span><span class="n">j4rs</span>::<span class="n">JvmBuilder</span><span class="p">;</span><span class="w">
+</span><span class="w">	</span><span class="k">use</span><span class="w"> </span><span class="n">j4rs</span>::<span class="n">jfx</span>::<span class="n">JavaFxSupport</span><span class="p">;</span><span class="w">
 </span><span class="w">
-</span><span class="w"></span><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
-</span><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">().</span><span class="n">build</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
-</span><span class="w">    </span><span class="n">jvm</span><span class="p">.</span><span class="n">deploy_javafx_dependencies</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
-</span><span class="w"></span><span class="p">}</span><span class="w">
+</span><span class="w">	</span><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w">		</span><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">().</span><span class="n">build</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">		</span><span class="n">jvm</span><span class="p">.</span><span class="n">deploy_javafx_dependencies</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="w">	</span><span class="p">}</span><span class="w">
 </span><span class="w">
-</span></code></pre></div><p>``</p>
-</li>
-<li>
-<p>Implement the application.</p>
-<p>In the comments below, you may read a short description for each line and see the respective Java code:</p>
-</li>
-</ol>
-<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="w">
-</span><span class="w"></span><span class="c1">// Create a Jvm with JavaFX support
-</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">().</span><span class="n">with_javafx_support</span><span class="p">().</span><span class="n">build</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span></code></pre></div><h3 id="3-implement-the-ui">3. Implement the UI:</h3>
+<p>There are two choices here; either build the UI using FXML, or, build it traditionally, using Java code.
+In the code snippets below, you may find comments with a short description for each line.</p>
+<h4 id="3a-implement-the-ui-with-java-calls-to-the-javafx-api">3.a Implement the UI with Java calls to the JavaFX API</h4>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// Create a Jvm with JavaFX support
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">().</span><span class="n">with_javafx_support</span><span class="p">().</span><span class="n">build</span><span class="p">()</span><span class="o">?</span><span class="p">;</span><span class="w">
 </span><span class="w">
 </span><span class="w"></span><span class="c1">// Start the JavaFX application.
-</span><span class="c1">// When the JavaFX application starts, the `InstanceReceiver` 
-</span><span class="c1">// that is returned from the `start_javafx_app` invocation
+</span><span class="c1">// When the JavaFX application starts, the `InstanceReceiver` channel that is returned from the `start_javafx_app` invocation
 </span><span class="c1">// will receive an Instance of `javafx.stage.Stage`.
-</span><span class="c1">// 
 </span><span class="c1">// The UI may start being built using the provided `Stage`.
-</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">start_javafx_app</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="n">rx</span><span class="p">().</span><span class="n">recv</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span><span class="w">
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">start_javafx_app</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="n">rx</span><span class="p">().</span><span class="n">recv</span><span class="p">()</span><span class="o">?</span><span class="p">;</span><span class="w">
 </span><span class="w">
 </span><span class="w"></span><span class="c1">// Create a StackPane. Java code: StackPane root = new StackPane();
 </span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">create_instance</span><span class="p">(</span><span class="s">&#34;javafx.scene.layout.StackPane&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[])</span><span class="o">?</span><span class="p">;</span><span class="w">
 </span><span class="w">
 </span><span class="w"></span><span class="c1">// Create the button. Java code: Button btn = new Button();
 </span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">btn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">create_instance</span><span class="p">(</span><span class="s">&#34;javafx.scene.control.Button&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[])</span><span class="o">?</span><span class="p">;</span><span class="w">
-</span><span class="w">
+</span><span class="w"></span><span class="c1">// Get the action channel for this button
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">btn_action_channel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">get_javafx_event_receiver</span><span class="p">(</span><span class="o">&amp;</span><span class="n">btn</span><span class="p">,</span><span class="w"> </span><span class="n">FxEventType</span>::<span class="n">ActionEvent_Action</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w">
 </span><span class="w"></span><span class="c1">// Set the text of the button. Java code: btn.setText(&#34;Say Hello World to Rust&#34;);
-</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">btn</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;setText&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="s">&#34;A button that sends events to Rust&#34;</span><span class="p">)</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="p">;</span><span class="w">
-</span><span class="w">
-</span><span class="w"></span><span class="c1">// Get the action channel for this button.
-</span><span class="c1">// Each time the button is clicked, there will be an Instance received by the channel.
-</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">btn_action_channel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">set_javafx_event_receiver</span><span class="p">(</span><span class="o">&amp;</span><span class="n">btn</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;setOnAction&#34;</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w">
-</span><span class="w">
+</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">btn</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;setText&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="s">&#34;A button that sends events to Rust&#34;</span><span class="p">.</span><span class="n">try_into</span><span class="p">()</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="p">;</span><span class="w">
 </span><span class="w"></span><span class="c1">// Add the button to the GUI. Java code: root.getChildren().add(btn);
 </span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">chain</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">)</span><span class="o">?</span><span class="w">
 </span><span class="w">	</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="s">&#34;getChildren&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[])</span><span class="o">?</span><span class="w">
-</span><span class="w">	</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="s">&#34;add&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="n">btn</span><span class="p">)</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="w">
+</span><span class="w">	</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="s">&#34;add&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">btn</span><span class="p">.</span><span class="n">try_into</span><span class="p">()</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="w">
 </span><span class="w">	</span><span class="p">.</span><span class="n">collect</span><span class="p">();</span><span class="w">
 </span><span class="w">
 </span><span class="w"></span><span class="c1">// Create a new Scene. Java code: Scene scene = new Scene(root, 300, 250);
 </span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">scene</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">create_instance</span><span class="p">(</span><span class="s">&#34;javafx.scene.Scene&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="w">
-</span><span class="w">	</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">?</span><span class="p">,</span><span class="w">
+</span><span class="w">	</span><span class="n">root</span><span class="p">.</span><span class="n">try_into</span><span class="p">()</span><span class="o">?</span><span class="p">,</span><span class="w">
 </span><span class="w">	</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="mi">300_</span><span class="k">f64</span><span class="p">)</span><span class="o">?</span><span class="p">.</span><span class="n">into_primitive</span><span class="p">()</span><span class="o">?</span><span class="p">,</span><span class="w">
 </span><span class="w">	</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="mi">250_</span><span class="k">f64</span><span class="p">)</span><span class="o">?</span><span class="p">.</span><span class="n">into_primitive</span><span class="p">()</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="p">;</span><span class="w">
-</span><span class="w">
 </span><span class="w"></span><span class="c1">// Set the title for the scene. Java code: stage.setTitle(&#34;Hello Rust world!&#34;);
-</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;setTitle&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="s">&#34;Hello Rust world!&#34;</span><span class="p">)</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="p">;</span><span class="w">
-</span><span class="w">
+</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;setTitle&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="s">&#34;Hello Rust world!&#34;</span><span class="p">.</span><span class="n">try_into</span><span class="p">()</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="p">;</span><span class="w">
 </span><span class="w"></span><span class="c1">// Set the scene in the stage. Java code: stage.setScene(scene);
-</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;setScene&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">InvocationArg</span>::<span class="n">try_from</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="p">;</span><span class="w">
-</span><span class="w">
+</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;setScene&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">scene</span><span class="p">.</span><span class="n">try_into</span><span class="p">()</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="p">;</span><span class="w">
 </span><span class="w"></span><span class="c1">// Show the stage. Java code: stage.show();
 </span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;show&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[])</span><span class="o">?</span><span class="p">;</span><span class="w">
 </span><span class="w">
-</span></code></pre></div><p>The <a href="https://github.com/astonbitecode/j4rs-showcase">j4rs-showcase</a> repo is updated with the above approach.</p>
+</span></code></pre></div><h4 id="3b-implement-the-ui-with-fxmlhttpsopenjfxiojavadoc12javafxfxmljavafxfxmldoc-filesintroduction_to_fxmlhtmloverview">3.b Implement the UI with <a href="https://openjfx.io/javadoc/12/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html#overview">FXML</a></h4>
+<p>I personally prefer building the UI with FXMLs, using for example the <a href="https://gluonhq.com/products/scene-builder/">Scene Builder</a>.</p>
+<p>The thing to keep in mind is that the controller class should be defined in the root FXML element and it should be <code>fx:controller=&quot;org.astonbitecode.j4rs.api.jfx.controllers.FxController&quot;</code></p>
+<p>Here is an FXML example; it creates a window with a label and a button:</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+
+<span class="cp">&lt;?import javafx.scene.control.Button?&gt;</span>
+<span class="cp">&lt;?import javafx.scene.control.Label?&gt;</span>
+<span class="cp">&lt;?import javafx.scene.layout.HBox?&gt;</span>
+<span class="cp">&lt;?import javafx.scene.layout.VBox?&gt;</span>
+<span class="cp">&lt;?import javafx.scene.text.Font?&gt;</span>
+
+<span class="nt">&lt;VBox</span> <span class="na">alignment=</span><span class="s">&#34;TOP_CENTER&#34;</span> <span class="na">maxHeight=</span><span class="s">&#34;-Infinity&#34;</span> <span class="na">maxWidth=</span><span class="s">&#34;-Infinity&#34;</span> <span class="na">minHeight=</span><span class="s">&#34;-Infinity&#34;</span> <span class="na">minWidth=</span><span class="s">&#34;-Infinity&#34;</span> <span class="na">prefHeight=</span><span class="s">&#34;400.0&#34;</span> <span class="na">prefWidth=</span><span class="s">&#34;725.0&#34;</span> <span class="na">spacing=</span><span class="s">&#34;33.0&#34;</span> <span class="na">xmlns=</span><span class="s">&#34;http://javafx.com/javafx/11.0.1&#34;</span> <span class="na">xmlns:fx=</span><span class="s">&#34;http://javafx.com/fxml/1&#34;</span> <span class="na">fx:controller=</span><span class="s">&#34;org.astonbitecode.j4rs.api.jfx.controllers.FxController&#34;</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;children&gt;</span>
+      <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&#34;JavaFX in Rust&#34;</span><span class="nt">&gt;</span>
+         <span class="nt">&lt;font&gt;</span>
+            <span class="nt">&lt;Font</span> <span class="na">size=</span><span class="s">&#34;65.0&#34;</span> <span class="nt">/&gt;</span>
+         <span class="nt">&lt;/font&gt;</span>
+      <span class="nt">&lt;/Label&gt;</span>
+      <span class="nt">&lt;Label</span> <span class="na">text=</span><span class="s">&#34;This UI is loaded with a FXML file&#34;</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;HBox</span> <span class="na">alignment=</span><span class="s">&#34;CENTER&#34;</span> <span class="na">prefHeight=</span><span class="s">&#34;100.0&#34;</span> <span class="na">prefWidth=</span><span class="s">&#34;200.0&#34;</span> <span class="na">spacing=</span><span class="s">&#34;10.0&#34;</span><span class="nt">&gt;</span>
+         <span class="nt">&lt;children&gt;</span>
+            <span class="nt">&lt;Button</span> <span class="na">id=</span><span class="s">&#34;helloButton&#34;</span> <span class="na">mnemonicParsing=</span><span class="s">&#34;false&#34;</span> <span class="na">text=</span><span class="s">&#34;Say Hello&#34;</span> <span class="nt">/&gt;</span>
+         <span class="nt">&lt;/children&gt;</span>
+      <span class="nt">&lt;/HBox&gt;</span>
+   <span class="nt">&lt;/children&gt;</span>
+<span class="nt">&lt;/VBox&gt;</span>
+
+</code></pre></div><p>The <code>id</code> of the elements can be used to retrieve the respective <a href="https://openjfx.io/javadoc/13/javafx.graphics/javafx/scene/Node.html">Nodes</a> in Rust and act upon them (eg. adding Event Listeners, changing the texts or effects on them etc).</p>
+<div class="highlight"><pre class="chroma"><code class="language-rust" data-lang="rust"><span class="c1">// Create a Jvm with JavaFX support
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">jvm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">JvmBuilder</span>::<span class="n">new</span><span class="p">().</span><span class="n">with_javafx_support</span><span class="p">().</span><span class="n">build</span><span class="p">()</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Start the JavaFX application.
+</span><span class="c1">// When the JavaFX application starts, the `InstanceReceiver` channel that is returned from the `start_javafx_app` invocation
+</span><span class="c1">// will receive an Instance of `javafx.stage.Stage`.
+</span><span class="c1">// The UI may start being built using the provided `Stage`.
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">stage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">start_javafx_app</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="n">rx</span><span class="p">().</span><span class="n">recv</span><span class="p">()</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Set the title for the scene. Java code: stage.setTitle(&#34;Hello Rust world!&#34;);
+</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;setTitle&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="s">&#34;Hello JavaFX from Rust!&#34;</span><span class="p">.</span><span class="n">try_into</span><span class="p">()</span><span class="o">?</span><span class="p">])</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="c1">// Show the stage. Java code: stage.show();
+</span><span class="c1"></span><span class="n">jvm</span><span class="p">.</span><span class="n">invoke</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;show&#34;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[])</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Load a fxml. This returns an `FxController` which can be used in order to find Nodes by their id,
+</span><span class="c1">// add Event Listeners and more.
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">jvm</span><span class="p">.</span><span class="n">load_fxml</span><span class="p">(</span><span class="o">&amp;</span><span class="n">PathBuf</span>::<span class="n">from</span><span class="p">(</span><span class="s">&#34;./fxml/jfx_in_rust.fxml&#34;</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stage</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Wait for the controller to be initialized. This is not mandatory, it is here to shoe that the functionality exists.
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">controller</span><span class="p">.</span><span class="n">on_initialized_callback</span><span class="p">(</span><span class="o">&amp;</span><span class="n">jvm</span><span class="p">)</span><span class="o">?</span><span class="p">.</span><span class="n">rx</span><span class="p">().</span><span class="n">recv</span><span class="p">()</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;The controller is initialized!&#34;</span><span class="p">);</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c1">// Get the InstanceReceiver to retrieve callbacks from the JavaFX button with id helloButton
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">hello_button_action_channel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">controller</span><span class="p">.</span><span class="n">get_event_receiver_for_node</span><span class="p">(</span><span class="s">&#34;helloButton&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">FxEventType</span>::<span class="n">ActionEvent_Action</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">jvm</span><span class="p">)</span><span class="o">?</span><span class="p">;</span><span class="w">
+</span><span class="w">
+</span></code></pre></div><hr>
+<p>The <a href="https://github.com/astonbitecode/j4rs-showcase">j4rs-showcase</a> repo is updated with the above approaches.</p>
 <h1 id="todo">TODO:</h1>
-<ol>
-<li>fxml support</li>
-<li>Extend the API for more JavaFX functionality support</li>
-<li>Allow more options regarding the JavaFX version to use underneath</li>
-</ol>
+<ul>
+<li>
+<p><input checked="" disabled="" type="checkbox"> fxml support</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"> Extend the API for more JavaFX functionality support</p>
+</li>
+<li>
+<p><input disabled="" type="checkbox"> Allow more options regarding the JavaFX version to use underneath</p>
+</li>
+</ul>
 <hr>
 <p>You are welcome to share any thoughts, improvements or proposals.</p>
 <p>Thanks for reading!</p>
@@ -452,7 +496,7 @@ This can happen by adding the following in a <a href="https://doc.rust-lang.org/
 			This site uses Google Analytics. The IPs are anonymized, the “Do Not Track” HTTP header is respected and the GA Client ID is stored in the Session Storage.
 		</p>
         <p class="credits theme-by text-muted">
-          <a href="https://gohugo.io">Hugo v0.74.3</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
+          <a href="https://gohugo.io">Hugo v0.75.1</a> powered &nbsp;&bull;&nbsp; Theme <a href="https://github.com/halogenica/beautifulhugo">Beautiful Hugo</a> adapted from <a href="https://deanattali.com/beautiful-jekyll/">Beautiful Jekyll</a>
           
         </p>
       </div>

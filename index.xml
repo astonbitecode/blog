@@ -6,11 +6,7 @@
     <description>Recent content on Aston&#39;s Programming Thoughts</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 15 Sep 2020 00:10:10 +0000</lastBuildDate>
-    
-	<atom:link href="https://astonbitecode.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <lastBuildDate>Tue, 15 Sep 2020 00:10:10 +0000</lastBuildDate><atom:link href="https://astonbitecode.github.io/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>j4rs: JavaFX support (WIP)</title>
       <link>https://astonbitecode.github.io/blog/post/j4rs_javafx_support/</link>
@@ -76,7 +72,7 @@ General description We will create a Rust application that:
       
       <guid>https://astonbitecode.github.io/blog/post/bang-not-ask/</guid>
       <description>There are times that Akka Actors need to contact some other Actor, get the response and then continue their processing.
-It is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don&amp;rsquo;t have access to others&amp;rsquo; code.</description>
+It is debatable whether this is a good design or not. However, when designing Akka APIs to be used by different libraries/modules, it is a reality that someone may have to deal with - especially when many different teams collaborate with each other, so you don&amp;rsquo;t have access to others&#39; code.</description>
     </item>
     
     <item>
